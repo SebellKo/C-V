@@ -1,0 +1,50 @@
+.main_container {
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.content_list {
+  width: 90%;
+  overflow: scroll;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2%;
+}
+
+.content_list li {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3%;
+}
+
+.content_list li img {
+  width: 10%;
+  cursor: pointer;
+}
+
+.content_list li input {
+  width: 50%;
+  height: 70%;
+  border: 1px solid #565656;
+}
+
+.plus_button {
+  width: 5%;
+  height: 5%;
+  cursor: pointer;
+}
+
+.delete_all_button {
+  border: 0;
+  background-color: #fff;
+  color: #df5252;
+  font-weight: 500;
+  cursor: pointer;
+}

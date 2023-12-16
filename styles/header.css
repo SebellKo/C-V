@@ -1,0 +1,21 @@
+header {
+  width: 100%;
+  height: 5%;
+  padding: 0 5%;
+}
+
+.header_list {
+  width: 90%;
+  height: 100%;
+  overflow: scroll;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3%;
+  font-weight: 600;
+}
+
+.header_list_add_button {
+  color: #7d7d7d;
+  cursor: pointer;
+}
