@@ -25,7 +25,7 @@
 }
 
 .content_list li img {
-  width: 10%;
+  width: 9%;
   cursor: pointer;
 }
 
@@ -41,10 +41,18 @@
   cursor: pointer;
 }
 
+.plus_button:hover {
+  transform: scale(1.1);
+}
+
 .delete_all_button {
   border: 0;
   background-color: #fff;
   color: #df5252;
   font-weight: 500;
   cursor: pointer;
+}
+
+.delete_all_button:hover {
+  color: #e7e7e7;
 }

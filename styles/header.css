@@ -15,7 +15,14 @@ header {
   font-weight: 600;
 }
 
-.header_list_add_button {
-  color: #7d7d7d;
+.header_list li {
   cursor: pointer;
+}
+
+.header_list_add_button {
+  color: #e5e5e5;
+}
+
+.header_list_add_button:hover {
+  color: #727272;
 }
