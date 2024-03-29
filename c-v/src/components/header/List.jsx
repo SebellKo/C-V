@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const ListWrapper = styled.ul`
   position: absolute;
+  z-index: 99;
   top: 30px;
   list-style: none;
   background-color: #45454d;

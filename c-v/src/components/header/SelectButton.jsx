@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+import useListStore from '../../stores/ListStore';
 import openButtonIcon from '../../assets/images/open-button.svg';
 
 const SelectButtonWrapper = styled.div`
@@ -18,8 +19,13 @@ const ListName = styled.span`
 `;
 
 const SelectButton = () => {
+  const { toggleClick } = useListStore();
+
+  const clickHandler = () => {
+    toggleClick();
+  };
   return (
-    <SelectButtonWrapper>
+    <SelectButtonWrapper onClick={clickHandler}>
       <ListName>New</ListName>
       <img src={openButtonIcon}></img>
     </SelectButtonWrapper>
