@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 
+import useListStore from '../../stores/ListStore';
+
 const ListWrapper = styled.ul`
   position: absolute;
   z-index: 99;
@@ -19,8 +21,15 @@ const ListWrapper = styled.ul`
 `;
 
 const List = () => {
+  const { setListName } = useListStore();
+
+  const clickHandler = (event) => {
+    const selectName = event.target.innerText;
+    setListName(selectName);
+  };
+
   return (
-    <ListWrapper>
+    <ListWrapper onClick={clickHandler}>
       <li>apple</li>
       <li>pear</li>
       <li>peach</li>

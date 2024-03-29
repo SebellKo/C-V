@@ -19,14 +19,14 @@ const ListName = styled.span`
 `;
 
 const SelectButton = () => {
-  const { toggleClick } = useListStore();
+  const { toggleClick, currentListName } = useListStore();
 
   const clickHandler = () => {
     toggleClick();
   };
   return (
     <SelectButtonWrapper onClick={clickHandler}>
-      <ListName>New</ListName>
+      <ListName>{currentListName}</ListName>
       <img src={openButtonIcon}></img>
     </SelectButtonWrapper>
   );
