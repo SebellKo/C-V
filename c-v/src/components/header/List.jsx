@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 const ListWrapper = styled.ul`
   position: absolute;
-  top: 33px;
+  top: 30px;
   list-style: none;
   background-color: #45454d;
   border-radius: 5px;

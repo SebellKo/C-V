@@ -14,6 +14,7 @@ const SelectButtonWrapper = styled.div`
 const ListName = styled.span`
   color: #fff;
   font-weight: 500;
+  font-size: 13px;
 `;
 
 const SelectButton = () => {
