@@ -1,7 +1,7 @@
-import './App.css';
+import ModalContainer from './components/Modal/ModalContainer';
 
 function App() {
-  return <h1>Hello World</h1>;
+  return <ModalContainer />;
 }
 
 export default App;
