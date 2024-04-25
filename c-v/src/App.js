@@ -1,7 +1,13 @@
-import './App.css';
+import FooterContainer from './components/Footer/FooterContainer';
+import MainContainer from './components/Main/MainContainer';
 
 function App() {
-  return <h1>Hello World</h1>;
+  return (
+    <>
+      <MainContainer></MainContainer>
+      <FooterContainer></FooterContainer>
+    </>
+  );
 }
 
 export default App;

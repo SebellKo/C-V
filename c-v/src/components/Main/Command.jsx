@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
@@ -48,11 +48,11 @@ const CommandContent = styled.div`
 
 const Command = () => {
   return (
-    <CommandWrapper>
+    <CommandWrapper draggable="true">
       <CommandHeader>
-        <img src={dragDropIcon} alt="drag-drop icon" />
+        <img draggable="false" src={dragDropIcon} alt="drag-drop icon" />
         <h5>command 1</h5>
-        <img src={deleteIcon} alt="close icon" />
+        <img draggable="false" src={deleteIcon} alt="close icon" />
       </CommandHeader>
       <CommandContent>
         <p>
