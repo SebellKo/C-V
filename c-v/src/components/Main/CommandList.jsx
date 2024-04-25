@@ -4,7 +4,7 @@ import Command from './Command';
 
 const StyledCommandList = styled.ul`
   width: 100%;
-  height: 70%;
+  height: 85%;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -5,10 +5,11 @@ import NewCommandButton from './NewCommandButton';
 
 const StyledMainContainer = styled.div`
   width: 100%;
-  height: 85%;
+  height: 80%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
 `;
 

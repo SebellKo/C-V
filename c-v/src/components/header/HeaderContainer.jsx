@@ -11,6 +11,7 @@ const HeaderConatiner = styled.div`
   display: flex;
   align-items: center;
   gap: 15px;
+  margin-left: 10px;
 `;
 
 const HeaderContainer = () => {

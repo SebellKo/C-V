@@ -9,6 +9,10 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width: 300px;
+  height: 380px;
+  border: 1px solid #e5e5e5;
+  border-radius: 2px;
 }
 
 ul {
