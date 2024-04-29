@@ -19,8 +19,10 @@ const CommandList = () => {
     currentListName: state.currentListName,
   }));
   const listArr = Object.entries(list);
-  console.log(listArr);
-  console.log(currentListName);
+  const currentListArr = listArr.filter(
+    (listItem) => listItem[0] === currentListName,
+  );
+  console.log(currentListArr);
   return (
     <StyledCommandList>
       <Command></Command>

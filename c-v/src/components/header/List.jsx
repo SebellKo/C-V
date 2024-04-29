@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { useListStore } from '../../stores/ListStore';
+import { useListStore, useListUiStore } from '../../stores/ListStore';
 
 const ListWrapper = styled.ul`
   position: absolute;
@@ -25,11 +25,14 @@ const List = () => {
     setListName: state.setListName,
     list: state.list,
   }));
+  const toggleClick = useListUiStore((state) => state.toggleClick);
+
   const listItemNames = Object.keys(list);
 
   const clickHandler = (event) => {
     const selectName = event.target.innerText;
     setListName(selectName);
+    toggleClick();
   };
 
   return (

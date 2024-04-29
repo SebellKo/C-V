@@ -10,6 +10,11 @@ const SelectButtonWrapper = styled.div`
   background-color: #45454d;
   border-radius: 15px;
   cursor: pointer;
+
+  > img {
+    transform: ${(props) =>
+      props.$isClick ? 'rotateZ(180deg)' : 'rotateZ(0deg)'};
+  }
 `;
 
 const ListName = styled.span`
@@ -20,13 +25,16 @@ const ListName = styled.span`
 
 const SelectButton = () => {
   const currentListName = useListStore((state) => state.currentListName);
-  const toggleClick = useListUiStore((state) => state.toggleClick);
+  const { toggleClick, isClick } = useListUiStore((state) => ({
+    toggleClick: state.toggleClick,
+    isClick: state.isClick,
+  }));
 
   const clickHandler = () => {
     toggleClick();
   };
   return (
-    <SelectButtonWrapper onClick={clickHandler}>
+    <SelectButtonWrapper $isClick={isClick} onClick={clickHandler}>
       <ListName>{currentListName}</ListName>
       <img src={openButtonIcon}></img>
     </SelectButtonWrapper>
