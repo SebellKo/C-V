@@ -4,7 +4,7 @@ import EditInput from './EditInput';
 import ConfirmText from './ConfirmText';
 import EditList from './EditList';
 import useModalStore from '../../stores/ModalStore';
-import useListStore from '../../stores/ListStore';
+import { useListStore } from '../../stores/ListStore';
 
 const StyledModalWrapper = styled.div`
   width: 230px;

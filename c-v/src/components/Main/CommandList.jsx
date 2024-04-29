@@ -1,6 +1,7 @@
 import { styled } from 'styled-components';
 
 import Command from './Command';
+import { useListStore } from '../../stores/ListStore';
 
 const StyledCommandList = styled.ul`
   width: 100%;
@@ -13,12 +14,15 @@ const StyledCommandList = styled.ul`
 `;
 
 const CommandList = () => {
+  const { list, currentListName } = useListStore((state) => ({
+    list: state.list,
+    currentListName: state.currentListName,
+  }));
+  const listArr = Object.entries(list);
+  console.log(listArr);
+  console.log(currentListName);
   return (
     <StyledCommandList>
-      <Command></Command>
-      <Command></Command>
-      <Command></Command>
-      <Command></Command>
       <Command></Command>
     </StyledCommandList>
   );

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import useListStore from '../../stores/ListStore';
+import { useListStore, useListUiStore } from '../../stores/ListStore';
 import openButtonIcon from '../../assets/images/open-button.svg';
 
 const SelectButtonWrapper = styled.div`
@@ -19,7 +19,8 @@ const ListName = styled.span`
 `;
 
 const SelectButton = () => {
-  const { toggleClick, currentListName } = useListStore();
+  const currentListName = useListStore((state) => state.currentListName);
+  const toggleClick = useListUiStore((state) => state.toggleClick);
 
   const clickHandler = () => {
     toggleClick();
