@@ -1,8 +1,11 @@
-import styled, { styped } from 'styled-components';
+import { styled } from 'styled-components';
 
 import FooterContainer from './components/Footer/FooterContainer';
 import MainContainer from './components/Main/MainContainer';
-import HeaderContainer from './components/header/HeaderContainer';
+import HeaderContainer from './components/Header/HeaderContainer';
+import ModalContainer from './components/Modal/ModalContainer';
+
+import useModalStore from './stores/ModalStore';
 
 const AppContainer = styled.div`
   width: 100%;
@@ -14,12 +17,17 @@ const AppContainer = styled.div`
 `;
 
 function App() {
+  const modalIsOpen = useModalStore((state) => state.modalIsOpen);
+
   return (
-    <AppContainer>
-      <HeaderContainer></HeaderContainer>
-      <MainContainer></MainContainer>
-      <FooterContainer></FooterContainer>
-    </AppContainer>
+    <>
+      {modalIsOpen && <ModalContainer></ModalContainer>}
+      <AppContainer>
+        <HeaderContainer></HeaderContainer>
+        <MainContainer></MainContainer>
+        <FooterContainer></FooterContainer>
+      </AppContainer>
+    </>
   );
 }
 
