@@ -3,6 +3,8 @@ import ConfirmButtons from './ConfirmButtons';
 import EditInput from './EditInput';
 import ConfirmText from './ConfirmText';
 import EditList from './EditList';
+import useModalStore from '../../stores/ModalStore';
+import useListStore from '../../stores/ListStore';
 
 const StyledModalWrapper = styled.div`
   width: 230px;
@@ -18,11 +20,20 @@ const StyledModalWrapper = styled.div`
 `;
 
 const ModalWrapper = () => {
+  const { modalType, setConfirmFn } = useModalStore((state) => ({
+    modalType: state.modalType,
+    setConfirmFn: state.setConfirmFn,
+  }));
+
+  const addListItem = useListStore((state) => state.addListItem);
+
+  if (modalType === 'input') setConfirmFn(addListItem);
+
   return (
     <StyledModalWrapper>
-      <EditInput></EditInput>
-      <ConfirmText></ConfirmText>
-      <EditList></EditList>
+      {modalType === 'input' && <EditInput></EditInput>}
+      {modalType === 'text' && <ConfirmText></ConfirmText>}
+      {modalType === 'list' && <EditList></EditList>}
       <ConfirmButtons></ConfirmButtons>
     </StyledModalWrapper>
   );
