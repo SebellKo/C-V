@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
+import useModalStore from '../../stores/ModalStore';
 
 const ConfirmButtonsWrapper = styled.div`
   display: flex;
@@ -17,10 +18,27 @@ const ConfirmButtonsWrapper = styled.div`
 `;
 
 const ConfirmButtons = () => {
+  const { setModalIsOpen, confirmFn, confirmFnParam } = useModalStore(
+    (state) => ({
+      setModalIsOpen: state.setModalIsOpen,
+      confirmFn: state.confirmFn,
+      confirmFnParam: state.confirmFnParam,
+    }),
+  );
+
+  const cancelClickHandler = () => {
+    setModalIsOpen();
+  };
+
+  const confirmClickHandler = () => {
+    if (confirmFnParam) confirmFn(confirmFnParam);
+    setModalIsOpen();
+  };
+
   return (
     <ConfirmButtonsWrapper>
-      <button>확인</button>
-      <button>취소</button>
+      <button onClick={confirmClickHandler}>확인</button>
+      <button onClick={cancelClickHandler}>취소</button>
     </ConfirmButtonsWrapper>
   );
 };

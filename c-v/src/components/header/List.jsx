@@ -21,7 +21,11 @@ const ListWrapper = styled.ul`
 `;
 
 const List = () => {
-  const { setListName } = useListStore();
+  const { setListName, list } = useListStore((state) => ({
+    setListName: state.setListName,
+    list: state.list,
+  }));
+  const listItemNames = Object.keys(list);
 
   const clickHandler = (event) => {
     const selectName = event.target.innerText;
@@ -30,10 +34,9 @@ const List = () => {
 
   return (
     <ListWrapper onClick={clickHandler}>
-      <li>apple</li>
-      <li>pear</li>
-      <li>peach</li>
-      <li>pine apple pen</li>
+      {listItemNames.map((listItem, index) => (
+        <li key={index}>{listItem}</li>
+      ))}
     </ListWrapper>
   );
 };

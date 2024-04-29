@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import useModalStore from '../../stores/ModalStore';
 
 const StyledEditInput = styled.input`
   width: 125px;
@@ -10,7 +11,15 @@ const StyledEditInput = styled.input`
 `;
 
 const EditInput = () => {
-  return <StyledEditInput type="text"></StyledEditInput>;
+  const setConfirmFnParam = useModalStore((state) => state.setConfirmFnParam);
+
+  const inputBlurHandler = (event) => {
+    setConfirmFnParam(event.target.value);
+  };
+
+  return (
+    <StyledEditInput onBlur={inputBlurHandler} type="text"></StyledEditInput>
+  );
 };
 
 export default EditInput;
