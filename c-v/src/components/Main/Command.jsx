@@ -42,25 +42,24 @@ const CommandContent = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    text-align: center;
     cursor: pointer;
   }
 `;
 
-const Command = () => {
+const Command = (props) => {
+  const commandOrder = props.index + 1;
+  const command = props.listItem;
+
   return (
     <CommandWrapper draggable="true">
       <CommandHeader>
         <img draggable="false" src={dragDropIcon} alt="drag-drop icon" />
-        <h5>command 1</h5>
+        <h5>{`command ${commandOrder}`}</h5>
         <img draggable="false" src={deleteIcon} alt="close icon" />
       </CommandHeader>
       <CommandContent>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor Lorem ipsum dolor sit amet, consectetur adipiscing
-          elit, sed do eiusmod tempor Lorem ipsum dolor sit amet, consectetur
-          adipiscing elit, sed do eiusmod tempor
-        </p>
+        <p>{command}</p>
       </CommandContent>
     </CommandWrapper>
   );

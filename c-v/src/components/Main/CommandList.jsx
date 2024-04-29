@@ -18,14 +18,18 @@ const CommandList = () => {
     list: state.list,
     currentListName: state.currentListName,
   }));
+
   const listArr = Object.entries(list);
-  const currentListArr = listArr.filter(
+  const [currentListArr] = listArr.filter(
     (listItem) => listItem[0] === currentListName,
   );
-  console.log(currentListArr);
+
   return (
     <StyledCommandList>
-      <Command></Command>
+      {currentListArr &&
+        currentListArr[1].map((listItem, index) => (
+          <Command key={index} listItem={listItem} index={index}></Command>
+        ))}
     </StyledCommandList>
   );
 };
