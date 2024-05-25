@@ -12,6 +12,7 @@ const useListStore = create((set) => ({
     ],
   },
   addListItem: (name) => set((prev) => (prev.list[name] = [])),
+  modifyList: (newList) => set(() => ({ list: newList })),
 }));
 
 const useListUiStore = create((set) => ({

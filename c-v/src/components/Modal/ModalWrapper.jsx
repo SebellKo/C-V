@@ -26,8 +26,10 @@ const ModalCard = () => {
   }));
 
   const addListItem = useListStore((state) => state.addListItem);
+  const modifyList = useListStore((state) => state.modifyList);
 
   if (modalType === 'input') setConfirmFn(addListItem);
+  if (modalType === 'list') setConfirmFn(modifyList);
 
   return (
     <ModalCardContainer>

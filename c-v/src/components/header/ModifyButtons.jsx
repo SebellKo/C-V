@@ -29,16 +29,21 @@ const ModifyButtons = () => {
     setModalType: state.setModalType,
   }));
 
-  const addClickHandler = () => {
+  const handleAddClick = () => {
     setModalType('input');
+    setModalIsOpen(true);
+  };
+
+  const handleEditClick = () => {
+    setModalType('list');
     setModalIsOpen(true);
   };
 
   return (
     <ModifyButtonContainer>
-      <button onClick={addClickHandler}>Add</button>
+      <button onClick={handleAddClick}>Add</button>
       <span> / </span>
-      <button>Edit</button>
+      <button onClick={handleEditClick}>Edit</button>
     </ModifyButtonContainer>
   );
 };

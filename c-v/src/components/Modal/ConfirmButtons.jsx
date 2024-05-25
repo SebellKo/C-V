@@ -18,21 +18,22 @@ const ConfirmButtonsWrapper = styled.div`
 `;
 
 const ConfirmButtons = () => {
-  const { setModalIsOpen, confirmFn, confirmFnParam } = useModalStore(
-    (state) => ({
+  const { setModalIsOpen, setConfirmFnParam, confirmFn, confirmFnParam } =
+    useModalStore((state) => ({
       setModalIsOpen: state.setModalIsOpen,
+      setConfirmFnParam: state.setConfirmFnParam,
       confirmFn: state.confirmFn,
       confirmFnParam: state.confirmFnParam,
-    }),
-  );
+    }));
 
   const cancelClickHandler = () => {
-    setModalIsOpen();
+    setModalIsOpen(false);
   };
 
   const confirmClickHandler = () => {
     if (confirmFnParam) confirmFn(confirmFnParam);
-    setModalIsOpen();
+    setConfirmFnParam(0);
+    setModalIsOpen(false);
   };
 
   return (

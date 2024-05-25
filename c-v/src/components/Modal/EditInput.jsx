@@ -10,7 +10,7 @@ const StyledEditInput = styled.input`
   font-size: 10px;
 `;
 
-const EditInput = () => {
+const EditInput = ({ value }) => {
   const setConfirmFnParam = useModalStore((state) => state.setConfirmFnParam);
 
   const inputBlurHandler = (event) => {
@@ -18,7 +18,11 @@ const EditInput = () => {
   };
 
   return (
-    <StyledEditInput onBlur={inputBlurHandler} type="text"></StyledEditInput>
+    <StyledEditInput
+      onBlur={inputBlurHandler}
+      type="text"
+      value={value}
+    ></StyledEditInput>
   );
 };
 
