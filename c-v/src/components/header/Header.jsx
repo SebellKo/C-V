@@ -4,7 +4,7 @@ import SelectButton from './SelectButton';
 import ModifyButtons from './ModifyButtons';
 import List from './List';
 
-import { useListStore, useListUiStore } from '../../stores/ListStore';
+import { useListUiStore } from '../../stores/ListStore';
 
 const HeaderConatiner = styled.div`
   position: relative;

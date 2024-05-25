@@ -6,7 +6,7 @@ import EditList from './EditList';
 import useModalStore from '../../stores/ModalStore';
 import { useListStore } from '../../stores/ListStore';
 
-const StyledModalWrapper = styled.div`
+const ModalCardContainer = styled.div`
   width: 230px;
   padding: 25px 0 15px 0;
   display: flex;
@@ -19,7 +19,7 @@ const StyledModalWrapper = styled.div`
   background-color: #fff;
 `;
 
-const ModalWrapper = () => {
+const ModalCard = () => {
   const { modalType, setConfirmFn } = useModalStore((state) => ({
     modalType: state.modalType,
     setConfirmFn: state.setConfirmFn,
@@ -30,13 +30,13 @@ const ModalWrapper = () => {
   if (modalType === 'input') setConfirmFn(addListItem);
 
   return (
-    <StyledModalWrapper>
+    <ModalCardContainer>
       {modalType === 'input' && <EditInput></EditInput>}
       {modalType === 'text' && <ConfirmText></ConfirmText>}
       {modalType === 'list' && <EditList></EditList>}
       <ConfirmButtons></ConfirmButtons>
-    </StyledModalWrapper>
+    </ModalCardContainer>
   );
 };
 
-export default ModalWrapper;
+export default ModalCard;

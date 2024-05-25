@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import useModalStore from '../../stores/ModalStore.js';
 
-const ModifyButtonsWrapper = styled.div`
+const ModifyButtonContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
@@ -35,11 +35,11 @@ const ModifyButtons = () => {
   };
 
   return (
-    <ModifyButtonsWrapper>
+    <ModifyButtonContainer>
       <button onClick={addClickHandler}>Add</button>
       <span> / </span>
       <button>Edit</button>
-    </ModifyButtonsWrapper>
+    </ModifyButtonContainer>
   );
 };
 

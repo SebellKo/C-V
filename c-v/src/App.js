@@ -1,9 +1,9 @@
 import { styled } from 'styled-components';
 
-import FooterContainer from './components/Footer/FooterContainer';
-import MainContainer from './components/Main/MainContainer';
-import HeaderContainer from './components/Header/HeaderContainer';
-import ModalContainer from './components/Modal/ModalContainer';
+import Footer from './components/Footer/Footer';
+import Main from './components/Main/Main';
+import Header from './components/Header/Header';
+import Modal from './components/Modal/Modal';
 
 import useModalStore from './stores/ModalStore';
 
@@ -21,11 +21,11 @@ function App() {
 
   return (
     <>
-      {modalIsOpen && <ModalContainer></ModalContainer>}
+      {modalIsOpen && <Modal></Modal>}
       <AppContainer>
-        <HeaderContainer></HeaderContainer>
-        <MainContainer></MainContainer>
-        <FooterContainer></FooterContainer>
+        <Header></Header>
+        <Main></Main>
+        <Footer></Footer>
       </AppContainer>
     </>
   );

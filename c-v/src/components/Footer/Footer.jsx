@@ -2,19 +2,19 @@ import { styled } from 'styled-components';
 
 import DeleteAllButton from './DeleteAllButton';
 
-const StyledFooterContainer = styled.div`
+const FooterContainer = styled.div`
   width: 100%;
   height: 5%;
   display: flex;
   justify-content: center;
 `;
 
-const FooterContainer = () => {
+const Footer = () => {
   return (
-    <StyledFooterContainer>
+    <FooterContainer>
       <DeleteAllButton></DeleteAllButton>
-    </StyledFooterContainer>
+    </FooterContainer>
   );
 };
 
-export default FooterContainer;
+export default Footer;

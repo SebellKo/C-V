@@ -3,7 +3,7 @@ import { styled } from 'styled-components';
 import CommandList from './CommandList';
 import NewCommandButton from './NewCommandButton';
 
-const StyledMainContainer = styled.div`
+const MainContainer = styled.div`
   width: 100%;
   height: 80%;
   display: flex;
@@ -13,13 +13,13 @@ const StyledMainContainer = styled.div`
   gap: 10px;
 `;
 
-const MainContainer = () => {
+const Main = () => {
   return (
-    <StyledMainContainer>
+    <MainContainer>
       <CommandList></CommandList>
       <NewCommandButton></NewCommandButton>
-    </StyledMainContainer>
+    </MainContainer>
   );
 };
 
-export default MainContainer;
+export default Main;

@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 import ModalWrapper from './ModalWrapper';
 
-const StyledModalContainer = styled.div`
+const ModalContainer = styled.div`
   position: absolute;
   z-index: 999;
   width: 100%;
@@ -14,12 +14,12 @@ const StyledModalContainer = styled.div`
   align-items: center;
 `;
 
-const ModalContainer = () => {
+const Modal = () => {
   return (
-    <StyledModalContainer>
+    <ModalContainer>
       <ModalWrapper></ModalWrapper>
-    </StyledModalContainer>
+    </ModalContainer>
   );
 };
 
-export default ModalContainer;
+export default Modal;
