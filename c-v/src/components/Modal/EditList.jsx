@@ -34,7 +34,6 @@ const EditList = () => {
       acc[cur[0]] = cur[1];
       return acc;
     }, {});
-
     setConfirmFnParam(convertedList);
   }, [updatedList]);
 

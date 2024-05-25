@@ -24,6 +24,7 @@ const ListName = styled.span`
 `;
 
 const SelectButton = () => {
+  const list = useListStore((state) => state.list);
   const currentListName = useListStore((state) => state.currentListName);
   const { toggleClick, isClick } = useListUiStore((state) => ({
     toggleClick: state.toggleClick,
@@ -35,7 +36,9 @@ const SelectButton = () => {
   };
   return (
     <SelectButtonWrapper $isClick={isClick} onClick={clickHandler}>
-      <ListName>{currentListName}</ListName>
+      <ListName>
+        {Object.keys(list).length === 0 ? 'Select' : currentListName}
+      </ListName>
       <img src={openButtonIcon}></img>
     </SelectButtonWrapper>
   );
