@@ -1,5 +1,6 @@
 import { styled } from 'styled-components';
 import useModalStore from '../../stores/ModalStore';
+import { useListStore } from '../../stores/ListStore';
 
 const ConfirmButtonsWrapper = styled.div`
   display: flex;
@@ -18,6 +19,7 @@ const ConfirmButtonsWrapper = styled.div`
 `;
 
 const ConfirmButtons = () => {
+  const setListName = useListStore((state) => state.setListName);
   const { setModalIsOpen, setConfirmFnParam, confirmFn, confirmFnParam } =
     useModalStore((state) => ({
       setModalIsOpen: state.setModalIsOpen,
@@ -32,6 +34,7 @@ const ConfirmButtons = () => {
 
   const confirmClickHandler = () => {
     if (confirmFnParam) confirmFn(confirmFnParam);
+    if (typeof confirmFnParam === 'object') setListName('Select');
     setConfirmFnParam(0);
     setModalIsOpen(false);
   };

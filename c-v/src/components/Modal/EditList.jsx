@@ -49,7 +49,7 @@ const EditList = () => {
       {updatedList.length === 0 && <h5>리스트가 없습니다.</h5>}
       {updatedList.map((listItem) => {
         return (
-          <li>
+          <li key={listItem[0]}>
             <img src={dragDropIcon} alt="drag icon" />
             <EditInput value={listItem[0]} />
             <img

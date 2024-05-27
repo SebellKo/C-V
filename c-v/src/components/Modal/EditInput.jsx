@@ -13,13 +13,13 @@ const StyledEditInput = styled.input`
 const EditInput = ({ value }) => {
   const setConfirmFnParam = useModalStore((state) => state.setConfirmFnParam);
 
-  const inputBlurHandler = (event) => {
+  const handleChangeInput = (event) => {
     setConfirmFnParam(event.target.value);
   };
 
   return (
     <StyledEditInput
-      onBlur={inputBlurHandler}
+      onChange={handleChangeInput}
       type="text"
       value={value}
     ></StyledEditInput>
