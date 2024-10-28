@@ -3,7 +3,6 @@ import ConfirmButtons from './ConfirmButtons';
 import EditInput from './EditInput';
 import ConfirmText from './ConfirmText';
 import EditList from './EditList';
-import useModalStore from '../../stores/ModalStore';
 import { useListStore } from '../../stores/ListStore';
 
 const ModalCardContainer = styled.div`
@@ -20,16 +19,8 @@ const ModalCardContainer = styled.div`
 `;
 
 const ModalCard = () => {
-  const { modalType, setConfirmFn } = useModalStore((state) => ({
-    modalType: state.modalType,
-    setConfirmFn: state.setConfirmFn,
-  }));
-
   const addListItem = useListStore((state) => state.addListItem);
   const modifyList = useListStore((state) => state.modifyList);
-
-  if (modalType === 'input') setConfirmFn(addListItem);
-  if (modalType === 'list') setConfirmFn(modifyList);
 
   return (
     <ModalCardContainer>

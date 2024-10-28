@@ -2,9 +2,6 @@ import styled from 'styled-components';
 
 import SelectButton from './SelectButton';
 import ModifyButtons from './ModifyButtons';
-import List from './List';
-
-import { useListUiStore } from '../../stores/ListStore';
 
 const HeaderConatiner = styled.div`
   position: relative;
@@ -15,13 +12,10 @@ const HeaderConatiner = styled.div`
 `;
 
 const HeaderContainer = () => {
-  const isClick = useListUiStore((state) => state.isClick);
-
   return (
     <HeaderConatiner>
       <SelectButton></SelectButton>
       <ModifyButtons></ModifyButtons>
-      {isClick && <List></List>}
     </HeaderConatiner>
   );
 };

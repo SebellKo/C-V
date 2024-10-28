@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 
-import useModalStore from '../../stores/ModalStore.js';
-
 const ModifyButtonContainer = styled.div`
   display: flex;
   align-items: center;
@@ -24,20 +22,9 @@ const ModifyButtonContainer = styled.div`
 `;
 
 const ModifyButtons = () => {
-  const { setModalIsOpen, setModalType } = useModalStore((state) => ({
-    setModalIsOpen: state.setModalIsOpen,
-    setModalType: state.setModalType,
-  }));
+  const handleAddClick = () => {};
 
-  const handleAddClick = () => {
-    setModalType('input');
-    setModalIsOpen(true);
-  };
-
-  const handleEditClick = () => {
-    setModalType('list');
-    setModalIsOpen(true);
-  };
+  const handleEditClick = () => {};
 
   return (
     <ModifyButtonContainer>

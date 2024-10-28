@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import useModalStore from '../../stores/ModalStore';
 
 const StyledEditInput = styled.input`
   width: 125px;
@@ -11,11 +10,7 @@ const StyledEditInput = styled.input`
 `;
 
 const EditInput = ({ value }) => {
-  const setConfirmFnParam = useModalStore((state) => state.setConfirmFnParam);
-
-  const handleChangeInput = (event) => {
-    setConfirmFnParam(event.target.value);
-  };
+  const handleChangeInput = (event) => {};
 
   return (
     <StyledEditInput

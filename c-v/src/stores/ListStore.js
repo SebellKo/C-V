@@ -12,12 +12,11 @@ const useListStore = create((set) => ({
     ],
   },
   addListItem: (name) => set((prev) => (prev.list[name] = [])),
-  modifyList: (newList) => set(() => ({ list: newList })),
+  modifyList: (newList) =>
+    set(
+      (prev) =>
+        (prev.list = { ...prev.list, [newList.listName]: newList.list }),
+    ),
 }));
 
-const useListUiStore = create((set) => ({
-  isClick: false,
-  toggleClick: () => set((prev) => ({ isClick: !prev.isClick })),
-}));
-
-export { useListStore, useListUiStore };
+export { useListStore };

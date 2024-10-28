@@ -1,4 +1,6 @@
 import { styled } from 'styled-components';
+import { useState } from 'react';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
@@ -10,25 +12,22 @@ const StyledCommandList = styled.ul`
   flex-direction: column;
   align-items: center;
   overflow-y: scroll;
-  gap: 25px;
+  gap: 15px;
 `;
 
+const currentListArr = ['apple', 'pineapple'];
+
 const CommandList = () => {
-  const { list, currentListName } = useListStore((state) => ({
-    list: state.list,
-    currentListName: state.currentListName,
-  }));
-
-  const listArr = Object.entries(list);
-  const [currentListArr] = listArr.filter(
-    (listItem) => listItem[0] === currentListName,
-  );
-
   return (
     <StyledCommandList>
       {currentListArr &&
-        currentListArr[1].map((listItem, index) => (
-          <Command key={index} listItem={listItem} index={index}></Command>
+        currentListArr.map((listItem, index) => (
+          <Command
+            key={index}
+            listItem={listItem}
+            currentList={currentListArr}
+            index={index}
+          ></Command>
         ))}
     </StyledCommandList>
   );

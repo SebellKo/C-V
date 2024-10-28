@@ -1,11 +1,13 @@
 import styled from 'styled-components';
 
-import { useListStore, useListUiStore } from '../../stores/ListStore';
+import { useListStore } from '../../stores/ListStore';
+import { useEffect, useRef } from 'react';
 
 const ListWrapper = styled.ul`
   position: absolute;
-  z-index: 99;
+  z-index: 9999;
   top: 30px;
+  left: 5px;
   list-style: none;
   background-color: #45454d;
   border-radius: 5px;
@@ -21,18 +23,14 @@ const ListWrapper = styled.ul`
 `;
 
 const List = () => {
-  const { setListName, list } = useListStore((state) => ({
-    setListName: state.setListName,
-    list: state.list,
-  }));
-  const toggleClick = useListUiStore((state) => state.toggleClick);
+  const setListName = useListStore((state) => state.setListName);
+  const list = useListStore((state) => state.list);
 
   const listItemNames = Object.keys(list);
 
   const clickHandler = (event) => {
     const selectName = event.target.innerText;
     setListName(selectName);
-    toggleClick();
   };
 
   return (
