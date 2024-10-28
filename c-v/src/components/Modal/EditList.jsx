@@ -5,7 +5,6 @@ import deleteIcon from '../../assets/images/delete-black.svg';
 import dragDropIcon from '../../assets/images/drag-drop.svg';
 import EditInput from './EditInput';
 import { useListStore } from '../../stores/ListStore';
-import useModalStore from '../../stores/ModalStore';
 
 const EditListWrapper = styled.ul`
   display: flex;
@@ -27,14 +26,12 @@ const EditList = () => {
   const listArr = Object.entries(list);
 
   const [updatedList, setUpdatedList] = useState(listArr);
-  const setConfirmFnParam = useModalStore((state) => state.setConfirmFnParam);
 
   useEffect(() => {
     const convertedList = updatedList.reduce((acc, cur) => {
       acc[cur[0]] = cur[1];
       return acc;
     }, {});
-    setConfirmFnParam(convertedList);
   }, [updatedList]);
 
   const handleClickDelete = (listName) => {
@@ -44,15 +41,35 @@ const EditList = () => {
     setUpdatedList(deletedList);
   };
 
+  const handleDragStartItem = (event) => {
+    const value = event.target.children[1].value;
+  };
+
+  const handleDragOverItem = (event) => {
+    event.preventDefault();
+  };
+
+  const handleDropItem = (event) => {
+    event.preventDefault();
+    console.log(event.target);
+  };
+
   return (
     <EditListWrapper>
       {updatedList.length === 0 && <h5>리스트가 없습니다.</h5>}
       {updatedList.map((listItem) => {
         return (
-          <li key={listItem[0]}>
-            <img src={dragDropIcon} alt="drag icon" />
+          <li
+            onDragStart={(event) => handleDragStartItem(event)}
+            onDragOver={(event) => handleDragOverItem(event)}
+            onDrop={(event) => handleDropItem(event)}
+            draggable={true}
+            key={listItem[0]}
+          >
+            <img draggable={false} src={dragDropIcon} alt="drag icon" />
             <EditInput value={listItem[0]} />
             <img
+              draggable={false}
               src={deleteIcon}
               alt="delete icon"
               onClick={() => handleClickDelete(listItem[0])}

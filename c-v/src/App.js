@@ -3,9 +3,6 @@ import { styled } from 'styled-components';
 import Footer from './components/Footer/Footer';
 import Main from './components/Main/Main';
 import Header from './components/Header/Header';
-import Modal from './components/Modal/Modal';
-
-import useModalStore from './stores/ModalStore';
 
 const AppContainer = styled.div`
   width: 100%;
@@ -17,11 +14,8 @@ const AppContainer = styled.div`
 `;
 
 function App() {
-  const modalIsOpen = useModalStore((state) => state.modalIsOpen);
-
   return (
     <>
-      {modalIsOpen && <Modal></Modal>}
       <AppContainer>
         <Header></Header>
         <Main></Main>

@@ -5,10 +5,14 @@ import deleteIcon from '../../assets/images/delete-white.svg';
 
 const CommandWrapper = styled.li`
   width: 250px;
-  height: 60px;
+  ${({ $isDragging }) => $isDragging && 'opacity: 0.5'}
+  position: relative;
+  z-index: 99;
 `;
 
 const CommandHeader = styled.div`
+  position: relative;
+  z-index: 0;
   width: 94%;
   padding: 2px 3% 2px 3%;
   display: flex;
@@ -34,7 +38,7 @@ const CommandContent = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #d9d9d9;
+  border: 1px solid ${({ $isOver }) => ($isOver ? '#00B3FF' : '#d9d9d9')};
   border-radius: 0 0 5px 5px;
   > p {
     width: 80%;
@@ -48,18 +52,22 @@ const CommandContent = styled.div`
 `;
 
 const Command = (props) => {
-  const commandOrder = props.index + 1;
   const command = props.listItem;
 
   return (
-    <CommandWrapper draggable="true">
+    <CommandWrapper>
       <CommandHeader>
         <img draggable="false" src={dragDropIcon} alt="drag-drop icon" />
-        <h5>{`command ${commandOrder}`}</h5>
+        <h5>{`command`}</h5>
         <img draggable="false" src={deleteIcon} alt="close icon" />
       </CommandHeader>
       <CommandContent>
-        <p>{command}</p>
+        <p
+          onDragEnter={(event) => dragEnterHandler(event)}
+          onDragLeave={(event) => dragLeaveHandler(event)}
+        >
+          {command}
+        </p>
       </CommandContent>
     </CommandWrapper>
   );

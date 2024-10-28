@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 
-import { useListStore, useListUiStore } from '../../stores/ListStore';
+import { useListStore } from '../../stores/ListStore';
 import openButtonIcon from '../../assets/images/open-button.svg';
+import List from './List';
+import { useState } from 'react';
 
 const SelectButtonWrapper = styled.div`
+  position: relative;
   display: flex;
   padding: 5px 10px;
   gap: 10px;
@@ -12,8 +15,8 @@ const SelectButtonWrapper = styled.div`
   cursor: pointer;
 
   > img {
-    transform: ${(props) =>
-      props.$isClick ? 'rotateZ(180deg)' : 'rotateZ(0deg)'};
+    transform: ${({ $isOpen }) =>
+      $isOpen ? 'rotateZ(180deg)' : 'rotateZ(0deg)'};
   }
 `;
 
@@ -25,18 +28,16 @@ const ListName = styled.span`
 
 const SelectButton = () => {
   const currentListName = useListStore((state) => state.currentListName);
-  const { toggleClick, isClick } = useListUiStore((state) => ({
-    toggleClick: state.toggleClick,
-    isClick: state.isClick,
-  }));
+  const [isOpen, setIsOpen] = useState(false);
 
-  const clickHandler = () => {
-    toggleClick();
-  };
   return (
-    <SelectButtonWrapper $isClick={isClick} onClick={clickHandler}>
+    <SelectButtonWrapper
+      $isOpen={isOpen}
+      onClick={() => setIsOpen((prev) => !prev)}
+    >
       <ListName>{currentListName}</ListName>
       <img src={openButtonIcon}></img>
+      {isOpen && <List setIsOpen={setIsOpen}></List>}
     </SelectButtonWrapper>
   );
 };
