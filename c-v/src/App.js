@@ -3,6 +3,7 @@ import { styled } from 'styled-components';
 import Footer from './components/Footer/Footer';
 import Main from './components/Main/Main';
 import Header from './components/Header/Header';
+import GlobalStyles from './styles/GlobalStyle';
 
 const AppContainer = styled.div`
   width: 100%;
@@ -16,6 +17,7 @@ const AppContainer = styled.div`
 function App() {
   return (
     <>
+      <GlobalStyles></GlobalStyles>
       <AppContainer>
         <Header></Header>
         <Main></Main>
