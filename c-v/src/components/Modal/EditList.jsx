@@ -41,35 +41,27 @@ const EditList = () => {
     setUpdatedList(deletedList);
   };
 
-  const handleDragStartItem = (event) => {
-    const value = event.target.children[1].value;
-  };
-
-  const handleDragOverItem = (event) => {
-    event.preventDefault();
-  };
-
-  const handleDropItem = (event) => {
-    event.preventDefault();
-    console.log(event.target);
+  const handleChangeInput = (event, index) => {
+    const inputValue = event.target.value;
+    setUpdatedList((prev) => {
+      const convertedList = [...prev];
+      convertedList[index][0] = inputValue;
+      return convertedList;
+    });
   };
 
   return (
     <EditListWrapper>
       {updatedList.length === 0 && <h5>리스트가 없습니다.</h5>}
-      {updatedList.map((listItem) => {
+      {updatedList.map((listItem, index) => {
         return (
-          <li
-            onDragStart={(event) => handleDragStartItem(event)}
-            onDragOver={(event) => handleDragOverItem(event)}
-            onDrop={(event) => handleDropItem(event)}
-            draggable={true}
-            key={listItem[0]}
-          >
-            <img draggable={false} src={dragDropIcon} alt="drag icon" />
-            <EditInput value={listItem[0]} />
+          <li key={index}>
+            <img src={dragDropIcon} alt="drag icon" />
+            <EditInput
+              value={listItem[0]}
+              onChange={(event) => handleChangeInput(event, index)}
+            ></EditInput>
             <img
-              draggable={false}
               src={deleteIcon}
               alt="delete icon"
               onClick={() => handleClickDelete(listItem[0])}

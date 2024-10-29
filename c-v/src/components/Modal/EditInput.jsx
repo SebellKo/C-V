@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import styled from 'styled-components';
 
 const StyledEditInput = styled.input`
@@ -9,11 +10,18 @@ const StyledEditInput = styled.input`
   font-size: 12px;
 `;
 
-const EditInput = ({ onChange }) => {
+const EditInput = ({ value, onChange }) => {
+  const [inputValue, setInputValue] = useState(value);
+
+  const handleChangeInput = (event) => {
+    onChange(event);
+    setInputValue(event.target.value);
+  };
   return (
     <StyledEditInput
       type="text"
-      onChange={(event) => onChange(event)}
+      value={inputValue}
+      onChange={(event) => handleChangeInput(event)}
     ></StyledEditInput>
   );
 };

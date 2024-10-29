@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { useAddListModalStore } from '../../stores/ModalStore';
 import ModalCard from '../../styles/components/ModalCard';
+import ModalTitle from '../../styles/components/ModalTitle';
 import Button from '../common/Button';
 import EditInput from './EditInput';
+import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import { useListStore } from '../../stores/ListStore';
 
 function AddListModal() {
@@ -29,10 +30,5 @@ function AddListModal() {
     </ModalCard>
   );
 }
-
-const ConfirmButtons = styled.div`
-  display: flex;
-  gap: 10px;
-`;
 
 export default AddListModal;
