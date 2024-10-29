@@ -20,12 +20,12 @@ import { create } from 'zustand';
 
 const createModalStore = () =>
   create((set) => ({
-    modalIsOpen: false,
-    openModal: () => set({ modalIsOpen: true }),
-    closeModal: () => set({ modalIsOpen: false }),
+    isOpen: false,
+    openModal: () => set({ isOpen: true }),
+    closeModal: () => set({ isOpen: false }),
   }));
 
 const useAddListModalStore = createModalStore();
 const useEditListModalStore = createModalStore();
 
-export default { useAddListModalStore, useEditListModalStore };
+export { useAddListModalStore, useEditListModalStore };
