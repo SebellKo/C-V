@@ -2,6 +2,9 @@ import { styled } from 'styled-components';
 
 import CommandList from './CommandList';
 import NewCommandButton from './NewCommandButton';
+import { useAddListModalStore } from '../../stores/ModalStore';
+import AddListModal from '../Modal/AddListModal';
+import Modal from '../Modal/Modal';
 
 const MainContainer = styled.div`
   width: 100%;
@@ -14,11 +17,21 @@ const MainContainer = styled.div`
 `;
 
 const Main = () => {
+  const { isOpen: isAddModalOpen, closeModal: closeAddListModal } =
+    useAddListModalStore();
+
   return (
-    <MainContainer>
-      <CommandList></CommandList>
-      <NewCommandButton></NewCommandButton>
-    </MainContainer>
+    <>
+      <MainContainer>
+        <CommandList></CommandList>
+        <NewCommandButton></NewCommandButton>
+      </MainContainer>
+      {isAddModalOpen && (
+        <Modal onClose={closeAddListModal}>
+          <AddListModal></AddListModal>
+        </Modal>
+      )}
+    </>
   );
 };
 

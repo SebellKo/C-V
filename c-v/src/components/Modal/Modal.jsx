@@ -1,9 +1,10 @@
 import { styled } from 'styled-components';
-
-import ModalWrapper from './ModalWrapper';
+import { createPortal } from 'react-dom';
 
 const ModalContainer = styled.div`
   position: absolute;
+  top: 0;
+  left: 0;
   z-index: 999;
   width: 100%;
   height: 380px;
@@ -14,12 +15,18 @@ const ModalContainer = styled.div`
   align-items: center;
 `;
 
-const Modal = () => {
-  return (
-    <ModalContainer>
-      <ModalWrapper></ModalWrapper>
-    </ModalContainer>
+function Modal({ children, onClose }) {
+  const closeModal = (event) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+  return createPortal(
+    <ModalContainer onClick={(event) => closeModal(event)}>
+      {children}
+    </ModalContainer>,
+    document.getElementById('root'),
   );
-};
+}
 
 export default Modal;

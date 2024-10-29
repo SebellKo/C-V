@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useAddListModalStore } from '../../stores/ModalStore';
 
 const ModifyButtonContainer = styled.div`
   display: flex;
@@ -22,13 +23,13 @@ const ModifyButtonContainer = styled.div`
 `;
 
 const ModifyButtons = () => {
-  const handleAddClick = () => {};
+  const openAddModal = useAddListModalStore((state) => state.openModal);
 
   const handleEditClick = () => {};
 
   return (
     <ModifyButtonContainer>
-      <button onClick={handleAddClick}>Add</button>
+      <button onClick={openAddModal}>Add</button>
       <span> / </span>
       <button onClick={handleEditClick}>Edit</button>
     </ModifyButtonContainer>
