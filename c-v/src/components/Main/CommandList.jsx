@@ -1,9 +1,5 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
-import { DragDropContext } from 'react-beautiful-dnd';
-
 import Command from './Command';
-import { useListStore } from '../../stores/ListStore';
 
 const StyledCommandList = styled.ul`
   width: 100%;

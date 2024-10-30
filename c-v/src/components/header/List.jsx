@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import { useListStore } from '../../stores/ListStore';
-import { useEffect, useRef } from 'react';
 
 const ListWrapper = styled.ul`
   position: absolute;
