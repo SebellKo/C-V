@@ -13,6 +13,7 @@ function AddListModal() {
   const addListItem = useListStore((state) => state.addListItem);
 
   const handleClickConrifm = () => {
+    console.log(listTitle);
     addListItem(listTitle);
     closeAddModal();
   };
