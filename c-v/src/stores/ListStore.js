@@ -8,7 +8,7 @@ const useListStore = create((set) => ({
     {
       id: 'apple',
       name: 'apple',
-      commands: ['apple', 'pine', 'apple', 'something'],
+      commands: ['apple', 'pine', 'something'],
     },
     {
       id: 'pear',
@@ -25,6 +25,14 @@ const useListStore = create((set) => ({
       list: [...list, { id: uuidv4(), name: name, commands: [] }],
     })),
   modifyList: (newList) => set({ list: newList }),
+  modifyCommands: (newCommands) =>
+    set(({ list }) => ({
+      list: list.map((listItem) =>
+        listItem.id === newCommands.id
+          ? { ...listItem, commands: newCommands.commands }
+          : listItem,
+      ),
+    })),
 }));
 
 export { useListStore };

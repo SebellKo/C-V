@@ -1,4 +1,6 @@
 import { styled } from 'styled-components';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
@@ -13,7 +15,7 @@ const CommandWrapper = styled.li`
 const CommandHeader = styled.div`
   position: relative;
   z-index: 0;
-  width: 94%;
+  width: 100%;
   padding: 2px 3% 2px 3%;
   display: flex;
   background-color: #aeaeae;
@@ -51,23 +53,41 @@ const CommandContent = styled.div`
   }
 `;
 
-const Command = (props) => {
-  const command = props.listItem;
+const Command = ({ listItem }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: listItem });
+
+  const command = listItem;
 
   return (
-    <CommandWrapper>
+    <CommandWrapper
+      ref={setNodeRef}
+      {...attributes}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition: transition,
+        zIndex: isDragging ? '100' : undefined,
+      }}
+    >
       <CommandHeader>
-        <img draggable="false" src={dragDropIcon} alt="drag-drop icon" />
+        <img
+          src={dragDropIcon}
+          alt="drag icon"
+          ref={setActivatorNodeRef}
+          {...listeners}
+        />
         <h5>{`command`}</h5>
-        <img draggable="false" src={deleteIcon} alt="close icon" />
+        <img src={deleteIcon} alt="close icon" />
       </CommandHeader>
       <CommandContent>
-        <p
-          onDragEnter={(event) => dragEnterHandler(event)}
-          onDragLeave={(event) => dragLeaveHandler(event)}
-        >
-          {command}
-        </p>
+        <p>{command}</p>
       </CommandContent>
     </CommandWrapper>
   );
