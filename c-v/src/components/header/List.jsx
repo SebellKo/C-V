@@ -25,8 +25,6 @@ const List = () => {
   const setListName = useListStore((state) => state.setListName);
   const list = useListStore((state) => state.list);
 
-  const listItemNames = Object.keys(list);
-
   const clickHandler = (event) => {
     const selectName = event.target.innerText;
     setListName(selectName);
@@ -34,8 +32,8 @@ const List = () => {
 
   return (
     <ListWrapper onClick={clickHandler}>
-      {listItemNames.map((listItem, index) => (
-        <li key={index}>{listItem}</li>
+      {list.map((listItem, index) => (
+        <li key={index}>{listItem.name}</li>
       ))}
     </ListWrapper>
   );
