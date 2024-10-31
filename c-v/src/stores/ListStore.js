@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 const useListStore = create((set) => ({
   currentListName: 'Select',
+
   setListName: (name) => set({ currentListName: name }),
+
   list: [
     {
       id: 'apple',
@@ -20,11 +22,32 @@ const useListStore = create((set) => ({
       ],
     },
   ],
+
   addListItem: (name) =>
     set(({ list }) => ({
       list: [...list, { id: uuidv4(), name: name, commands: [] }],
     })),
+
   modifyList: (newList) => set({ list: newList }),
+
+  addCommand: (newCommand) =>
+    set(({ list }) => {
+      const matchedIndex = list.findIndex(
+        (listItem) => listItem.name === newCommand.currentListName,
+      );
+
+      if (matchedIndex === -1) return { list };
+
+      const updatedList = [...list];
+      updatedList[matchedIndex].commands = [
+        ...updatedList[matchedIndex].commands,
+        newCommand.command,
+      ];
+
+      console.log(updatedList);
+      return { list: updatedList };
+    }),
+
   modifyCommands: (newCommands) =>
     set(({ list }) => ({
       list: list.map((listItem) =>

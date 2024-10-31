@@ -41,6 +41,7 @@ const CommandList = () => {
       const updatedCommands = arrayMove(commands, activeIndex, overIndex);
       modifyCommands({ id: currentList.id, commands: updatedCommands });
     }
+    setActiveId(null);
   };
 
   return (

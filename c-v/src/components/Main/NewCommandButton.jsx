@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { useAddCommandModalStore } from '../../stores/ModalStore';
+import { useListStore } from '../../stores/ListStore';
 
 const StyledNewCommandButton = styled.button`
   background: none;
@@ -12,7 +14,19 @@ const StyledNewCommandButton = styled.button`
 `;
 
 const NewCommandButton = () => {
-  return <StyledNewCommandButton>New Command</StyledNewCommandButton>;
+  const openAddCommandModal = useAddCommandModalStore(
+    (state) => state.openModal,
+  );
+  const currentListName = useListStore((state) => state.currentListName);
+
+  return (
+    <StyledNewCommandButton
+      onClick={openAddCommandModal}
+      disabled={currentListName === 'Select'}
+    >
+      New Command
+    </StyledNewCommandButton>
+  );
 };
 
 export default NewCommandButton;

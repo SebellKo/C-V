@@ -14,7 +14,7 @@ const EditInput = ({ value, onChange }) => {
   const [inputValue, setInputValue] = useState(value);
 
   const handleChangeInput = (event) => {
-    onChange(event);
+    if (onChange) onChange(event);
     setInputValue(event.target.value);
   };
   return (
