@@ -32,6 +32,7 @@ function EditCommandModal() {
       targetCommand: selectedCommand,
       newCommand: newCommandValue,
     });
+    resetSelectedCommand();
     closeEditCommandModal();
   };
 
