@@ -75,6 +75,10 @@ const useListStore = create((set) => ({
 
       return { list: updatedList };
     }),
+  removeAllCommands: (targetList) =>
+    set(({ list }) => ({
+      list: list.filter((listItem) => listItem.name !== targetList),
+    })),
 }));
 
 export { useListStore };

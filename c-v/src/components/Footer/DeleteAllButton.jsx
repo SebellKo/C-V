@@ -1,4 +1,6 @@
 import { styled } from 'styled-components';
+import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
+import { useListStore } from '../../stores/ListStore';
 
 const StyledDeleteAllButton = styled.button`
   background: none;
@@ -12,7 +14,19 @@ const StyledDeleteAllButton = styled.button`
 `;
 
 const DeleteAllButton = () => {
-  return <StyledDeleteAllButton>Delete All</StyledDeleteAllButton>;
+  const openDeleteConfirmModal = useDeleteConfirmModalStore(
+    (state) => state.openModal,
+  );
+  const currentListName = useListStore((state) => state.currentListName);
+
+  return (
+    <StyledDeleteAllButton
+      onClick={openDeleteConfirmModal}
+      disabled={currentListName === 'Select'}
+    >
+      Delete All
+    </StyledDeleteAllButton>
+  );
 };
 
 export default DeleteAllButton;
