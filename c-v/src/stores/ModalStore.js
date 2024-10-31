@@ -11,10 +11,12 @@ const useAddListModalStore = createModalStore();
 const useEditListModalStore = createModalStore();
 const useAddCommandModalStore = createModalStore();
 const useDeleteConfirmModalStore = createModalStore();
+const useEditCommandModalStore = createModalStore();
 
 export {
   useAddListModalStore,
   useEditListModalStore,
   useAddCommandModalStore,
   useDeleteConfirmModalStore,
+  useEditCommandModalStore,
 };

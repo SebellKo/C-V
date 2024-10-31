@@ -5,6 +5,8 @@ import { CSS } from '@dnd-kit/utilities';
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
 import { useListStore } from '../../stores/ListStore';
+import { useEditCommandModalStore } from '../../stores/ModalStore';
+import useCommandStore from '../../stores/CommandStore';
 
 const CommandWrapper = styled.li`
   width: 250px;
@@ -66,11 +68,21 @@ const Command = ({ listItem }) => {
   } = useSortable({ id: listItem });
   const removeCommand = useListStore((state) => state.removeCommand);
   const currentListName = useListStore((state) => state.currentListName);
+  const openEditCommandModal = useEditCommandModalStore(
+    (state) => state.openModal,
+  );
+  const setSelectedCommand = useCommandStore(
+    (state) => state.setSelectedCommand,
+  );
 
   const command = listItem;
 
-  const handleClickDeleteIcon = () => {
+  const handleClickDeleteIcon = () =>
     removeCommand({ currentListName: currentListName, command: command });
+
+  const handleClickCommand = () => {
+    openEditCommandModal();
+    setSelectedCommand(command);
   };
 
   return (
@@ -97,7 +109,7 @@ const Command = ({ listItem }) => {
           onClick={handleClickDeleteIcon}
         />
       </CommandHeader>
-      <CommandContent>
+      <CommandContent onClick={handleClickCommand}>
         <p>{command}</p>
       </CommandContent>
     </CommandWrapper>

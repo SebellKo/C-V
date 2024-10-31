@@ -6,6 +6,7 @@ import {
   useAddCommandModalStore,
   useAddListModalStore,
   useDeleteConfirmModalStore,
+  useEditCommandModalStore,
   useEditListModalStore,
 } from '../../stores/ModalStore';
 import AddListModal from '../Modal/AddListModal';
@@ -13,6 +14,7 @@ import Modal from '../Modal/Modal';
 import EditListModal from '../Modal/EditListModal';
 import AddCommandModal from '../Modal/AddCommandModal';
 import DeleteConfirmModal from '../Modal/DeleteConfirmModal';
+import EditCommandModal from '../Modal/EditCommandModal';
 
 const MainContainer = styled.div`
   width: 100%;
@@ -33,6 +35,8 @@ const Main = () => {
     useAddCommandModalStore();
   const { isOpen: isDeleteModalOpen, closeModal: closeDeleteModal } =
     useDeleteConfirmModalStore();
+  const { isOpen: isEditCommandModalOpen, closeModal: closeEditCommandModal } =
+    useEditCommandModalStore();
 
   return (
     <>
@@ -58,6 +62,11 @@ const Main = () => {
       {isDeleteModalOpen && (
         <Modal onClose={closeDeleteModal}>
           <DeleteConfirmModal></DeleteConfirmModal>
+        </Modal>
+      )}
+      {isEditCommandModalOpen && (
+        <Modal onClose={closeEditCommandModal}>
+          <EditCommandModal></EditCommandModal>
         </Modal>
       )}
     </>
