@@ -38,6 +38,12 @@ const useListStore = create((set) => ({
 
       if (matchedIndex === -1) return { list };
 
+      const isDuplicated = list[matchedIndex].commands.find(
+        (listItem) => listItem === newCommand.command,
+      );
+
+      if (isDuplicated) return { list };
+
       const updatedList = [...list];
       updatedList[matchedIndex].commands = [
         ...updatedList[matchedIndex].commands,
