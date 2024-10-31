@@ -17,7 +17,7 @@ const StyledCommandList = styled.ul`
 
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
-  const modifyCommands = useListStore((state) => state.modifyCommands);
+  const changeCommandOrder = useListStore((state) => state.changeCommandOrder);
   const list = useListStore((state) => state.list);
   const [currentList] = list.filter(
     (listItem) => listItem.name === currentListName,
@@ -39,7 +39,7 @@ const CommandList = () => {
         (commandItem) => commandItem === over.id,
       );
       const updatedCommands = arrayMove(commands, activeIndex, overIndex);
-      modifyCommands({ id: currentList.id, commands: updatedCommands });
+      changeCommandOrder({ id: currentList.id, commands: updatedCommands });
     }
     setActiveId(null);
   };

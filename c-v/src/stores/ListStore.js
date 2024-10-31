@@ -44,11 +44,10 @@ const useListStore = create((set) => ({
         newCommand.command,
       ];
 
-      console.log(updatedList);
       return { list: updatedList };
     }),
 
-  modifyCommands: (newCommands) =>
+  changeCommandOrder: (newCommands) =>
     set(({ list }) => ({
       list: list.map((listItem) =>
         listItem.id === newCommands.id
@@ -56,6 +55,20 @@ const useListStore = create((set) => ({
           : listItem,
       ),
     })),
+
+  removeCommand: (targetCommand) =>
+    set(({ list }) => {
+      const matchedIndex = list.findIndex(
+        (listItem) => listItem.name === targetCommand.currentListName,
+      );
+
+      const updatedList = [...list];
+      updatedList[matchedIndex].commands = updatedList[
+        matchedIndex
+      ].commands.filter((command) => command !== targetCommand.command);
+
+      return { list: updatedList };
+    }),
 }));
 
 export { useListStore };

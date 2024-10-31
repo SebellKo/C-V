@@ -4,6 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
+import { useListStore } from '../../stores/ListStore';
 
 const CommandWrapper = styled.li`
   width: 250px;
@@ -63,8 +64,14 @@ const Command = ({ listItem }) => {
     transition,
     isDragging,
   } = useSortable({ id: listItem });
+  const removeCommand = useListStore((state) => state.removeCommand);
+  const currentListName = useListStore((state) => state.currentListName);
 
   const command = listItem;
+
+  const handleClickDeleteIcon = () => {
+    removeCommand({ currentListName: currentListName, command: command });
+  };
 
   return (
     <CommandWrapper
@@ -84,7 +91,11 @@ const Command = ({ listItem }) => {
           {...listeners}
         />
         <h5>{`command`}</h5>
-        <img src={deleteIcon} alt="close icon" />
+        <img
+          src={deleteIcon}
+          alt="close icon"
+          onClick={handleClickDeleteIcon}
+        />
       </CommandHeader>
       <CommandContent>
         <p>{command}</p>
