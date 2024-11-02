@@ -15,6 +15,7 @@ import EditListModal from '../Modal/EditListModal';
 import AddCommandModal from '../Modal/AddCommandModal';
 import DeleteConfirmModal from '../Modal/DeleteConfirmModal';
 import EditCommandModal from '../Modal/EditCommandModal';
+import { useEffect } from 'react';
 
 const MainContainer = styled.div`
   width: 100%;

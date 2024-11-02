@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useAddListModalStore } from '../../stores/ModalStore';
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
@@ -13,7 +14,10 @@ function AddListModal() {
   const addListItem = useListStore((state) => state.addListItem);
 
   const handleClickConrifm = () => {
-    console.log(listTitle);
+    chrome.runtime.sendMessage({
+      type: 'add-list',
+      message: { listName: listTitle, id: uuidv4() },
+    });
     addListItem(listTitle);
     closeAddModal();
   };
