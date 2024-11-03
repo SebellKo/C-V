@@ -3,7 +3,7 @@ import { DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const StyledCommandList = styled.ul`
   width: 100%;
@@ -18,13 +18,19 @@ const StyledCommandList = styled.ul`
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const changeCommandOrder = useListStore((state) => state.changeCommandOrder);
-  const list = useListStore((state) => state.list);
-  const [currentList] = list.filter(
-    (listItem) => listItem.name === currentListName,
-  );
+  const [list, setList] = useState([]);
   const [activeId, setActiveId] = useState();
 
-  const commands = currentList ? currentList.commands : [];
+  useEffect(() => {
+    chrome.runtime
+      .sendMessage({
+        type: 'get-list-by-name',
+        message: { name: currentListName },
+      })
+      .then((response) => setTestList(response.listData));
+  }, [currentListName]);
+
+  const commands = list.commands ? list.commands : [];
 
   const handleDragStart = ({ active }) => {
     setActiveId(active.id);

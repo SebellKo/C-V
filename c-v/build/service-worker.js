@@ -6,7 +6,8 @@ const openDatabase = () => {
       const db = event.target.result;
 
       if (!db.objectStoreNames.contains('list')) {
-        db.createObjectStore('list', { autoIncrement: true });
+        const listStore = db.createObjectStore('list', { autoIncrement: true });
+        listStore.createIndex('name', 'name', { unique: false });
       }
     };
 
@@ -42,8 +43,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       await modifyList(request.message.newList);
     })();
   }
+
+  if (request.type === 'get-list-by-name') {
+    (async () => {
+      const listData = await getListByName(request.message.name);
+      console.log(listData);
+      sendResponse({ listData: listData });
+    })();
+  }
   return true;
 });
+
+const getListByName = async (listName) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readonly');
+    const listStore = transaction.objectStore('list');
+    const nameIndex = listStore.index('name');
+
+    return new Promise((resolve, reject) => {
+      const getListByNameRequest = nameIndex.get(listName);
+
+      getListByNameRequest.onsuccess = (event) => resolve(event.target.result);
+      getListByNameRequest.onerror = (error) => reject(error);
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const modifyList = async (newList) => {
   try {
