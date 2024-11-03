@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { useListStore } from '../../stores/ListStore';
+import { useEffect, useState } from 'react';
 
 const ListWrapper = styled.ul`
   position: absolute;
@@ -23,7 +24,13 @@ const ListWrapper = styled.ul`
 
 const List = () => {
   const setListName = useListStore((state) => state.setListName);
-  const list = useListStore((state) => state.list);
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    chrome.runtime
+      .sendMessage({ type: 'get-list' })
+      .then((response) => setList(response.listData));
+  }, []);
 
   const clickHandler = (event) => {
     const selectName = event.target.innerText;
