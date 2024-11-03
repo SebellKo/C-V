@@ -6,7 +6,7 @@ const openDatabase = () => {
       const db = event.target.result;
 
       if (!db.objectStoreNames.contains('list')) {
-        db.createObjectStore('list', { keyPath: 'id' });
+        db.createObjectStore('list', { autoIncrement: true });
       }
     };
 
@@ -24,10 +24,59 @@ chrome.runtime.onInstalled.addListener(async () => {
   }
 });
 
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'add-list')
-    return await addList(request.message.listName, request.message.id);
+    (async () => {
+      await addList(request.message.listName, request.message.id);
+    })();
+
+  if (request.type === 'get-list') {
+    (async () => {
+      const listData = await getList();
+      sendResponse({ listData: listData });
+    })();
+  }
+
+  if (request.type === 'edit-list') {
+    (async () => {
+      await modifyList(request.message.newList);
+    })();
+  }
+  return true;
 });
+
+const modifyList = async (newList) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readwrite');
+    const listStore = transaction.objectStore('list');
+
+    await listStore.clear();
+
+    newList.forEach(async (listItem) => await listStore.add(listItem));
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getList = async () => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readonly');
+    const listStore = transaction.objectStore('list');
+    return new Promise((resolve, reject) => {
+      const getListRequest = listStore.getAll();
+
+      getListRequest.onsuccess = (event) => {
+        resolve(event.target.result);
+      };
+
+      getListRequest.onerror = (error) => reject(error);
+    });
+  } catch (error) {
+    console.error('Database operation failed:', error);
+  }
+};
 
 const addList = async (listName, id) => {
   try {
@@ -41,7 +90,6 @@ const addList = async (listName, id) => {
       name: listName,
       commands: [],
     };
-    console.log(newList);
 
     const addRequest = listStore.add(newList);
 
@@ -55,5 +103,4 @@ const addList = async (listName, id) => {
   } catch (error) {
     console.error('Database operation failed:', error);
   }
-  return true;
 };
