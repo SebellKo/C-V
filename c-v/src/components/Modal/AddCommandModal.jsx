@@ -21,6 +21,10 @@ function AddCommandModal() {
   };
 
   const handleClickConfirm = () => {
+    chrome.runtime.sendMessage({
+      type: 'add-new-command',
+      message: { newCommand: newCommand, currentListName: currentListName },
+    });
     addCommand({ currentListName: currentListName, command: newCommand });
     closeAddCommandModal();
   };

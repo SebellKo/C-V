@@ -18,16 +18,17 @@ const StyledCommandList = styled.ul`
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const changeCommandOrder = useListStore((state) => state.changeCommandOrder);
-  const [list, setList] = useState([]);
+  const [list, setList] = useState({});
   const [activeId, setActiveId] = useState();
 
   useEffect(() => {
+    if (currentListName === 'Select') return;
     chrome.runtime
       .sendMessage({
         type: 'get-list-by-name',
         message: { name: currentListName },
       })
-      .then((response) => setTestList(response.listData));
+      .then((response) => setList(response.listData));
   }, [currentListName]);
 
   const commands = list.commands ? list.commands : [];
