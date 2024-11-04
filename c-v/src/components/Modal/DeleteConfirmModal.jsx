@@ -6,20 +6,25 @@ import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
 import { useListStore } from '../../stores/ListStore';
 import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import deleteCommands from '../../api/deleteCommands';
 
 function DeleteConfirmModal() {
   const currentListName = useListStore((state) => state.currentListName);
-  const removeAllCommands = useListStore((state) => state.removeAllCommands);
-  const setListName = useListStore((state) => state.setListName);
   const closeDeleteConfirmModal = useDeleteConfirmModalStore(
     (state) => state.closeModal,
   );
+  const queryClient = useQueryClient();
 
-  const handleClickConfirm = () => {
-    removeAllCommands(currentListName);
-    setListName('Select');
-    closeDeleteConfirmModal();
-  };
+  const { mutate: deleteCommandsMutate } = useMutation({
+    mutationFn: () => deleteCommands(currentListName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['list', currentListName] });
+      closeDeleteConfirmModal();
+    },
+  });
+
+  const handleClickConfirm = () => deleteCommandsMutate();
 
   return (
     <ModalCard>

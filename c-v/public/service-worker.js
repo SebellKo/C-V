@@ -91,11 +91,46 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     })();
   }
+
+  if (request.type === 'delete-commands') {
+    (async () => {
+      await deleteCommands(request.message.currentListName);
+      sendResponse({ success: true });
+    })();
+  }
   return true;
 });
 
+const deleteCommands = async (currentListName) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readwrite');
+    const listStore = transaction.objectStore('list');
+    const nameIndex = listStore.index('name');
+
+    const currentList = await new Promise((resolve, reject) => {
+      const getCurrentListRequest = nameIndex.get(currentListName);
+
+      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
+      getCurrentListRequest.onerror = (error) => reject(error);
+    });
+
+    const primaryKey = await new Promise((resolve, reject) => {
+      const getKeyRequest = nameIndex.getKey(currentListName);
+
+      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
+      getKeyRequest.onerror = (error) => reject(error);
+    });
+
+    currentList.commands = [];
+
+    await listStore.put(currentList, primaryKey);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const editCommand = async (currentListName, targetCommand, newCommand) => {
-  console.log(currentListName, targetCommand, newCommand);
   try {
     const db = await openDatabase();
     const transaction = db.transaction(['list'], 'readwrite');
@@ -119,9 +154,8 @@ const editCommand = async (currentListName, targetCommand, newCommand) => {
     const targetIndex = currentList.commands.findIndex(
       (commandItem) => commandItem === targetCommand,
     );
-    console.log(targetIndex);
+
     currentList.commands[targetIndex] = newCommand;
-    console.log(targetIndex);
 
     await listStore.put(currentList, primaryKey);
   } catch (error) {
