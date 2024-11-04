@@ -4,6 +4,8 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import getListByName from '../../api/getListByName';
 
 const StyledCommandList = styled.ul`
   width: 100%;
@@ -18,18 +20,15 @@ const StyledCommandList = styled.ul`
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const changeCommandOrder = useListStore((state) => state.changeCommandOrder);
-  const [list, setList] = useState({});
   const [activeId, setActiveId] = useState();
 
-  useEffect(() => {
-    if (currentListName === 'Select') return;
-    chrome.runtime
-      .sendMessage({
-        type: 'get-list-by-name',
-        message: { name: currentListName },
-      })
-      .then((response) => setList(response.listData));
-  }, [currentListName]);
+  const { data } = useQuery({
+    queryKey: ['list', currentListName],
+    queryFn: () => getListByName(currentListName),
+    enabled: currentListName !== 'Select',
+  });
+
+  const list = data || {};
 
   const commands = list.commands ? list.commands : [];
 

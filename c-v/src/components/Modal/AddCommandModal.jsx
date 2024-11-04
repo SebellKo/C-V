@@ -6,28 +6,32 @@ import Button from '../common/Button';
 import EditInput from './EditInput';
 import { useListStore } from '../../stores/ListStore';
 import { useAddCommandModalStore } from '../../stores/ModalStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import postCommand from '../../api/postCommand';
 
 function AddCommandModal() {
   const [newCommand, setNewCommand] = useState();
   const currentListName = useListStore((state) => state.currentListName);
-  const addCommand = useListStore((state) => state.addCommand);
   const closeAddCommandModal = useAddCommandModalStore(
     (state) => state.closeModal,
   );
+  const queryClient = useQueryClient();
+
+  const { mutate: addCommand } = useMutation({
+    mutationFn: () => postCommand(newCommand, currentListName),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['list', currentListName] });
+      closeAddCommandModal();
+    },
+    onError: (error) => console.log(error),
+  });
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;
     setNewCommand(inputValue);
   };
 
-  const handleClickConfirm = () => {
-    chrome.runtime.sendMessage({
-      type: 'add-new-command',
-      message: { newCommand: newCommand, currentListName: currentListName },
-    });
-    addCommand({ currentListName: currentListName, command: newCommand });
-    closeAddCommandModal();
-  };
+  const handleClickConfirm = () => addCommand();
 
   return (
     <ModalCard>
