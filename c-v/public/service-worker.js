@@ -60,8 +60,46 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     })();
   }
+
+  if (request.type === 'edit-commands') {
+    (async () => {
+      await editCommands(
+        request.message.currentListName,
+        request.message.updatedCommands,
+      );
+      sendResponse({ success: true });
+    })();
+  }
   return true;
 });
+
+const editCommands = async (currentListName, updatedCommands) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readwrite');
+    const listStore = transaction.objectStore('list');
+    const nameIndex = listStore.index('name');
+
+    const currentList = await new Promise((resolve, reject) => {
+      const getCurrentListRequest = nameIndex.get(currentListName);
+
+      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
+      getCurrentListRequest.onerror = (error) => reject(error);
+    });
+
+    const primaryKey = await new Promise((resolve, reject) => {
+      const getKeyRequest = nameIndex.getKey(currentListName);
+
+      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
+      getKeyRequest.onerror = (error) => reject(error);
+    });
+
+    currentList.commands = updatedCommands;
+    await listStore.put(currentList, primaryKey);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const addCommand = async (newCommand, currentListName) => {
   try {
