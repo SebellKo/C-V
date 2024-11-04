@@ -7,6 +7,8 @@ import EditInput from '../Modal/EditInput';
 import useCommandStore from '../../stores/CommandStore';
 import { useEditCommandModalStore } from '../../stores/ModalStore';
 import { useListStore } from '../../stores/ListStore';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import putEditCommand from '../../api/putEditCommand';
 
 function EditCommandModal() {
   const currentListName = useListStore((state) => state.currentListName);
@@ -17,9 +19,18 @@ function EditCommandModal() {
   const closeEditCommandModal = useEditCommandModalStore(
     (state) => state.closeModal,
   );
-  const modifyCommand = useListStore((state) => state.modifyCommand);
-
   const [newCommandValue, setNewCommandValue] = useState(selectedCommand);
+  const queryClient = useQueryClient();
+
+  const { mutate: editCommandMutate } = useMutation({
+    mutationFn: () =>
+      putEditCommand(currentListName, selectedCommand, newCommandValue),
+    onSuccess: () => {
+      resetSelectedCommand();
+      closeEditCommandModal();
+      queryClient.invalidateQueries({ queryKey: ['list', currentListName] });
+    },
+  });
 
   const handleChangeCommand = (event) => {
     const inputValue = event.target.value;
@@ -27,13 +38,7 @@ function EditCommandModal() {
   };
 
   const handleClickConfirm = () => {
-    modifyCommand({
-      currentListName: currentListName,
-      targetCommand: selectedCommand,
-      newCommand: newCommandValue,
-    });
-    resetSelectedCommand();
-    closeEditCommandModal();
+    editCommandMutate();
   };
 
   const handleClickCancel = () => {
