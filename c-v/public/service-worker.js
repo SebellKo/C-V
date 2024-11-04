@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'add-list')
     (async () => {
       await addList(request.message.listName, request.message.id);
+      sendResponse({ success: true });
     })();
 
   if (request.type === 'get-list') {
@@ -41,6 +42,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'edit-list') {
     (async () => {
       await modifyList(request.message.newList);
+      sendResponse({ success: true });
     })();
   }
 
