@@ -1,12 +1,14 @@
 import { styled } from 'styled-components';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
 import { useListStore } from '../../stores/ListStore';
 import { useEditCommandModalStore } from '../../stores/ModalStore';
 import useCommandStore from '../../stores/CommandStore';
+import deleteCommand from '../../api/deleteCommand';
 
 const CommandWrapper = styled.li`
   width: 250px;
@@ -66,7 +68,6 @@ const Command = ({ listItem }) => {
     transition,
     isDragging,
   } = useSortable({ id: listItem });
-  const removeCommand = useListStore((state) => state.removeCommand);
   const currentListName = useListStore((state) => state.currentListName);
   const openEditCommandModal = useEditCommandModalStore(
     (state) => state.openModal,
@@ -74,11 +75,17 @@ const Command = ({ listItem }) => {
   const setSelectedCommand = useCommandStore(
     (state) => state.setSelectedCommand,
   );
+  const queryClient = useQueryClient();
 
   const command = listItem;
 
-  const handleClickDeleteIcon = () =>
-    removeCommand({ currentListName: currentListName, command: command });
+  const { mutate: deleteCommandMutate } = useMutation({
+    mutationFn: () => deleteCommand(currentListName, command),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ['list', currentListName] }),
+  });
+
+  const handleClickDeleteIcon = () => deleteCommandMutate();
 
   const handleClickCommand = () => {
     openEditCommandModal();

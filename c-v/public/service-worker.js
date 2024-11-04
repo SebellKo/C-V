@@ -70,8 +70,48 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     })();
   }
+
+  if (request.type === 'delete-command') {
+    (async () => {
+      await deleteCommand(
+        request.message.currentListName,
+        request.message.targetCommand,
+      );
+      sendResponse({ success: true });
+    })();
+  }
   return true;
 });
+
+const deleteCommand = async (currentListName, targetCommand) => {
+  try {
+    const db = await openDatabase();
+    const transaction = db.transaction(['list'], 'readwrite');
+    const listStore = transaction.objectStore('list');
+    const nameIndex = listStore.index('name');
+
+    const currentList = await new Promise((resolve, reject) => {
+      const getCurrentListRequest = nameIndex.get(currentListName);
+
+      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
+      getCurrentListRequest.onerror = (error) => reject(error);
+    });
+
+    const primaryKey = await new Promise((resolve, reject) => {
+      const getKeyRequest = nameIndex.getKey(currentListName);
+
+      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
+      getKeyRequest.onerror = (error) => reject(error);
+    });
+
+    currentList.commands = currentList.commands.filter(
+      (commandItem) => commandItem !== targetCommand,
+    );
+    await listStore.put(currentList, primaryKey);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const editCommands = async (currentListName, updatedCommands) => {
   try {
