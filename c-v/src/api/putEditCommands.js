@@ -1,4 +1,4 @@
-const putEditCommand = async (currentListName, updatedCommands) => {
+const putEditCommands = async (currentListName, updatedCommands) => {
   const result = await new Promise((resolve, reject) => {
     chrome.runtime
       .sendMessage({
@@ -16,4 +16,4 @@ const putEditCommand = async (currentListName, updatedCommands) => {
   return result;
 };
 
-export default putEditCommand;
+export default putEditCommands;

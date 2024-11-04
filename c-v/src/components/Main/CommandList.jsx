@@ -6,7 +6,7 @@ import { useListStore } from '../../stores/ListStore';
 import { useEffect, useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import getListByName from '../../api/getListByName';
-import putEditCommand from '../../api/putEditCommand';
+import putEditCommands from '../../api/putEditCommands';
 
 const StyledCommandList = styled.ul`
   width: 100%;
@@ -31,7 +31,7 @@ const CommandList = () => {
 
   const { mutate: editCommand } = useMutation({
     mutationFn: ({ updatedCommands }) =>
-      putEditCommand(currentListName, updatedCommands),
+      putEditCommands(currentListName, updatedCommands),
   });
 
   useEffect(() => {
