@@ -1,13 +1,16 @@
 import getListStore from '../getListStore.js';
-import getListByName from '../getListByName.js';
 
 const editList = async (newList) => {
   try {
     const listStore = await getListStore('readwrite');
-    const nameIndex = listStore.index('name');
-    const existedList = await getListByName(newList, nameIndex);
+    const isExistList = newList.some((listItem, index) => {
+      return (
+        newList.findIndex((findItem) => listItem.name === findItem.name) !==
+        index
+      );
+    });
 
-    if (existedList) return { isDuplicated: true };
+    if (isExistList) return { isDuplicated: true };
 
     await listStore.clear();
 

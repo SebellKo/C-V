@@ -1,20 +1,14 @@
-const openDatabase = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('CVStore', 1);
+import openDatabase from './modules/openDatabase.js';
 
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      if (!db.objectStoreNames.contains('list')) {
-        const listStore = db.createObjectStore('list', { autoIncrement: true });
-        listStore.createIndex('name', 'name', { unique: false });
-      }
-    };
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject('Failed to open database');
-  });
-};
+import editList from './modules/service/editList.js';
+import getList from './modules/service/getList.js';
+import getCurrentListByName from './modules/service/getCurrentListByName.js';
+import editCommands from './modules/service/editCommands.js';
+import editCommand from './modules/service/editCommand.js';
+import deleteCommands from './modules/service/deleteCommands.js';
+import deleteCommand from './modules/service/deleteCommand.js';
+import addList from './modules/service/addList.js';
+import addCommand from './modules/service/addCommand.js';
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
@@ -26,10 +20,16 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'add-list')
+  if (request.type === 'add-list') {
     (async () => {
-      await addList(request.message.listName, request.message.id);
+      const result = await addList(
+        request.message.listName,
+        request.message.id,
+      );
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
+  }
 
   if (request.type === 'get-list') {
     (async () => {
@@ -40,94 +40,69 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === 'edit-list') {
     (async () => {
-      await modifyList(request.message.newList);
+      const result = await editList(request.message.newList);
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
   }
 
   if (request.type === 'get-list-by-name') {
     (async () => {
-      const listData = await getListByName(request.message.name);
-      console.log(listData);
+      const listData = await getCurrentListByName(request.message.name);
       sendResponse({ listData: listData });
     })();
   }
+
+  if (request.type === 'add-new-command') {
+    (async () => {
+      const result = await addCommand(
+        request.message.newCommand,
+        request.message.currentListName,
+      );
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'edit-commands') {
+    (async () => {
+      await editCommands(
+        request.message.currentListName,
+        request.message.updatedCommands,
+      );
+      sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'delete-command') {
+    (async () => {
+      await deleteCommand(
+        request.message.currentListName,
+        request.message.targetCommand,
+      );
+      sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'edit-command') {
+    (async () => {
+      const result = await editCommand(
+        request.message.currentListName,
+        request.message.targetCommand,
+        request.message.newCommand,
+      );
+
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'delete-commands') {
+    (async () => {
+      await deleteCommands(request.message.currentListName);
+      sendResponse({ success: true });
+    })();
+  }
+
   return true;
 });
-
-const getListByName = async (listName) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readonly');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    return new Promise((resolve, reject) => {
-      const getListByNameRequest = nameIndex.get(listName);
-
-      getListByNameRequest.onsuccess = (event) => resolve(event.target.result);
-      getListByNameRequest.onerror = (error) => reject(error);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const modifyList = async (newList) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-
-    await listStore.clear();
-
-    newList.forEach(async (listItem) => await listStore.add(listItem));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const getList = async () => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readonly');
-    const listStore = transaction.objectStore('list');
-    return new Promise((resolve, reject) => {
-      const getListRequest = listStore.getAll();
-
-      getListRequest.onsuccess = (event) => {
-        resolve(event.target.result);
-      };
-
-      getListRequest.onerror = (error) => reject(error);
-    });
-  } catch (error) {
-    console.error('Database operation failed:', error);
-  }
-};
-
-const addList = async (listName, id) => {
-  try {
-    const db = await openDatabase();
-
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-
-    const newList = {
-      id: id,
-      name: listName,
-      commands: [],
-    };
-
-    const addRequest = listStore.add(newList);
-
-    addRequest.onsuccess = () => {
-      console.log('Item added successfully');
-    };
-
-    addRequest.onerror = () => {
-      console.log('Failed to add item');
-    };
-  } catch (error) {
-    console.error('Database operation failed:', error);
-  }
-};

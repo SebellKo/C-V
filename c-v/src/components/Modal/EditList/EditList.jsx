@@ -5,7 +5,7 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 
 import EditListItem from './EditListItem';
 
-const EditList = ({ updatedList, setUpdatedList }) => {
+const EditList = ({ updatedList, setUpdatedList, setIsDuplicated }) => {
   const [activeId, setActiveId] = useState();
 
   const handleDragStart = ({ active }) => {
@@ -37,6 +37,7 @@ const EditList = ({ updatedList, setUpdatedList }) => {
                 index={index}
                 updatedList={updatedList}
                 setUpdatedList={setUpdatedList}
+                setIsDuplicated={setIsDuplicated}
               />
             );
           })}

@@ -7,7 +7,13 @@ import EditInput from './EditInput';
 import deleteIcon from '../../../assets/images/delete-black.svg';
 import dragDropIcon from '../../../assets/images/drag-drop.svg';
 
-function EditListItem({ updatedList, setUpdatedList, value, index }) {
+function EditListItem({
+  updatedList,
+  setUpdatedList,
+  value,
+  index,
+  setIsDuplicated,
+}) {
   const {
     attributes,
     listeners,
@@ -23,6 +29,7 @@ function EditListItem({ updatedList, setUpdatedList, value, index }) {
     const convertedList = [...updatedList];
     convertedList[index].name = inputValue;
     setUpdatedList(convertedList);
+    setIsDuplicated(false);
   };
 
   const handleClickDelete = (listName) => {
