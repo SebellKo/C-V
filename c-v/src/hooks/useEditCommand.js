@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useListStore } from '../../stores/ListStore';
+import { useListStore } from '../stores/ListStore';
 import putEditCommand from '../api/putEditCommand';
-import useCommandStore from '../../stores/CommandStore';
-import { useEditCommandModalStore } from '../../stores/ModalStore';
+import useCommandStore from '../stores/CommandStore';
+import { useEditCommandModalStore } from '../stores/ModalStore';
 
 const useEditCommand = () => {
   const currentListName = useListStore((state) => state.currentListName);

@@ -4,8 +4,8 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import EditInput from './EditInput';
-import deleteIcon from '../../assets/images/delete-black.svg';
-import dragDropIcon from '../../assets/images/drag-drop.svg';
+import deleteIcon from '../../../assets/images/delete-black.svg';
+import dragDropIcon from '../../../assets/images/drag-drop.svg';
 
 function EditListItem({ updatedList, setUpdatedList, value, index }) {
   const {

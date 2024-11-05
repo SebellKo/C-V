@@ -1,10 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import getListByName from '../api/getListByName';
-import { useListStore } from '../stores/ListStore';
 
-const useGetListByName = () => {
-  const currentListName = useListStore((state) => state.currentListName);
-
+const useGetListByName = (currentListName) => {
   const { data: list, isSuccess } = useQuery({
     queryKey: ['list', currentListName],
     queryFn: () => getListByName(currentListName),

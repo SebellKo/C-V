@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import postList from '../api/postList';
-import { useAddListModalStore } from '../../stores/ModalStore';
+import { useAddListModalStore } from '../stores/ModalStore';
 
 const useAddList = () => {
   const closeAddModal = useAddListModalStore((state) => state.closeModal);

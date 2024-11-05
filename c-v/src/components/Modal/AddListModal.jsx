@@ -14,7 +14,7 @@ function AddListModal() {
   const closeAddModal = useAddListModalStore((state) => state.closeModal);
   const { addListMutate } = useAddList();
 
-  const handleClickConrifm = () => addListMutate(listTitle);
+  const handleClickConrifm = () => addListMutate({ listTitle: listTitle });
 
   return (
     <ModalCard>

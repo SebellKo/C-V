@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import deleteCommands from '../api/deleteCommands';
-import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
+import { useDeleteConfirmModalStore } from '../stores/ModalStore';
 
 const useDeleteCommands = (currentListName) => {
   const queryClient = useQueryClient();

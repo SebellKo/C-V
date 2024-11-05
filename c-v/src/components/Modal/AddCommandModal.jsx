@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import useAddCommand from '../../hooks/useAddCommand';
-import { useAddCommandModalStore } from '../stores/ModalStore';
+import { useAddCommandModalStore } from '../../stores/ModalStore';
 
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
@@ -14,7 +14,7 @@ function AddCommandModal() {
   const closeAddCommandModal = useAddCommandModalStore(
     (state) => state.closeModal,
   );
-  const { addCommandMutate } = useAddCommand(currentListName);
+  const { addCommandMutate } = useAddCommand();
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;

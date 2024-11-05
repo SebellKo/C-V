@@ -8,7 +8,7 @@ import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
-import EditInput from '../Modal/EditInput';
+import EditInput from './EditList/EditInput';
 
 function EditCommandModal() {
   const selectedCommand = useCommandStore((state) => state.selectedCommand);

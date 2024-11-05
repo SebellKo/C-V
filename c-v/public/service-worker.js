@@ -1,20 +1,14 @@
-const openDatabase = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('CVStore', 1);
+import openDatabase from './modules/openDatabase.js';
 
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      if (!db.objectStoreNames.contains('list')) {
-        const listStore = db.createObjectStore('list', { autoIncrement: true });
-        listStore.createIndex('name', 'name', { unique: false });
-      }
-    };
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject('Failed to open database');
-  });
-};
+import modifyList from './modules/service/modifyList.js';
+import getList from './modules/service/getList.js';
+import getCurrentListByName from './modules/service/getCurrentListByName.js';
+import editCommands from './modules/service/editCommands.js';
+import editCommand from './modules/service/editCommand.js';
+import deleteCommands from './modules/service/deleteCommands.js';
+import deleteCommand from './modules/service/deleteCommand.js';
+import addList from './modules/service/addList.js';
+import addCommand from './modules/service/addCommand.js';
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
@@ -48,7 +42,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === 'get-list-by-name') {
     (async () => {
-      const listData = await getListByName(request.message.name);
+      const listData = await getCurrentListByName(request.message.name);
       sendResponse({ listData: listData });
     })();
   }
@@ -100,231 +94,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: true });
     })();
   }
+
   return true;
 });
-
-const deleteCommands = async (currentListName) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    const currentList = await new Promise((resolve, reject) => {
-      const getCurrentListRequest = nameIndex.get(currentListName);
-
-      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-      getCurrentListRequest.onerror = (error) => reject(error);
-    });
-
-    const primaryKey = await new Promise((resolve, reject) => {
-      const getKeyRequest = nameIndex.getKey(currentListName);
-
-      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-      getKeyRequest.onerror = (error) => reject(error);
-    });
-
-    currentList.commands = [];
-
-    await listStore.put(currentList, primaryKey);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const editCommand = async (currentListName, targetCommand, newCommand) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    const currentList = await new Promise((resolve, reject) => {
-      const getCurrentListRequest = nameIndex.get(currentListName);
-
-      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-      getCurrentListRequest.onerror = (error) => reject(error);
-    });
-
-    const primaryKey = await new Promise((resolve, reject) => {
-      const getKeyRequest = nameIndex.getKey(currentListName);
-
-      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-      getKeyRequest.onerror = (error) => reject(error);
-    });
-
-    const targetIndex = currentList.commands.findIndex(
-      (commandItem) => commandItem === targetCommand,
-    );
-
-    currentList.commands[targetIndex] = newCommand;
-
-    await listStore.put(currentList, primaryKey);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const deleteCommand = async (currentListName, targetCommand) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    const currentList = await new Promise((resolve, reject) => {
-      const getCurrentListRequest = nameIndex.get(currentListName);
-
-      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-      getCurrentListRequest.onerror = (error) => reject(error);
-    });
-
-    const primaryKey = await new Promise((resolve, reject) => {
-      const getKeyRequest = nameIndex.getKey(currentListName);
-
-      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-      getKeyRequest.onerror = (error) => reject(error);
-    });
-
-    currentList.commands = currentList.commands.filter(
-      (commandItem) => commandItem !== targetCommand,
-    );
-    await listStore.put(currentList, primaryKey);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const editCommands = async (currentListName, updatedCommands) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    const currentList = await new Promise((resolve, reject) => {
-      const getCurrentListRequest = nameIndex.get(currentListName);
-
-      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-      getCurrentListRequest.onerror = (error) => reject(error);
-    });
-
-    const primaryKey = await new Promise((resolve, reject) => {
-      const getKeyRequest = nameIndex.getKey(currentListName);
-
-      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-      getKeyRequest.onerror = (error) => reject(error);
-    });
-
-    currentList.commands = updatedCommands;
-    await listStore.put(currentList, primaryKey);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const addCommand = async (newCommand, currentListName) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    const currentList = await new Promise((resolve, reject) => {
-      const getCurrentListRequest = nameIndex.get(currentListName);
-
-      getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-      getCurrentListRequest.onerror = (error) => reject(error);
-    });
-
-    const primaryKey = await new Promise((resolve, reject) => {
-      const getKeyRequest = nameIndex.getKey(currentListName);
-
-      getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-      getKeyRequest.onerror = (error) => reject(error);
-    });
-
-    currentList.commands = [...currentList.commands, newCommand];
-    await listStore.put(currentList, primaryKey);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const getListByName = async (listName) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readonly');
-    const listStore = transaction.objectStore('list');
-    const nameIndex = listStore.index('name');
-
-    return new Promise((resolve, reject) => {
-      const getListByNameRequest = nameIndex.get(listName);
-
-      getListByNameRequest.onsuccess = (event) => resolve(event.target.result);
-      getListByNameRequest.onerror = (error) => reject(error);
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const modifyList = async (newList) => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-
-    await listStore.clear();
-
-    newList.forEach(async (listItem) => await listStore.add(listItem));
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const getList = async () => {
-  try {
-    const db = await openDatabase();
-    const transaction = db.transaction(['list'], 'readonly');
-    const listStore = transaction.objectStore('list');
-    return new Promise((resolve, reject) => {
-      const getListRequest = listStore.getAll();
-
-      getListRequest.onsuccess = (event) => {
-        resolve(event.target.result);
-      };
-
-      getListRequest.onerror = (error) => reject(error);
-    });
-  } catch (error) {
-    console.error('Database operation failed:', error);
-  }
-};
-
-const addList = async (listName, id) => {
-  try {
-    const db = await openDatabase();
-
-    const transaction = db.transaction(['list'], 'readwrite');
-    const listStore = transaction.objectStore('list');
-
-    const newList = {
-      id: id,
-      name: listName,
-      commands: [],
-    };
-
-    const addRequest = listStore.add(newList);
-
-    addRequest.onsuccess = () => {
-      console.log('Item added successfully');
-    };
-
-    addRequest.onerror = () => {
-      console.log('Failed to add item');
-    };
-  } catch (error) {
-    console.error('Database operation failed:', error);
-  }
-};

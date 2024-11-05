@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import putEditList from '../api/putEditList';
-import { useEditListModalStore } from '../../stores/ModalStore';
-import { useListStore } from '../../stores/ListStore';
+import { useListStore } from '../stores/ListStore';
+import { useEditListModalStore } from '../stores/ModalStore';
 
 const useEditList = () => {
   const closeEditModal = useEditListModalStore((state) => state.closeModal);

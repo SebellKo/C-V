@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import postCommand from '../api/postCommand';
 import { useAddCommandModalStore } from '../stores/ModalStore';
-import { useListStore } from '../../stores/ListStore';
+import { useListStore } from '../stores/ListStore';
 
 const useAddCommand = () => {
   const currentListName = useListStore((state) => state.currentListName);

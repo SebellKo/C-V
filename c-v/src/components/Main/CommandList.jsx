@@ -7,16 +7,19 @@ import useEditCommands from '../../hooks/useEditCommands';
 import useGetListByName from '../../hooks/useGetListByName';
 
 import Command from './Command';
+import { useListStore } from '../../stores/ListStore';
 
 const CommandList = () => {
+  const currentListName = useListStore((state) => state.currentListName);
   const [activeId, setActiveId] = useState();
   const [commands, setCommands] = useState([]);
   const { editCommandsMutate } = useEditCommands();
-  const { list, isSuccess } = useGetListByName();
+  const { list, isSuccess } = useGetListByName(currentListName);
 
   useEffect(() => {
     if (isSuccess) setCommands(list.commands);
-  }, [list, isSuccess]);
+    if (currentListName === 'Select') setCommands([]);
+  }, [list, isSuccess, currentListName]);
 
   const handleDragStart = ({ active }) => setActiveId(active.id);
 
