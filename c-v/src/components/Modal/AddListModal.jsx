@@ -5,19 +5,14 @@ import ModalTitle from '../../styles/components/ModalTitle';
 import Button from '../common/Button';
 import EditInput from './EditInput';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
-import { useMutation } from '@tanstack/react-query';
-import postList from '../../api/postList';
+import useAddList from '../../hooks/useAddList';
 
 function AddListModal() {
   const [listTitle, setListTitle] = useState('');
   const closeAddModal = useAddListModalStore((state) => state.closeModal);
+  const { addListMutate } = useAddList();
 
-  const { mutate: addListMutate } = useMutation({
-    mutationFn: () => postList(listTitle),
-    onSuccess: () => closeAddModal(),
-  });
-
-  const handleClickConrifm = () => addListMutate();
+  const handleClickConrifm = () => addListMutate(listTitle);
 
   return (
     <ModalCard>

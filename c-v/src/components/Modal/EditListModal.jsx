@@ -4,34 +4,20 @@ import EditList from './EditList';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
 import { useEditListModalStore } from '../../stores/ModalStore';
-import { useListStore } from '../../stores/ListStore';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import getList from '../../api/getList';
-import putEditList from '../../api/putEditList';
+import useEditList from '../../hooks/useEditList';
+import useGetList from '../../hooks/useGetList';
 
 function EditListModal() {
   const closeEditModal = useEditListModalStore((state) => state.closeModal);
-  const setListName = useListStore((state) => state.setListName);
   const [updatedList, setUpdatedList] = useState([]);
-
-  const { data: list, isSuccess } = useQuery({
-    queryFn: getList,
-    queryKey: ['list'],
-  });
-
-  const { mutate: editListMutate } = useMutation({
-    mutationFn: () => putEditList(updatedList),
-    onSuccess: () => {
-      setListName('Select');
-      closeEditModal();
-    },
-  });
+  const { editListMutate } = useEditList();
+  const { list, isSuccess } = useGetList();
 
   useEffect(() => {
     if (isSuccess) setUpdatedList(list);
   }, [list, isSuccess]);
 
-  const handleClickConfirm = () => editListMutate();
+  const handleClickConfirm = () => editListMutate({ updatedList: updatedList });
 
   return (
     <ModalCard>

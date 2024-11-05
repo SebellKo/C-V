@@ -4,9 +4,8 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
 import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import getListByName from '../../api/getListByName';
-import putEditCommands from '../../api/putEditCommands';
+import useEditCommands from '../../hooks/useEditCommands';
+import useGetListByName from '../../hooks/useGetListByName';
 
 const StyledCommandList = styled.ul`
   width: 100%;
@@ -22,25 +21,14 @@ const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const [activeId, setActiveId] = useState();
   const [commands, setCommands] = useState([]);
-
-  const { data: list, isSuccess } = useQuery({
-    queryKey: ['list', currentListName],
-    queryFn: () => getListByName(currentListName),
-    enabled: currentListName !== 'Select',
-  });
-
-  const { mutate: editCommand } = useMutation({
-    mutationFn: ({ updatedCommands }) =>
-      putEditCommands(currentListName, updatedCommands),
-  });
+  const { editCommandsMutate } = useEditCommands();
+  const { list, isSuccess } = useGetListByName();
 
   useEffect(() => {
     if (isSuccess) setCommands(list.commands);
   }, [list, isSuccess]);
 
-  const handleDragStart = ({ active }) => {
-    setActiveId(active.id);
-  };
+  const handleDragStart = ({ active }) => setActiveId(active.id);
 
   const handleDragEnd = ({ over }) => {
     if (over && activeId) {
@@ -51,7 +39,7 @@ const CommandList = () => {
         (commandItem) => commandItem === over.id,
       );
       const updatedCommands = arrayMove(commands, activeIndex, overIndex);
-      editCommand({ updatedCommands: updatedCommands });
+      editCommandsMutate({ updatedCommands: updatedCommands });
       setCommands(updatedCommands);
     }
     setActiveId(null);
