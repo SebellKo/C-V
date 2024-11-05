@@ -11,6 +11,10 @@ const editCommand = async (currentListName, targetCommand, newCommand) => {
 
     const primaryKey = await getPrimaryKey(currentListName, nameIndex);
 
+    const isDuplicated = currentList.commands.includes(newCommand);
+
+    if (isDuplicated) return { isDuplicated: true };
+
     const targetIndex = currentList.commands.findIndex(
       (commandItem) => commandItem === targetCommand,
     );
@@ -18,6 +22,7 @@ const editCommand = async (currentListName, targetCommand, newCommand) => {
     currentList.commands[targetIndex] = newCommand;
 
     await listStore.put(currentList, primaryKey);
+    return { isDuplicated: false };
   } catch (error) {
     console.log(error);
   }

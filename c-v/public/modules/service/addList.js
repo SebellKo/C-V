@@ -1,8 +1,13 @@
+import getListByName from '../getListByName.js';
 import getListStore from '../getListStore.js';
 
 const addList = async (listName, id) => {
   try {
     const listStore = await getListStore('readwrite');
+    const nameIndex = listStore.index('name');
+    const existedList = await getListByName(listName, nameIndex);
+
+    if (existedList) return { isDuplicated: true };
 
     const newList = {
       id: id,
@@ -10,15 +15,9 @@ const addList = async (listName, id) => {
       commands: [],
     };
 
-    const addRequest = listStore.add(newList);
+    await listStore.add(newList);
 
-    addRequest.onsuccess = () => {
-      console.log('Item added successfully');
-    };
-
-    addRequest.onerror = () => {
-      console.log('Failed to add item');
-    };
+    return { isDuplicated: false };
   } catch (error) {
     console.error('Database operation failed:', error);
   }

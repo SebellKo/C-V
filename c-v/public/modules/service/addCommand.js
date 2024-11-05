@@ -11,8 +11,13 @@ const addCommand = async (newCommand, currentListName) => {
 
     const primaryKey = await getPrimaryKey(currentListName, nameIndex);
 
+    const isDuplicated = currentList.commands.includes(newCommand);
+
+    if (isDuplicated) return { isDuplicated: true };
+
     currentList.commands = [...currentList.commands, newCommand];
     await listStore.put(currentList, primaryKey);
+    return { isDuplicated: false };
   } catch (error) {
     console.log(error);
   }

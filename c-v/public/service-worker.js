@@ -1,6 +1,6 @@
 import openDatabase from './modules/openDatabase.js';
 
-import modifyList from './modules/service/modifyList.js';
+import editList from './modules/service/editList.js';
 import getList from './modules/service/getList.js';
 import getCurrentListByName from './modules/service/getCurrentListByName.js';
 import editCommands from './modules/service/editCommands.js';
@@ -20,11 +20,16 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.type === 'add-list')
+  if (request.type === 'add-list') {
     (async () => {
-      await addList(request.message.listName, request.message.id);
-      sendResponse({ success: true });
+      const result = await addList(
+        request.message.listName,
+        request.message.id,
+      );
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
+  }
 
   if (request.type === 'get-list') {
     (async () => {
@@ -35,8 +40,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === 'edit-list') {
     (async () => {
-      await modifyList(request.message.newList);
-      sendResponse({ success: true });
+      const result = await editList(request.message.newList);
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
   }
 
@@ -49,11 +55,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === 'add-new-command') {
     (async () => {
-      await addCommand(
+      const result = await addCommand(
         request.message.newCommand,
         request.message.currentListName,
       );
-      sendResponse({ success: true });
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
   }
 
@@ -79,12 +86,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.type === 'edit-command') {
     (async () => {
-      await editCommand(
+      const result = await editCommand(
         request.message.currentListName,
         request.message.targetCommand,
         request.message.newCommand,
       );
-      sendResponse({ success: true });
+
+      if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      else sendResponse({ success: true });
     })();
   }
 
