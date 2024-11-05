@@ -1,7 +1,5 @@
 import { styled } from 'styled-components';
 
-import CommandList from './CommandList';
-import NewCommandButton from './NewCommandButton';
 import {
   useAddCommandModalStore,
   useAddListModalStore,
@@ -9,23 +7,15 @@ import {
   useEditCommandModalStore,
   useEditListModalStore,
 } from '../../stores/ModalStore';
-import AddListModal from '../Modal/AddListModal';
+
+import CommandList from './CommandList';
+import NewCommandButton from './NewCommandButton';
 import Modal from '../Modal/Modal';
+import AddListModal from '../Modal/AddListModal';
 import EditListModal from '../Modal/EditListModal';
 import AddCommandModal from '../Modal/AddCommandModal';
 import DeleteConfirmModal from '../Modal/DeleteConfirmModal';
 import EditCommandModal from '../Modal/EditCommandModal';
-import { useEffect } from 'react';
-
-const MainContainer = styled.div`
-  width: 100%;
-  height: 80%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-`;
 
 const Main = () => {
   const { isOpen: isAddModalOpen, closeModal: closeAddListModal } =
@@ -73,5 +63,15 @@ const Main = () => {
     </>
   );
 };
+
+const MainContainer = styled.div`
+  width: 100%;
+  height: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+`;
 
 export default Main;

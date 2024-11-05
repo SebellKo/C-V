@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+
+import useCommandStore from '../../stores/CommandStore';
+import { useEditCommandModalStore } from '../../stores/ModalStore';
+import useEditCommand from '../../hooks/useEditCommand';
+
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
 import EditInput from '../Modal/EditInput';
-import useCommandStore from '../../stores/CommandStore';
-import { useEditCommandModalStore } from '../../stores/ModalStore';
-import useEditCommand from '../../hooks/useEditCommand';
 
 function EditCommandModal() {
   const selectedCommand = useCommandStore((state) => state.selectedCommand);

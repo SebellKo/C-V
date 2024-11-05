@@ -1,6 +1,18 @@
 import { styled } from 'styled-components';
 import { createPortal } from 'react-dom';
 
+function Modal({ children, onClose }) {
+  const closeModal = (event) => {
+    if (event.target === event.currentTarget) onClose();
+  };
+  return createPortal(
+    <ModalContainer onClick={(event) => closeModal(event)}>
+      {children}
+    </ModalContainer>,
+    document.getElementById('root'),
+  );
+}
+
 const ModalContainer = styled.div`
   position: absolute;
   top: 0;
@@ -14,19 +26,5 @@ const ModalContainer = styled.div`
   justify-content: center;
   align-items: center;
 `;
-
-function Modal({ children, onClose }) {
-  const closeModal = (event) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
-  return createPortal(
-    <ModalContainer onClick={(event) => closeModal(event)}>
-      {children}
-    </ModalContainer>,
-    document.getElementById('root'),
-  );
-}
 
 export default Modal;

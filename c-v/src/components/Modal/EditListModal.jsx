@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import ModalCard from '../../styles/components/ModalCard';
-import EditList from './EditList';
-import ConfirmButtons from '../../styles/components/ConfirmButtons';
-import Button from '../common/Button';
+
 import { useEditListModalStore } from '../../stores/ModalStore';
 import useEditList from '../../hooks/useEditList';
 import useGetList from '../../hooks/useGetList';
+
+import ModalCard from '../../styles/components/ModalCard';
+import EditList from './EditList/EditList';
+import ConfirmButtons from '../../styles/components/ConfirmButtons';
+import Button from '../common/Button';
 
 function EditListModal() {
   const closeEditModal = useEditListModalStore((state) => state.closeModal);

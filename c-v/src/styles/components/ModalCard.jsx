@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+const ModalCard = ({ children }) => {
+  return <ModalCardContainer>{children}</ModalCardContainer>;
+};
+
 const ModalCardContainer = styled.div`
   width: 230px;
   padding: 25px 0 15px 0;
@@ -12,9 +16,5 @@ const ModalCardContainer = styled.div`
   border-radius: 5px;
   background-color: #fff;
 `;
-
-const ModalCard = ({ children }) => {
-  return <ModalCardContainer>{children}</ModalCardContainer>;
-};
 
 export default ModalCard;

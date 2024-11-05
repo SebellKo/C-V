@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import { useListStore } from '../../stores/ListStore';
+import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
+import useDeleteCommands from '../../hooks/useDeleteCommands';
+
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
-import { useListStore } from '../../stores/ListStore';
-import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
-import useDeleteCommands from '../../hooks/useDeleteCommands';
 
 function DeleteConfirmModal() {
   const currentListName = useListStore((state) => state.currentListName);

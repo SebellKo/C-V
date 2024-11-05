@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+
+import useAddCommand from '../../hooks/useAddCommand';
+import { useAddCommandModalStore } from '../stores/ModalStore';
+
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
 import EditInput from './EditList/EditInput';
-import useAddCommand from '../../hooks/useAddCommand';
-import { useAddCommandModalStore } from '../stores/ModalStore';
 
 function AddCommandModal() {
   const [newCommand, setNewCommand] = useState();

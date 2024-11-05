@@ -1,9 +1,26 @@
 import styled from 'styled-components';
+import { useState } from 'react';
 
 import { useListStore } from '../../stores/ListStore';
+
 import openButtonIcon from '../../assets/images/open-button.svg';
 import List from './List';
-import { useState } from 'react';
+
+const SelectButton = () => {
+  const currentListName = useListStore((state) => state.currentListName);
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <SelectButtonWrapper
+      $isOpen={isOpen}
+      onClick={() => setIsOpen((prev) => !prev)}
+    >
+      <ListName>{currentListName}</ListName>
+      <img src={openButtonIcon}></img>
+      {isOpen && <List setIsOpen={setIsOpen}></List>}
+    </SelectButtonWrapper>
+  );
+};
 
 const SelectButtonWrapper = styled.div`
   position: relative;
@@ -25,21 +42,5 @@ const ListName = styled.span`
   font-weight: 500;
   font-size: 13px;
 `;
-
-const SelectButton = () => {
-  const currentListName = useListStore((state) => state.currentListName);
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <SelectButtonWrapper
-      $isOpen={isOpen}
-      onClick={() => setIsOpen((prev) => !prev)}
-    >
-      <ListName>{currentListName}</ListName>
-      <img src={openButtonIcon}></img>
-      {isOpen && <List setIsOpen={setIsOpen}></List>}
-    </SelectButtonWrapper>
-  );
-};
 
 export default SelectButton;

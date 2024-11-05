@@ -1,15 +1,9 @@
 import { styled } from 'styled-components';
 import { useState } from 'react';
-import EditListItem from './EditListItem';
 import { DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 
-const EditListWrapper = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  list-style: none;
-`;
+import EditListItem from './EditListItem';
 
 const EditList = ({ updatedList, setUpdatedList }) => {
   const [activeId, setActiveId] = useState();
@@ -51,5 +45,12 @@ const EditList = ({ updatedList, setUpdatedList }) => {
     </EditListWrapper>
   );
 };
+
+const EditListWrapper = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style: none;
+`;
 
 export default EditList;

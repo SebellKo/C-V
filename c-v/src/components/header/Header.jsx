@@ -3,14 +3,6 @@ import styled from 'styled-components';
 import SelectButton from './SelectButton';
 import ModifyButtons from './ModifyButtons';
 
-const HeaderConatiner = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-left: 10px;
-`;
-
 const HeaderContainer = () => {
   return (
     <HeaderConatiner>
@@ -19,5 +11,13 @@ const HeaderContainer = () => {
     </HeaderConatiner>
   );
 };
+
+const HeaderConatiner = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: 10px;
+`;
 
 export default HeaderContainer;

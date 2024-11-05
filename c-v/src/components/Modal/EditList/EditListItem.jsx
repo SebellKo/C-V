@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 import EditInput from './EditInput';
 import deleteIcon from '../../assets/images/delete-black.svg';
 import dragDropIcon from '../../assets/images/drag-drop.svg';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 function EditListItem({ updatedList, setUpdatedList, value, index }) {
   const {

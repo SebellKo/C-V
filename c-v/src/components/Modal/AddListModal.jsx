@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+
 import { useAddListModalStore } from '../../stores/ModalStore';
+import useAddList from '../../hooks/useAddList';
+
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import Button from '../common/Button';
 import EditInput from './EditList/EditInput';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
-import useAddList from '../../hooks/useAddList';
 
 function AddListModal() {
   const [listTitle, setListTitle] = useState('');

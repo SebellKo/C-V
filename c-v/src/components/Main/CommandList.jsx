@@ -1,24 +1,14 @@
 import { styled } from 'styled-components';
 import { DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
-import Command from './Command';
-import { useListStore } from '../../stores/ListStore';
 import { useEffect, useState } from 'react';
+
 import useEditCommands from '../../hooks/useEditCommands';
 import useGetListByName from '../../hooks/useGetListByName';
 
-const StyledCommandList = styled.ul`
-  width: 100%;
-  height: 85%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow-y: scroll;
-  gap: 15px;
-`;
+import Command from './Command';
 
 const CommandList = () => {
-  const currentListName = useListStore((state) => state.currentListName);
   const [activeId, setActiveId] = useState();
   const [commands, setCommands] = useState([]);
   const { editCommandsMutate } = useEditCommands();
@@ -58,5 +48,15 @@ const CommandList = () => {
     </StyledCommandList>
   );
 };
+
+const StyledCommandList = styled.ul`
+  width: 100%;
+  height: 85%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: scroll;
+  gap: 15px;
+`;
 
 export default CommandList;
