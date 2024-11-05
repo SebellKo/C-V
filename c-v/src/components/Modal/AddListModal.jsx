@@ -3,7 +3,7 @@ import { useAddListModalStore } from '../../stores/ModalStore';
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
 import Button from '../common/Button';
-import EditInput from './EditInput';
+import EditInput from './EditList/EditInput';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import useAddList from '../../hooks/useAddList';
 
