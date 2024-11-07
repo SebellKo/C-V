@@ -10,14 +10,19 @@ const SelectButton = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleClickSelect = (event) => {
+    event.stopPropagation();
+    setIsOpen((prev) => !prev);
+  };
+
   return (
     <SelectButtonWrapper
       $isOpen={isOpen}
-      onClick={() => setIsOpen((prev) => !prev)}
+      onClick={(event) => handleClickSelect(event)}
     >
       <ListName>{currentListName}</ListName>
       <img src={openButtonIcon}></img>
-      {isOpen && <List setIsOpen={setIsOpen}></List>}
+      {isOpen && <List isOpen={isOpen} setIsOpen={setIsOpen}></List>}
     </SelectButtonWrapper>
   );
 };
