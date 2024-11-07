@@ -33,7 +33,7 @@
       "128": "icon/icon-128.png"
     }
   },
-  "permissions": ["storage", "scripting"],
+  "permissions": ["scripting"],
   "commands": {
     "_execute_action": {
       "suggested_key": {
