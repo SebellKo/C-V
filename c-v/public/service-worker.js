@@ -9,6 +9,10 @@ import deleteCommands from './modules/service/deleteCommands.js';
 import deleteCommand from './modules/service/deleteCommand.js';
 import addList from './modules/service/addList.js';
 import addCommand from './modules/service/addCommand.js';
+import getCurrentListName from './modules/service/getCurrentListName.js';
+import setCurrentListName from './modules/service/setCurrentListName.js';
+import setCommandByIndex from './modules/service/setCommandByIndex.js';
+import getCommandByIndex from './modules/service/getCommandByIndex.js';
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
@@ -101,6 +105,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       await deleteCommands(request.message.currentListName);
       sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'get-current-list-name') {
+    (async () => {
+      const currentList = await getCurrentListName();
+      sendResponse({ currentListName: currentList });
+    })();
+  }
+
+  if (request.type === 'set-current-list-name') {
+    (async () => {
+      await setCurrentListName(request.message.index);
+      sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'set-command-by-index') {
+    (async () => {
+      await setCommandByIndex(
+        request.message.currentListName,
+        request.message.newCommand,
+        request.message.index,
+      );
+      sendResponse({ success: true });
+    })();
+  }
+
+  if (request.type === 'get-current-command') {
+    (async () => {
+      const result = await getCommandByIndex(
+        request.message.currentListName,
+        request.message.index,
+      );
+      sendResponse({ command: result });
     })();
   }
 

@@ -9,6 +9,9 @@ const openDatabase = () => {
         const listStore = db.createObjectStore('list', { autoIncrement: true });
         listStore.createIndex('name', 'name', { unique: false });
       }
+      if (!db.objectStoreNames.contains('currentList')) {
+        db.createObjectStore('currentList', { autoIncrement: true });
+      }
     };
 
     request.onsuccess = () => resolve(request.result);
