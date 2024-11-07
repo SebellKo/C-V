@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5a4df9db.css",
+    "main.js": "/static/js/main.bbcf661e.js",
+    "static/media/drag-drop-icon.svg": "/static/media/drag-drop-icon.55a8fafeb158e41a6441d285c1a561a7.svg",
+    "static/media/drag-drop.svg": "/static/media/drag-drop.20d0ac4d9ebf3041db71fc63a2716ff1.svg",
+    "static/media/delete-white.svg": "/static/media/delete-white.069496d709d03c4a6be1915f4947374d.svg",
+    "static/media/delete-black.svg": "/static/media/delete-black.245ba25ea5b48fe33ae9c4c4174710ee.svg",
+    "index.html": "/index.html",
+    "static/media/open-button.svg": "/static/media/open-button.178307b6005e0040e172b561969b3a37.svg"
+  },
+  "entrypoints": [
+    "static/css/main.5a4df9db.css",
+    "static/js/main.bbcf661e.js"
+  ]
+}
