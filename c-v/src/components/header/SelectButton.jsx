@@ -10,14 +10,19 @@ const SelectButton = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleClickSelect = (event) => {
+    event.stopPropagation();
+    setIsOpen((prev) => !prev);
+  };
+
   return (
     <SelectButtonWrapper
       $isOpen={isOpen}
-      onClick={() => setIsOpen((prev) => !prev)}
+      onClick={(event) => handleClickSelect(event)}
     >
       <ListName>{currentListName}</ListName>
       <img src={openButtonIcon}></img>
-      {isOpen && <List setIsOpen={setIsOpen}></List>}
+      {isOpen && <List isOpen={isOpen} setIsOpen={setIsOpen}></List>}
     </SelectButtonWrapper>
   );
 };
@@ -38,9 +43,13 @@ const SelectButtonWrapper = styled.div`
 `;
 
 const ListName = styled.span`
+  max-width: 100px;
   color: #fff;
   font-weight: 500;
   font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export default SelectButton;

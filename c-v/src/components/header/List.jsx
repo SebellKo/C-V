@@ -1,25 +1,41 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useListStore } from '../../stores/ListStore';
 import useGetList from '../../hooks/useGetList';
 
-const List = () => {
+const List = ({ isOpen, setIsOpen }) => {
   const setListName = useListStore((state) => state.setListName);
   const [updatedList, setUpdatedList] = useState([]);
   const { list, isSuccess } = useGetList();
+  const listItemRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOthers = (event) => {
+      if (
+        listItemRef.current &&
+        !listItemRef.current.contains(event.target) &&
+        isOpen
+      )
+        setIsOpen(false);
+    };
+    document.addEventListener('click', (event) => handleClickOthers(event));
+
+    return () =>
+      document.removeEventListener('click', (event) => handleClickItem(event));
+  }, []);
 
   useEffect(() => {
     if (isSuccess) setUpdatedList(list);
   }, [list, isSuccess]);
 
-  const clickHandler = (event) => {
+  const handleClickItem = (event) => {
     const selectName = event.target.innerText;
     setListName(selectName);
   };
 
   return (
-    <ListWrapper onClick={clickHandler}>
+    <ListWrapper ref={listItemRef} onClick={(event) => handleClickItem(event)}>
       {updatedList.map((listItem, index) => (
         <li key={index}>{listItem.name}</li>
       ))}
@@ -38,10 +54,14 @@ const ListWrapper = styled.ul`
   overflow-x: hidden;
 
   > li {
+    max-width: 100px;
     padding: 3px 8px 4px 8px;
     border-bottom: 1px solid #ededed;
     color: #fff;
     font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     cursor: pointer;
   }
 `;

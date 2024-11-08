@@ -3,7 +3,7 @@ import postCommand from '../api/postCommand';
 import { useAddCommandModalStore } from '../stores/ModalStore';
 import { useListStore } from '../stores/ListStore';
 
-const useAddCommand = (setIsDuplicated) => {
+const useAddCommand = (setIsDuplicated, setIsFull) => {
   const currentListName = useListStore((state) => state.currentListName);
   const closeAddCommandModal = useAddCommandModalStore(
     (state) => state.closeModal,
@@ -14,6 +14,7 @@ const useAddCommand = (setIsDuplicated) => {
     mutationFn: ({ newCommand }) => postCommand(newCommand, currentListName),
     onSuccess: (data) => {
       if (data.isDuplicated) return setIsDuplicated(true);
+      if (data.isFull) return setIsFull(true);
       queryClient.invalidateQueries({ queryKey: ['list', currentListName] });
       closeAddCommandModal();
     },

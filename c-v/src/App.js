@@ -8,7 +8,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const AppContainer = styled.div`
   width: 100%;
-  height: 96%;
+  height: 100%;
   display: flex;
   padding: 2% 0;
   flex-direction: column;
