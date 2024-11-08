@@ -32,7 +32,7 @@ const SelectButtonWrapper = styled.div`
   display: flex;
   padding: 5px 10px;
   gap: 10px;
-  background-color: #45454d;
+  background-color: #000;
   border-radius: 15px;
   cursor: pointer;
 

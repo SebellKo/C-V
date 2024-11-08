@@ -26,7 +26,7 @@ const StyledNewCommandButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    color: #6a6a6a;
+    color: #000;
   }
 `;
 
