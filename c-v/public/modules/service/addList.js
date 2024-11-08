@@ -9,6 +9,14 @@ const addList = async (listName, id) => {
 
     if (existedList) return { isDuplicated: true };
 
+    const listCount = await new Promise((resolve, reject) => {
+      const getListCountRequest = listStore.count();
+      getListCountRequest.onsuccess = (event) => resolve(event.target.result);
+      getListCountRequest.onerror = (error) => reject(error);
+    });
+
+    if (listCount === 10) return { isFull: true };
+
     const newList = {
       id: id,
       name: listName,

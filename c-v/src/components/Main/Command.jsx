@@ -11,7 +11,7 @@ import deleteCommand from '../../api/deleteCommand';
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
 
-const Command = ({ listItem }) => {
+const Command = ({ listItem, index }) => {
   const {
     attributes,
     listeners,
@@ -70,7 +70,9 @@ const Command = ({ listItem }) => {
         />
       </CommandHeader>
       <CommandContent onClick={handleClickCommand}>
-        <p>{command}</p>
+        <p>
+          {command} {index + 1}
+        </p>
       </CommandContent>
     </CommandWrapper>
   );

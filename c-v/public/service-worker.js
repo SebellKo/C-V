@@ -31,6 +31,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         request.message.id,
       );
       if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      if (result.isFull) sendResponse({ isFull: true });
       else sendResponse({ success: true });
     })();
   }
@@ -64,6 +65,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         request.message.currentListName,
       );
       if (result.isDuplicated) sendResponse({ isDuplicated: true });
+      if (result.isFull) sendResponse({ isFull: true });
       else sendResponse({ success: true });
     })();
   }

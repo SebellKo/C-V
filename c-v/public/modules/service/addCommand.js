@@ -15,6 +15,8 @@ const addCommand = async (newCommand, currentListName) => {
 
     if (isDuplicated) return { isDuplicated: true };
 
+    if (currentList.commands.length === 10) return { isFull: true };
+
     currentList.commands = [...currentList.commands, newCommand];
     await listStore.put(currentList, primaryKey);
     return { isDuplicated: false };
