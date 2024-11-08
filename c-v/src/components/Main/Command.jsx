@@ -62,7 +62,7 @@ const Command = ({ listItem, index }) => {
           ref={setActivatorNodeRef}
           {...listeners}
         />
-        <h5>{`command`}</h5>
+        <h5>command {index + 1}</h5>
         <img
           src={deleteIcon}
           alt="close icon"
@@ -70,9 +70,7 @@ const Command = ({ listItem, index }) => {
         />
       </CommandHeader>
       <CommandContent onClick={handleClickCommand}>
-        <p>
-          {command} {index + 1}
-        </p>
+        <p>{command}</p>
       </CommandContent>
     </CommandWrapper>
   );

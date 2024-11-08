@@ -43,9 +43,13 @@ const SelectButtonWrapper = styled.div`
 `;
 
 const ListName = styled.span`
+  max-width: 100px;
   color: #fff;
   font-weight: 500;
   font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export default SelectButton;

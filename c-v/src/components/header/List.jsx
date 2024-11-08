@@ -54,10 +54,14 @@ const ListWrapper = styled.ul`
   overflow-x: hidden;
 
   > li {
+    max-width: 100px;
     padding: 3px 8px 4px 8px;
     border-bottom: 1px solid #ededed;
     color: #fff;
     font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     cursor: pointer;
   }
 `;
