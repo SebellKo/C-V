@@ -20,7 +20,8 @@
         "contents/content.js",
         "contents/setCopyText.js",
         "contents/getCurrentListName.js",
-        "contents/setCurrentListName.js"
+        "contents/setCurrentListName.js",
+        "contents/setCurrentCommand.js"
       ]
     }
   ],
@@ -33,7 +34,7 @@
       "128": "icon/icon-128.png"
     }
   },
-  "permissions": ["scripting"],
+
   "commands": {
     "_execute_action": {
       "suggested_key": {

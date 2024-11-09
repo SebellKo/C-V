@@ -21,12 +21,12 @@ const DeleteAllButton = () => {
 
 const StyledDeleteAllButton = styled.button`
   background: none;
-  color: #dd959a;
+  color: rgb(241 94 104);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   &:hover {
-    color: #d5525b;
+    color: rgb(248 19 35);
   }
 `;
 

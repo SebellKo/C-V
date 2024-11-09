@@ -34,7 +34,7 @@ const ModifyButtonContainer = styled.div`
     transition: all 0.3s ease;
     cursor: pointer;
     &:hover {
-      color: #414141;
+      color: #000;
     }
   }
 `;

@@ -49,7 +49,7 @@ const ListWrapper = styled.ul`
   top: 30px;
   left: 5px;
   list-style: none;
-  background-color: #45454d;
+  background-color: #000;
   border-radius: 5px;
   overflow-x: hidden;
 
