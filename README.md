@@ -33,7 +33,7 @@ C:V는 멀티 복사 / 붙여넣기 기능을 10개의 리스트, 10개의 커�
 - React
 - Javascript
 - indexedDB
-- tanstakc-query, dnd-kit, styled-components, zustand
+- tanstack-query, dnd-kit, styled-components, zustand
 <br/>
 <br/>
 
