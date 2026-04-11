@@ -1,0 +1,4 @@
+interface:
+  display_name: "Task Implementation"
+  short_description: "Single ST workflow for Spec/Task execution"
+  default_prompt: "Use $task-implementation for MT/ST-scoped work from Spec/Task documents, implement only one small task, and stop after marking it In Review."
