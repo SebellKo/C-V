@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation"
+  short_description: "Baseline workflow for code changes"
+  default_prompt: "Use $implementation as the baseline for any code-change request, and add task-specific references only when the request explicitly points to Spec/Task or MT/ST scope."
