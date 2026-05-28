@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npm run build:extension",
     "build:extension": "node scripts/build-extension.mjs",
     "typecheck": "tsc --noEmit",
     "test": "react-scripts test",
