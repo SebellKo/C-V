@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import {
+  useState,
+  type ChangeEvent,
+  type ChangeEventHandler,
+} from 'react';
 import styled from 'styled-components';
 
-const EditInput = ({ value, onChange }) => {
+interface EditInputProps {
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+}
+
+const EditInput = ({ value = '', onChange }: EditInputProps) => {
   const [inputValue, setInputValue] = useState(value);
 
-  const handleChangeInput = (event) => {
+  const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     if (onChange) onChange(event);
     setInputValue(event.target.value);
   };

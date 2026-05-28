@@ -1,15 +1,21 @@
 import { styled } from 'styled-components';
+import type { MouseEvent, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-function Modal({ children, onClose }) {
-  const closeModal = (event) => {
+interface ModalProps {
+  children: ReactNode;
+  onClose: () => void;
+}
+
+function Modal({ children, onClose }: ModalProps) {
+  const closeModal = (event: MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) onClose();
   };
   return createPortal(
     <ModalContainer onClick={(event) => closeModal(event)}>
       {children}
     </ModalContainer>,
-    document.getElementById('root'),
+    document.getElementById('root') as HTMLElement,
   );
 }
 

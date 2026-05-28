@@ -1,7 +1,12 @@
-import React from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import styled from 'styled-components';
 
-function Button({ children, onClick }) {
+interface ButtonProps {
+  children: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+
+function Button({ children, onClick }: ButtonProps) {
   return <StyledButton onClick={onClick}>{children}</StyledButton>;
 }
 

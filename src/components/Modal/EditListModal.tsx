@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useEditListModalStore } from '../../stores/ModalStore';
 import useEditList from '../../hooks/useEditList';
@@ -9,10 +9,11 @@ import EditList from './EditList/EditList';
 import ConfirmButtons from '../../styles/components/ConfirmButtons';
 import Button from '../common/Button';
 import Caution from '../../styles/components/Caution';
+import type { CommandList } from '../../types/domain';
 
 function EditListModal() {
   const closeEditModal = useEditListModalStore((state) => state.closeModal);
-  const [updatedList, setUpdatedList] = useState([]);
+  const [updatedList, setUpdatedList] = useState<CommandList[]>([]);
   const [isDuplicated, setIsDuplicated] = useState(false);
   const { editListMutate } = useEditList(setIsDuplicated);
   const { list, isSuccess } = useGetList();

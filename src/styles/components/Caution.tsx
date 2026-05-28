@@ -1,7 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import styled from 'styled-components';
 
-function Caution({ children }) {
+interface CautionProps {
+  children: ReactNode;
+}
+
+function Caution({ children }: CautionProps) {
   return <Desc>{children}</Desc>;
 }
 

@@ -1,37 +1,51 @@
 import styled from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type MouseEvent,
+  type SetStateAction,
+} from 'react';
 
 import { useListStore } from '../../stores/ListStore';
 import useGetList from '../../hooks/useGetList';
+import type { CommandList } from '../../types/domain';
 
-const List = ({ isOpen, setIsOpen }) => {
+interface ListProps {
+  isOpen: boolean;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const List = ({ isOpen, setIsOpen }: ListProps) => {
   const setListName = useListStore((state) => state.setListName);
-  const [updatedList, setUpdatedList] = useState([]);
+  const [updatedList, setUpdatedList] = useState<CommandList[]>([]);
   const { list, isSuccess } = useGetList();
-  const listItemRef = useRef(null);
+  const listItemRef = useRef<HTMLUListElement>(null);
 
   useEffect(() => {
-    const handleClickOthers = (event) => {
+    const handleClickOthers = (event: globalThis.MouseEvent) => {
       if (
         listItemRef.current &&
+        event.target instanceof Node &&
         !listItemRef.current.contains(event.target) &&
         isOpen
       )
         setIsOpen(false);
     };
-    document.addEventListener('click', (event) => handleClickOthers(event));
+    document.addEventListener('click', handleClickOthers);
 
-    return () =>
-      document.removeEventListener('click', (event) => handleClickItem(event));
-  }, []);
+    return () => document.removeEventListener('click', handleClickOthers);
+  }, [isOpen, setIsOpen]);
 
   useEffect(() => {
     if (isSuccess) setUpdatedList(list);
   }, [list, isSuccess]);
 
-  const handleClickItem = (event) => {
-    const selectName = event.target.innerText;
-    setListName(selectName);
+  const handleClickItem = (event: MouseEvent<HTMLUListElement>) => {
+    if (event.target instanceof HTMLLIElement) {
+      setListName(event.target.innerText);
+    }
   };
 
   return (

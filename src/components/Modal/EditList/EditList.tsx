@@ -1,17 +1,36 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
-import { DndContext } from '@dnd-kit/core';
+import {
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 
 import EditListItem from './EditListItem';
+import type { CommandList, ListName } from '../../../types/domain';
 
-const EditList = ({ updatedList, setUpdatedList, setIsDuplicated }) => {
-  const [activeId, setActiveId] = useState();
+interface EditListProps {
+  updatedList: CommandList[];
+  setUpdatedList: Dispatch<SetStateAction<CommandList[]>>;
+  setIsDuplicated: Dispatch<SetStateAction<boolean>>;
+}
 
-  const handleDragStart = ({ active }) => {
-    setActiveId(active.id);
+const EditList = ({
+  updatedList,
+  setUpdatedList,
+  setIsDuplicated,
+}: EditListProps) => {
+  const [activeId, setActiveId] = useState<ListName | null>(null);
+
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setActiveId(String(active.id));
   };
-  const handleDragEnd = ({ over }) => {
+  const handleDragEnd = ({ over }: DragEndEvent) => {
     if (over && activeId) {
       const activeIndex = updatedList.findIndex(
         (item) => item.name === activeId,

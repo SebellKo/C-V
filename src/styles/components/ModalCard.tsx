@@ -1,6 +1,11 @@
+import type { ReactNode } from 'react';
 import styled from 'styled-components';
 
-const ModalCard = ({ children }) => {
+interface ModalCardProps {
+  children: ReactNode;
+}
+
+const ModalCard = ({ children }: ModalCardProps) => {
   return <ModalCardContainer>{children}</ModalCardContainer>;
 };
 

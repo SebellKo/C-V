@@ -1,7 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import styled from 'styled-components';
 
-function ModalTitle({ children }) {
+interface ModalTitleProps {
+  children: ReactNode;
+}
+
+function ModalTitle({ children }: ModalTitleProps) {
   return <Title>{children}</Title>;
 }
 

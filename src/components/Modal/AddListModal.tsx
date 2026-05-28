@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 import { useAddListModalStore } from '../../stores/ModalStore';
 import useAddList from '../../hooks/useAddList';
@@ -19,7 +19,7 @@ function AddListModal() {
 
   const handleClickConrifm = () => addListMutate({ listTitle: listTitle });
 
-  const handleChangeInput = (event) => {
+  const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setListTitle(inputValue);
     setIsDuplicated(false);
@@ -29,7 +29,7 @@ function AddListModal() {
   return (
     <ModalCard>
       <ModalTitle>리스트 이름을 입력해 주세요</ModalTitle>
-      <EditInput onChange={(event) => handleChangeInput(event)}></EditInput>
+      <EditInput onChange={handleChangeInput}></EditInput>
       {isDuplicated && <Caution>중복된 리스트 입니다</Caution>}
       {isFull && <Caution>리스트는 10개까지 생성 가능합니다</Caution>}
       <ConfirmButtons>

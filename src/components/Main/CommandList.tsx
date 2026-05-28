@@ -1,5 +1,9 @@
 import { styled } from 'styled-components';
-import { DndContext } from '@dnd-kit/core';
+import {
+  DndContext,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { useEffect, useState } from 'react';
 
@@ -8,22 +12,24 @@ import useGetListByName from '../../hooks/useGetListByName';
 
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
+import type { CommandText } from '../../types/domain';
 
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
-  const [activeId, setActiveId] = useState();
-  const [commands, setCommands] = useState([]);
+  const [activeId, setActiveId] = useState<CommandText | null>(null);
+  const [commands, setCommands] = useState<CommandText[]>([]);
   const { editCommandsMutate } = useEditCommands();
   const { list, isSuccess } = useGetListByName(currentListName);
 
   useEffect(() => {
-    if (isSuccess) setCommands(list.commands);
+    if (isSuccess) setCommands(list?.commands ?? []);
     if (currentListName === 'Select') setCommands([]);
   }, [list, isSuccess, currentListName]);
 
-  const handleDragStart = ({ active }) => setActiveId(active.id);
+  const handleDragStart = ({ active }: DragStartEvent) =>
+    setActiveId(String(active.id));
 
-  const handleDragEnd = ({ over }) => {
+  const handleDragEnd = ({ over }: DragEndEvent) => {
     if (over && activeId) {
       const activeIndex = commands.findIndex(
         (commandItem) => commandItem === activeId,

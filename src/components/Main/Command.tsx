@@ -10,8 +10,15 @@ import deleteCommand from '../../api/deleteCommand';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
+import type { CommandText } from '../../types/domain';
+import type { RuntimeResponse } from '../../types/messages';
 
-const Command = ({ listItem, index }) => {
+interface CommandProps {
+  listItem: CommandText;
+  index: number;
+}
+
+const Command = ({ listItem, index }: CommandProps) => {
   const {
     attributes,
     listeners,
@@ -32,7 +39,11 @@ const Command = ({ listItem, index }) => {
 
   const command = listItem;
 
-  const { mutate: deleteCommandMutate } = useMutation({
+  const { mutate: deleteCommandMutate } = useMutation<
+    RuntimeResponse<'delete-command'>,
+    Error,
+    void
+  >({
     mutationFn: () => deleteCommand(currentListName, command),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: ['list', currentListName] }),
@@ -76,7 +87,7 @@ const Command = ({ listItem, index }) => {
   );
 };
 
-const CommandWrapper = styled.li`
+const CommandWrapper = styled.li<{ $isDragging?: boolean }>`
   width: 250px;
   ${({ $isDragging }) => $isDragging && 'opacity: 0.5'}
   position: relative;
@@ -105,7 +116,7 @@ const CommandHeader = styled.div`
   }
 `;
 
-const CommandContent = styled.div`
+const CommandContent = styled.div<{ $isOver?: boolean }>`
   width: 100%;
   height: 50px;
   display: flex;

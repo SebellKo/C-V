@@ -1,7 +1,11 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import styled from 'styled-components';
 
-function ConfirmButtons({ children }) {
+interface ConfirmButtonsProps {
+  children: ReactNode;
+}
+
+function ConfirmButtons({ children }: ConfirmButtonsProps) {
   return <StyledConfirmButtons>{children}</StyledConfirmButtons>;
 }
 

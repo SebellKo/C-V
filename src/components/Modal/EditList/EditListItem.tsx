@@ -1,4 +1,8 @@
-import React from 'react';
+import {
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import styled from 'styled-components';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -6,6 +10,15 @@ import { CSS } from '@dnd-kit/utilities';
 import EditInput from './EditInput';
 import deleteIcon from '../../../assets/images/delete-black.svg';
 import dragDropIcon from '../../../assets/images/drag-drop.svg';
+import type { CommandList, ListName } from '../../../types/domain';
+
+interface EditListItemProps {
+  updatedList: CommandList[];
+  setUpdatedList: Dispatch<SetStateAction<CommandList[]>>;
+  value: ListName;
+  index: number;
+  setIsDuplicated: Dispatch<SetStateAction<boolean>>;
+}
 
 function EditListItem({
   updatedList,
@@ -13,7 +26,7 @@ function EditListItem({
   value,
   index,
   setIsDuplicated,
-}) {
+}: EditListItemProps) {
   const {
     attributes,
     listeners,
@@ -24,7 +37,10 @@ function EditListItem({
     isDragging,
   } = useSortable({ id: value });
 
-  const handleChangeInput = (event, index) => {
+  const handleChangeInput = (
+    event: ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const inputValue = event.target.value;
     const convertedList = [...updatedList];
     convertedList[index].name = inputValue;
@@ -32,7 +48,7 @@ function EditListItem({
     setIsDuplicated(false);
   };
 
-  const handleClickDelete = (listName) => {
+  const handleClickDelete = (listName: ListName) => {
     const deletedList = updatedList.filter(
       (listItem) => listItem.name !== listName,
     );

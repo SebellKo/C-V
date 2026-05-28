@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, type MouseEvent } from 'react';
 
 import { useListStore } from '../../stores/ListStore';
 
@@ -10,7 +10,7 @@ const SelectButton = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleClickSelect = (event) => {
+  const handleClickSelect = (event: MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
     setIsOpen((prev) => !prev);
   };
@@ -21,13 +21,13 @@ const SelectButton = () => {
       onClick={(event) => handleClickSelect(event)}
     >
       <ListName>{currentListName}</ListName>
-      <img src={openButtonIcon}></img>
+      <img src={openButtonIcon} alt="open list"></img>
       {isOpen && <List isOpen={isOpen} setIsOpen={setIsOpen}></List>}
     </SelectButtonWrapper>
   );
 };
 
-const SelectButtonWrapper = styled.div`
+const SelectButtonWrapper = styled.div<{ $isOpen: boolean }>`
   position: relative;
   display: flex;
   padding: 5px 10px;

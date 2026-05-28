@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 
 import useCommandStore from '../../stores/CommandStore';
 import { useEditCommandModalStore } from '../../stores/ModalStore';
@@ -23,7 +23,7 @@ function EditCommandModal() {
   const [newCommandValue, setNewCommandValue] = useState(selectedCommand);
   const { editCommandMutate } = useEditCommand(setIsDuplicated);
 
-  const handleChangeCommand = (event) => {
+  const handleChangeCommand = (event: ChangeEvent<HTMLInputElement>) => {
     const inputValue = event.target.value;
     setNewCommandValue(inputValue);
     setIsDuplicated(false);
@@ -46,7 +46,7 @@ function EditCommandModal() {
       <ModalTitle>커맨드 수정</ModalTitle>
       <EditInput
         value={newCommandValue}
-        onChange={(event) => handleChangeCommand(event)}
+        onChange={handleChangeCommand}
       ></EditInput>
       {isDuplicated && <Caution>중복된 커맨드 입니다</Caution>}
       <ConfirmButtons>
