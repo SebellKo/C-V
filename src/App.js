@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 
 import Footer from './components/Footer/Footer';
 import Main from './components/Main/Main';
-import Header from './components/Header/Header';
+import Header from './components/header/Header';
 import GlobalStyles from './styles/GlobalStyle';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
