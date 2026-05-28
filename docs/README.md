@@ -8,17 +8,19 @@ C:V는 Chrome Extension 기반의 멀티 복사/붙여넣기 도구입니다. �
 
 - [아키텍처](./architecture.md): 폴더 구조, 런타임 구성, 메시지 흐름, IndexedDB 구조
 - [기능 명세](./features.md): 리스트/커맨드 관리, 단축키, 데이터 제한
+- [Specs](./specs/README.md): 구현 전 검토용 Spec과 task 문서
 
 ## 기술 스택
 
 - React 18
-- JavaScript
+- TypeScript
 - Chrome Extension Manifest V3
 - IndexedDB
 - TanStack Query
 - Zustand
 - styled-components
 - dnd-kit
+- esbuild
 
 ## 핵심 개념
 
@@ -28,3 +30,10 @@ C:V는 Chrome Extension 기반의 멀티 복사/붙여넣기 도구입니다. �
 - 팝업 UI: 리스트와 커맨드를 생성, 수정, 삭제, 정렬하는 React 화면입니다.
 - Content Script: 웹 페이지에서 단축키와 선택 텍스트를 감지합니다.
 - Service Worker: 팝업과 Content Script의 요청을 받아 IndexedDB를 읽고 씁니다.
+
+## 빌드 기준
+
+- TypeScript 원본은 `src/`와 `extension/`에 있습니다.
+- `public/`은 manifest, HTML, icon 같은 정적 파일만 관리합니다.
+- `npm run build`는 React Popup과 Chrome Extension 런타임 스크립트를 모두 빌드합니다.
+- Chrome에 로드할 unpacked extension 대상은 `build/` 디렉토리입니다.

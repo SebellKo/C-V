@@ -28,12 +28,30 @@ C:V는 멀티 복사 / 붙여넣기 기능을 10개의 리스트, 10개의 커�
 <br/>
 <br/>
 
-## Skils
+## Skills
 
 - React
-- Javascript
-- indexedDB
-- tanstack-query, dnd-kit, styled-components, zustand
+- TypeScript
+- Chrome Extension Manifest V3
+- IndexedDB
+- TanStack Query, dnd-kit, styled-components, Zustand
+- esbuild
+<br/>
+<br/>
+
+## Development
+
+- `npm run typecheck`: TypeScript 타입 검사
+- `npm run build`: React Popup과 Extension 런타임 스크립트 빌드
+- Chrome Extension 로드 대상: `build/`
+
+### 프로젝트 구조
+
+- `src/`: React Popup UI
+- `extension/`: Service Worker, Content Script, IndexedDB 모듈 TypeScript 원본
+- `public/`: manifest, HTML, icon 등 정적 파일
+- `scripts/build-extension.mjs`: `extension/` 원본을 `build/`의 JavaScript 산출물로 번들
+
 <br/>
 <br/>
 
