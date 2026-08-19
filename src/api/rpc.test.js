@@ -92,11 +92,11 @@ const supportedRequests = [
   ],
 ];
 
-describe('service worker RPC dispatcher', () => {
+describe('서비스 워커 RPC 요청 처리', () => {
   it.each(supportedRequests)(
-    '%s request runs one handler and responds exactly once',
+    '%s 요청은 하나의 처리기만 실행하고 한 번만 응답한다',
     async (type, request, serviceName) => {
-      // Given
+      // 준비
       const services = createServices();
       const listener = createMessageListener(createRpcDispatcher(services));
       let sendResponse;
@@ -104,10 +104,10 @@ describe('service worker RPC dispatcher', () => {
         sendResponse = jest.fn(resolve);
       });
 
-      // When
+      // 실행
       const keepsChannelOpen = listener(request, {}, sendResponse);
 
-      // Then
+      // 검증
       await expect(response).resolves.toMatchObject({ ok: true });
       expect(keepsChannelOpen).toBe(true);
       expect(sendResponse).toHaveBeenCalledTimes(1);
@@ -116,15 +116,15 @@ describe('service worker RPC dispatcher', () => {
     },
   );
 
-  it('unknown type returns UNKNOWN_TYPE without running a handler', async () => {
-    // Given
+  it('지원하지 않는 요청은 서비스를 실행하지 않고 UNKNOWN_TYPE 오류를 반환한다', async () => {
+    // 준비
     const services = createServices();
     const dispatch = createRpcDispatcher(services);
 
-    // When
+    // 실행
     const response = await dispatch({ type: 'missing-handler' });
 
-    // Then
+    // 검증
     expect(response).toEqual({
       ok: false,
       error: { code: 'UNKNOWN_TYPE', message: 'Unknown request type' },
@@ -132,18 +132,18 @@ describe('service worker RPC dispatcher', () => {
     expect(totalServiceCalls(services)).toBe(0);
   });
 
-  it('missing or mistyped required payload returns INVALID_PAYLOAD', async () => {
-    // Given
+  it('필수 입력이 없거나 타입이 잘못되면 INVALID_PAYLOAD 오류를 반환한다', async () => {
+    // 준비
     const services = createServices();
     const dispatch = createRpcDispatcher(services);
 
-    // When
+    // 실행
     const response = await dispatch({
       type: 'add-new-command',
       message: { newCommand: 'Copy me', currentListName: 1 },
     });
 
-    // Then
+    // 검증
     expect(response).toEqual({
       ok: false,
       error: { code: 'INVALID_PAYLOAD', message: 'Invalid request payload' },
@@ -152,26 +152,26 @@ describe('service worker RPC dispatcher', () => {
   });
 
   it.each([
-    ['duplicate', { isDuplicated: true }, { isDuplicated: true }],
-    ['full', { isFull: true }, { isFull: true }],
-  ])('%s remains a successful domain result', async (name, result, data) => {
-    // Given
+    ['중복', { isDuplicated: true }, { isDuplicated: true }],
+    ['용량 초과', { isFull: true }, { isFull: true }],
+  ])('%s 결과는 RPC 성공으로 반환한다', async (name, result, data) => {
+    // 준비
     const services = createServices();
     services.addCommand.mockResolvedValue(result);
     const dispatch = createRpcDispatcher(services);
 
-    // When
+    // 실행
     const response = await dispatch({
       type: 'add-new-command',
       message: { newCommand: 'Copy me', currentListName: 'Work' },
     });
 
-    // Then
+    // 검증
     expect(response).toEqual({ ok: true, data });
   });
 
-  it('database rejection returns DB_ERROR without exposing command text', async () => {
-    // Given
+  it('데이터베이스 작업이 실패하면 명령 내용을 노출하지 않고 DB_ERROR를 반환한다', async () => {
+    // 준비
     const command = 'private command text';
     const services = createServices();
     services.addCommand.mockRejectedValue(
@@ -179,13 +179,13 @@ describe('service worker RPC dispatcher', () => {
     );
     const dispatch = createRpcDispatcher(services);
 
-    // When
+    // 실행
     const response = await dispatch({
       type: 'add-new-command',
       message: { newCommand: command, currentListName: 'Work' },
     });
 
-    // Then
+    // 검증
     expect(response).toEqual({
       ok: false,
       error: { code: 'DB_ERROR', message: 'Database operation failed' },
