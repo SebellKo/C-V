@@ -12,28 +12,58 @@ import { useListStore } from '../../stores/ListStore';
 const CommandList = () => {
   const currentListName = useListStore((state) => state.currentListName);
   const [activeId, setActiveId] = useState();
-  const [commands, setCommands] = useState([]);
+  const [commandSnapshot, setCommandSnapshot] = useState({
+    listName: 'Select',
+    commands: [],
+  });
   const { editCommandsMutate } = useEditCommands();
   const { list, isSuccess } = useGetListByName(currentListName);
 
   useEffect(() => {
-    if (isSuccess) setCommands(list.commands);
-    if (currentListName === 'Select') setCommands([]);
+    if (isSuccess) {
+      setCommandSnapshot({
+        listName: currentListName,
+        commands: list.commands,
+      });
+    }
+    if (currentListName === 'Select') {
+      setCommandSnapshot({ listName: currentListName, commands: [] });
+    }
   }, [list, isSuccess, currentListName]);
+
+  const isCurrentSnapshot = commandSnapshot.listName === currentListName;
+  const commands = isCurrentSnapshot ? commandSnapshot.commands : [];
 
   const handleDragStart = ({ active }) => setActiveId(active.id);
 
   const handleDragEnd = ({ over }) => {
-    if (over && activeId) {
+    if (over && activeId && isCurrentSnapshot) {
       const activeIndex = commands.findIndex(
         (commandItem) => commandItem === activeId,
       );
       const overIndex = commands.findIndex(
         (commandItem) => commandItem === over.id,
       );
-      const updatedCommands = arrayMove(commands, activeIndex, overIndex);
-      editCommandsMutate({ updatedCommands: updatedCommands });
-      setCommands(updatedCommands);
+      if (activeIndex !== -1 && overIndex !== -1) {
+        const previousSnapshot = commandSnapshot;
+        const updatedSnapshot = {
+          listName: commandSnapshot.listName,
+          commands: arrayMove(commands, activeIndex, overIndex),
+        };
+        setCommandSnapshot(updatedSnapshot);
+        editCommandsMutate(
+          {
+            listName: updatedSnapshot.listName,
+            updatedCommands: updatedSnapshot.commands,
+          },
+          {
+            onError: () =>
+              setCommandSnapshot((snapshot) =>
+                snapshot === updatedSnapshot ? previousSnapshot : snapshot,
+              ),
+          },
+        );
+      }
     }
     setActiveId(null);
   };
@@ -44,7 +74,12 @@ const CommandList = () => {
         <SortableContext items={commands}>
           {commands &&
             commands.map((listItem, index) => (
-              <Command key={index} listItem={listItem} index={index}></Command>
+              <Command
+                key={index}
+                listName={commandSnapshot.listName}
+                listItem={listItem}
+                index={index}
+              ></Command>
             ))}
         </SortableContext>
       </DndContext>
