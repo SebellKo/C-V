@@ -1,10 +1,8 @@
+import sendRuntimeMessage from './sendRuntimeMessage';
+
 const getList = async () => {
-  const data = await new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage({ type: 'get-list' }).then((response) => {
-      resolve(response.listData);
-    });
-  });
-  return data;
+  const data = await sendRuntimeMessage({ type: 'get-list' });
+  return data.listData;
 };
 
 export default getList;

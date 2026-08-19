@@ -1,15 +1,10 @@
+import sendRuntimeMessage from './sendRuntimeMessage';
+
 const postCommand = async (newCommand, currentListName) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'add-new-command',
-        message: { newCommand: newCommand, currentListName: currentListName },
-      })
-      .then((response) => {
-        resolve(response);
-      });
+  return sendRuntimeMessage({
+    type: 'add-new-command',
+    message: { newCommand, currentListName },
   });
-  return result;
 };
 
 export default postCommand;
