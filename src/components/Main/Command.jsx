@@ -3,7 +3,6 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { useListStore } from '../../stores/ListStore';
 import { useEditCommandModalStore } from '../../stores/ModalStore';
 import useCommandStore from '../../stores/CommandStore';
 import deleteCommand from '../../api/deleteCommand';
@@ -11,7 +10,7 @@ import deleteCommand from '../../api/deleteCommand';
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
 
-const Command = ({ listItem, index }) => {
+const Command = ({ listName, listItem, index }) => {
   const {
     attributes,
     listeners,
@@ -21,7 +20,6 @@ const Command = ({ listItem, index }) => {
     transition,
     isDragging,
   } = useSortable({ id: listItem });
-  const currentListName = useListStore((state) => state.currentListName);
   const openEditCommandModal = useEditCommandModalStore(
     (state) => state.openModal,
   );
@@ -33,12 +31,14 @@ const Command = ({ listItem, index }) => {
   const command = listItem;
 
   const { mutate: deleteCommandMutate } = useMutation({
-    mutationFn: () => deleteCommand(currentListName, command),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ['list', currentListName] }),
+    mutationFn: ({ targetListName, targetCommand }) =>
+      deleteCommand(targetListName, targetCommand),
+    onSuccess: (_data, { targetListName }) =>
+      queryClient.invalidateQueries({ queryKey: ['list', targetListName] }),
   });
 
-  const handleClickDeleteIcon = () => deleteCommandMutate();
+  const handleClickDeleteIcon = () =>
+    deleteCommandMutate({ targetListName: listName, targetCommand: command });
 
   const handleClickCommand = () => {
     openEditCommandModal();
