@@ -20,15 +20,15 @@ const [
   import('../public/modules/service/getCurrentListByName.js'),
 ]);
 
-test('editList resolves only after its transaction commits', async () => {
-  // Given
+test('editList는 트랜잭션 커밋이 끝난 뒤에만 완료된다', async () => {
+  // 준비
   const database = installIndexedDB([
     { key: 1, value: { name: 'old', commands: ['before'] } },
   ]);
   database.blockCommits = true;
   let settled = false;
 
-  // When
+  // 실행
   const editing = editList([
     { name: 'first', commands: [] },
     { name: 'second', commands: ['after'] },
@@ -37,7 +37,7 @@ test('editList resolves only after its transaction commits', async () => {
   });
   await nextTask();
 
-  // Then
+  // 검증
   assert.equal(settled, false);
   assert.deepEqual(database.listValues(), [
     { name: 'old', commands: ['before'] },
@@ -52,13 +52,13 @@ test('editList resolves only after its transaction commits', async () => {
   assert.equal(database.closed, true);
 });
 
-test('editList rejects and rolls back clear and add when one add fails', async () => {
-  // Given
+test('목록 항목 하나의 저장이 실패하면 editList는 실패하고 전체 변경을 롤백한다', async () => {
+  // 준비
   const original = [{ key: 1, value: { name: 'old', commands: ['keep'] } }];
   const database = installIndexedDB(original);
   database.failedListName = 'broken';
 
-  // When / Then
+  // 실행 및 검증
   await assert.rejects(
     editList([
       { name: 'first', commands: [] },
@@ -70,11 +70,11 @@ test('editList rejects and rolls back clear and add when one add fails', async (
   assert.equal(database.closed, true);
 });
 
-test('a missing list and primary key reject instead of returning undefined', async () => {
-  // Given
+test('목록이나 기본 키가 없으면 undefined 대신 오류를 반환한다', async () => {
+  // 준비
   const database = installIndexedDB([]);
 
-  // When / Then
+  // 실행 및 검증
   await assert.rejects(getCurrentListByName('missing'), /List not found/);
   await assert.rejects(
     getPrimaryKey('missing', {
@@ -85,30 +85,30 @@ test('a missing list and primary key reject instead of returning undefined', asy
   assert.equal(database.closed, true);
 });
 
-test('request and transaction failures preserve their IndexedDB errors', async () => {
-  // Given
+test('요청과 트랜잭션 실패는 원래 IndexedDB 오류를 유지한다', async () => {
+  // 준비
   const requestError = new DOMException('duplicate', 'ConstraintError');
   const request = failedRequest(requestError);
   const transaction = new EventTarget();
   transaction.error = requestError;
   transaction.abort = () => transaction.dispatchEvent(new Event('abort'));
 
-  // When / Then
+  // 실행 및 검증
   await assert.rejects(requestToPromise(request), requestError);
   const completion = transactionDone(transaction);
   transaction.abort();
   await assert.rejects(completion, requestError);
 });
 
-test('openDatabase closes a connection when its version changes', async () => {
-  // Given
+test('데이터베이스 버전이 변경되면 openDatabase 연결을 닫는다', async () => {
+  // 준비
   const database = installIndexedDB([]);
 
-  // When
+  // 실행
   const connection = await openDatabase();
   connection.onversionchange();
 
-  // Then
+  // 검증
   assert.equal(database.closed, true);
 });
 
