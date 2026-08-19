@@ -1,21 +1,26 @@
-import getListByName from '../getListByName.js';
 import getListStore from '../getListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import transactionDone from '../transactionDone.js';
 
 const addList = async (listName, id) => {
+  const { db, transaction, store } = await getListStore('readwrite');
+  const done = transactionDone(transaction);
+
   try {
-    const listStore = await getListStore('readwrite');
-    const nameIndex = listStore.index('name');
-    const existedList = await getListByName(listName, nameIndex);
+    const nameIndex = store.index('name');
+    const existedList = await requestToPromise(nameIndex.get(listName));
 
-    if (existedList) return { isDuplicated: true };
+    if (existedList) {
+      await done;
+      return { isDuplicated: true };
+    }
 
-    const listCount = await new Promise((resolve, reject) => {
-      const getListCountRequest = listStore.count();
-      getListCountRequest.onsuccess = (event) => resolve(event.target.result);
-      getListCountRequest.onerror = (error) => reject(error);
-    });
+    const listCount = await requestToPromise(store.count());
 
-    if (listCount === 10) return { isFull: true };
+    if (listCount === 10) {
+      await done;
+      return { isFull: true };
+    }
 
     const newList = {
       id: id,
@@ -23,11 +28,19 @@ const addList = async (listName, id) => {
       commands: [],
     };
 
-    await listStore.add(newList);
-
+    await requestToPromise(store.add(newList));
+    await done;
     return { isDuplicated: false };
   } catch (error) {
-    console.error('Database operation failed:', error);
+    try {
+      transaction.abort();
+    } catch {
+      // The transaction already completed or aborted.
+    }
+    await done.catch(() => undefined);
+    throw error;
+  } finally {
+    db.close();
   }
 };
 

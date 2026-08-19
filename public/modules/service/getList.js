@@ -1,20 +1,25 @@
 import getListStore from '../getListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import transactionDone from '../transactionDone.js';
 
 const getList = async () => {
+  const { db, transaction, store } = await getListStore('readonly');
+  const done = transactionDone(transaction);
+
   try {
-    const listStore = await getListStore('readonly');
-
-    return new Promise((resolve, reject) => {
-      const getListRequest = listStore.getAll();
-
-      getListRequest.onsuccess = (event) => {
-        resolve(event.target.result);
-      };
-
-      getListRequest.onerror = (error) => reject(error);
-    });
+    const list = await requestToPromise(store.getAll());
+    await done;
+    return list;
   } catch (error) {
-    console.error('Database operation failed:', error);
+    try {
+      transaction.abort();
+    } catch {
+      // The transaction already completed or aborted.
+    }
+    await done.catch(() => undefined);
+    throw error;
+  } finally {
+    db.close();
   }
 };
 

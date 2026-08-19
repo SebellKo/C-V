@@ -1,21 +1,31 @@
 import getCurrentListStore from '../getCurrentListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import transactionDone from '../transactionDone.js';
 
 const getCurrentListName = async () => {
+  const { db, transaction, store } = await getCurrentListStore('readonly');
+  const done = transactionDone(transaction);
+
   try {
-    const currentListNameStore = await getCurrentListStore('readonly');
+    const currentListName = await requestToPromise(store.getAll());
 
-    const currentListName = await new Promise((resolve, reject) => {
-      const getCurrentListNameRequest = currentListNameStore.getAll();
-      getCurrentListNameRequest.onsuccess = (event) =>
-        resolve(event.target.result);
-      getCurrentListNameRequest.onError = (error) => reject(error);
-    });
+    if (currentListName.length === 0) {
+      await done;
+      return '';
+    }
 
-    if (currentListName.length === 0) return '';
-
+    await done;
     return currentListName[0].name;
   } catch (error) {
-    console.log(error);
+    try {
+      transaction.abort();
+    } catch {
+      // The transaction already completed or aborted.
+    }
+    await done.catch(() => undefined);
+    throw error;
+  } finally {
+    db.close();
   }
 };
 

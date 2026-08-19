@@ -1,16 +1,28 @@
 import getListStore from '../getListStore.js';
 import getListByName from '../getListByName.js';
+import transactionDone from '../transactionDone.js';
 
 const getCurrentListByName = async (currentListName) => {
+  const { db, transaction, store } = await getListStore('readonly');
+  const done = transactionDone(transaction);
+
   try {
-    const listStore = await getListStore('readonly');
-    const nameIndex = listStore.index('name');
+    const nameIndex = store.index('name');
 
     const currentList = await getListByName(currentListName, nameIndex);
 
+    await done;
     return currentList;
   } catch (error) {
-    console.log(error);
+    try {
+      transaction.abort();
+    } catch {
+      // The transaction already completed or aborted.
+    }
+    await done.catch(() => undefined);
+    throw error;
+  } finally {
+    db.close();
   }
 };
 
