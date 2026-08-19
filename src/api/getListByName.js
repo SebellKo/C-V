@@ -1,12 +1,11 @@
+import sendRuntimeMessage from './sendRuntimeMessage';
+
 const getListByName = async (listName) => {
-  const data = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({ type: 'get-list-by-name', message: { name: listName } })
-      .then((response) => {
-        resolve(response.listData);
-      });
+  const data = await sendRuntimeMessage({
+    type: 'get-list-by-name',
+    message: { name: listName },
   });
-  return data;
+  return data.listData;
 };
 
 export default getListByName;

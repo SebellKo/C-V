@@ -1,20 +1,14 @@
-const putEditCommand = async (currentListName, targetCommand, newCommand) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'edit-command',
-        message: {
-          currentListName: currentListName,
-          targetCommand: targetCommand,
-          newCommand: newCommand,
-        },
-      })
-      .then((response) => {
-        resolve(response);
-      });
-  });
+import sendRuntimeMessage from './sendRuntimeMessage';
 
-  return result;
+const putEditCommand = async (currentListName, targetCommand, newCommand) => {
+  return sendRuntimeMessage({
+    type: 'edit-command',
+    message: {
+      currentListName,
+      targetCommand,
+      newCommand,
+    },
+  });
 };
 
 export default putEditCommand;
