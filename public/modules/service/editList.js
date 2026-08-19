@@ -1,8 +1,8 @@
-import getListStore from '../getListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import withStore from '../withStore.js';
 
-const editList = async (newList) => {
-  try {
-    const listStore = await getListStore('readwrite');
+const editList = (newList) =>
+  withStore('list', 'readwrite', async (store) => {
     const isExistList = newList.some((listItem, index) => {
       return (
         newList.findIndex((findItem) => listItem.name === findItem.name) !==
@@ -10,16 +10,14 @@ const editList = async (newList) => {
       );
     });
 
-    if (isExistList) return { isDuplicated: true };
+    if (isExistList) {
+      return { isDuplicated: true };
+    }
 
-    await listStore.clear();
+    const requests = [store.clear(), ...newList.map((item) => store.add(item))];
 
-    newList.forEach(async (listItem) => await listStore.add(listItem));
-
+    await Promise.all(requests.map(requestToPromise));
     return { isDuplicated: false };
-  } catch (error) {
-    console.log(error);
-  }
-};
+  });
 
 export default editList;

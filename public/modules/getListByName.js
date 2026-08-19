@@ -1,10 +1,11 @@
-const getListByName = async (currentListName, nameIndex) => {
-  const currentList = await new Promise((resolve, reject) => {
-    const getCurrentListRequest = nameIndex.get(currentListName);
+import requestToPromise from './requestToPromise.js';
 
-    getCurrentListRequest.onsuccess = (event) => resolve(event.target.result);
-    getCurrentListRequest.onerror = (error) => reject(error);
-  });
+const getListByName = async (currentListName, nameIndex) => {
+  const currentList = await requestToPromise(nameIndex.get(currentListName));
+
+  if (currentList === undefined) {
+    throw new Error(`List not found: ${currentListName}`);
+  }
 
   return currentList;
 };

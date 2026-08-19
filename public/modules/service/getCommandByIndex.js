@@ -1,19 +1,12 @@
 import getListByName from '../getListByName.js';
-import getListStore from '../getListStore.js';
+import withStore from '../withStore.js';
 
-const getCommandByIndex = async (currentListName, index) => {
-  try {
-    const listStore = await getListStore('readonly');
-    const nameIndex = listStore.index('name');
+const getCommandByIndex = (currentListName, index) =>
+  withStore('list', 'readonly', async (store) => {
+    const nameIndex = store.index('name');
 
     const currentList = await getListByName(currentListName, nameIndex);
-
-    const targetCommand = currentList.commands[index];
-
-    return targetCommand;
-  } catch (error) {
-    console.log(error);
-  }
-};
+    return currentList.commands[index];
+  });
 
 export default getCommandByIndex;

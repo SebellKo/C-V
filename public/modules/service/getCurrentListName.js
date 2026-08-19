@@ -1,22 +1,15 @@
-import getCurrentListStore from '../getCurrentListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import withStore from '../withStore.js';
 
-const getCurrentListName = async () => {
-  try {
-    const currentListNameStore = await getCurrentListStore('readonly');
+const getCurrentListName = () =>
+  withStore('currentList', 'readonly', async (store) => {
+    const currentListName = await requestToPromise(store.getAll());
 
-    const currentListName = await new Promise((resolve, reject) => {
-      const getCurrentListNameRequest = currentListNameStore.getAll();
-      getCurrentListNameRequest.onsuccess = (event) =>
-        resolve(event.target.result);
-      getCurrentListNameRequest.onError = (error) => reject(error);
-    });
-
-    if (currentListName.length === 0) return '';
+    if (currentListName.length === 0) {
+      return '';
+    }
 
     return currentListName[0].name;
-  } catch (error) {
-    console.log(error);
-  }
-};
+  });
 
 export default getCurrentListName;

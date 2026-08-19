@@ -1,28 +1,27 @@
-import getListStore from '../getListStore.js';
 import getListByName from '../getListByName.js';
 import getPrimaryKey from '../getPrimaryKey.js';
+import requestToPromise from '../requestToPromise.js';
+import withStore from '../withStore.js';
 
-const addCommand = async (newCommand, currentListName) => {
-  try {
-    const listStore = await getListStore('readwrite');
-    const nameIndex = listStore.index('name');
+const addCommand = (newCommand, currentListName) =>
+  withStore('list', 'readwrite', async (store) => {
+    const nameIndex = store.index('name');
 
     const currentList = await getListByName(currentListName, nameIndex);
-
     const primaryKey = await getPrimaryKey(currentListName, nameIndex);
-
     const isDuplicated = currentList.commands.includes(newCommand);
 
-    if (isDuplicated) return { isDuplicated: true };
+    if (isDuplicated) {
+      return { isDuplicated: true };
+    }
 
-    if (currentList.commands.length === 10) return { isFull: true };
+    if (currentList.commands.length === 10) {
+      return { isFull: true };
+    }
 
     currentList.commands = [...currentList.commands, newCommand];
-    await listStore.put(currentList, primaryKey);
+    await requestToPromise(store.put(currentList, primaryKey));
     return { isDuplicated: false };
-  } catch (error) {
-    console.log(error);
-  }
-};
+  });
 
 export default addCommand;
