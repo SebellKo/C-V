@@ -1,16 +1,10 @@
-const putEditList = async (updatedList) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'edit-list',
-        message: { newList: updatedList },
-      })
-      .then((response) => {
-        resolve(response);
-      });
-  });
+import sendRuntimeMessage from './sendRuntimeMessage';
 
-  return result;
+const putEditList = async (updatedList) => {
+  return sendRuntimeMessage({
+    type: 'edit-list',
+    message: { newList: updatedList },
+  });
 };
 
 export default putEditList;

@@ -1,18 +1,16 @@
-import getCurrentListStore from '../getCurrentListStore.js';
+import requestToPromise from '../requestToPromise.js';
+import withStore from '../withStore.js';
 import getList from './getList.js';
 
 const setCurrentListName = async (index) => {
-  try {
-    const listArr = await getList();
-    const currentListStore = await getCurrentListStore('readwrite');
+  const listArr = await getList();
 
+  return withStore('currentList', 'readwrite', async (store) => {
     const currentListName = listArr[index].name;
     const newCurrentListName = { name: currentListName };
 
-    await currentListStore.put(newCurrentListName, 1);
-  } catch (error) {
-    console.log(error);
-  }
+    await requestToPromise(store.put(newCurrentListName, 1));
+  });
 };
 
 export default setCurrentListName;

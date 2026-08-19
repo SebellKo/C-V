@@ -1,10 +1,13 @@
-const getPrimaryKey = async (currentListName, nameIndex) => {
-  const primaryKey = await new Promise((resolve, reject) => {
-    const getKeyRequest = nameIndex.getKey(currentListName);
+import requestToPromise from './requestToPromise.js';
 
-    getKeyRequest.onsuccess = (event) => resolve(event.target.result);
-    getKeyRequest.onerror = (error) => reject(error);
-  });
+const getPrimaryKey = async (currentListName, nameIndex) => {
+  const primaryKey = await requestToPromise(
+    nameIndex.getKey(currentListName),
+  );
+
+  if (primaryKey === undefined) {
+    throw new Error(`List key not found: ${currentListName}`);
+  }
 
   return primaryKey;
 };

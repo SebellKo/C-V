@@ -1,15 +1,9 @@
-const postList = async (listTitle) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'add-list',
-        message: { listName: listTitle, id: crypto.randomUUID() },
-      })
-      .then((response) => {
-        resolve(response);
-      });
+import sendRuntimeMessage from './sendRuntimeMessage';
+
+const postList = (listTitle) =>
+  sendRuntimeMessage({
+    type: 'add-list',
+    message: { listName: listTitle, id: crypto.randomUUID() },
   });
-  return result;
-};
 
 export default postList;

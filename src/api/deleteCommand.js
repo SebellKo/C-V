@@ -1,19 +1,13 @@
-const deleteCommand = async (currentListName, command) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'delete-command',
-        message: {
-          currentListName: currentListName,
-          targetCommand: command,
-        },
-      })
-      .then((response) => {
-        resolve(response);
-      });
-  });
+import sendRuntimeMessage from './sendRuntimeMessage';
 
-  return result;
+const deleteCommand = async (currentListName, command) => {
+  return sendRuntimeMessage({
+    type: 'delete-command',
+    message: {
+      currentListName,
+      targetCommand: command,
+    },
+  });
 };
 
 export default deleteCommand;
