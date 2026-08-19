@@ -1,11 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
 import sendRuntimeMessage from './sendRuntimeMessage';
 
-const postList = async (listTitle) => {
-  return sendRuntimeMessage({
+const postList = (listTitle) =>
+  sendRuntimeMessage({
     type: 'add-list',
-    message: { listName: listTitle, id: uuidv4() },
+    message: { listName: listTitle, id: crypto.randomUUID() },
   });
-};
 
 export default postList;
