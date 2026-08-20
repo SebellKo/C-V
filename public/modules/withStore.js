@@ -17,11 +17,13 @@ const withStore = async (storeName, mode, operation) => {
   const db = await openDatabase();
 
   try {
-    const transaction = db.transaction([storeName], mode);
+    const storeNames = Array.isArray(storeName) ? storeName : [storeName];
+    const transaction = db.transaction(storeNames, mode);
     const done = waitForTransaction(transaction);
 
     try {
-      const result = await operation(transaction.objectStore(storeName));
+      const stores = storeNames.map((name) => transaction.objectStore(name));
+      const result = await operation(...stores);
       await done;
       return result;
     } catch (error) {

@@ -2,14 +2,27 @@ import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
 
 const getCurrentListName = () =>
-  withStore('currentList', 'readonly', async (store) => {
-    const currentListName = await requestToPromise(store.getAll());
+  withStore(
+    ['currentList', 'list'],
+    'readwrite',
+    async (currentListStore, listStore) => {
+      const selectedList = await requestToPromise(currentListStore.get(1));
 
-    if (currentListName.length === 0) {
-      return '';
-    }
+      if (!selectedList) {
+        return '';
+      }
 
-    return currentListName[0].name;
-  });
+      const list = await requestToPromise(
+        listStore.index('id').get(selectedList.listId),
+      );
+
+      if (!list) {
+        await requestToPromise(currentListStore.clear());
+        return '';
+      }
+
+      return list.name;
+    },
+  );
 
 export default getCurrentListName;
