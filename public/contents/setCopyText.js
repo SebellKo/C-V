@@ -1,25 +1,20 @@
-const sendCopiedText = async (currentListName, currentSelection, index) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'set-command-by-index',
-        message: {
-          currentListName: currentListName,
-          newCommand: currentSelection,
-          index: index,
-        },
-      })
-      .then((response) => resolve(response));
+const sendCopiedText = (listId, currentSelection, index) =>
+  chrome.runtime.sendMessage({
+    type: 'set-command-by-index',
+    message: {
+      listId,
+      newCommand: currentSelection,
+      index,
+    },
   });
-
-  return result;
-};
 
 const setCopyText = async (pressedKeyCode) => {
   const index =
     pressedKeyCode === 'Digit0' ? 9 : Number(pressedKeyCode.split('')[5]) - 1;
 
-  const currentList = await getCurrentListName();
+  const currentListId = await getCurrentListId();
 
-  await sendCopiedText(currentList.currentListName, currentSelection, index);
+  if (currentListId === null) return;
+
+  await sendCopiedText(currentListId, currentSelection, index);
 };

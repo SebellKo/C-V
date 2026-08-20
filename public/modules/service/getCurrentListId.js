@@ -2,7 +2,7 @@ import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
 import { CURRENT_LIST_KEY } from '../../constants/database.js';
 
-const getCurrentListName = () =>
+const getCurrentListId = () =>
   withStore(
     ['currentList', 'list'],
     'readwrite',
@@ -12,20 +12,25 @@ const getCurrentListName = () =>
       );
 
       if (!selectedList) {
-        return '';
+        return null;
       }
 
-      const list = await requestToPromise(
-        listStore.index('id').get(selectedList.listId),
+      if (typeof selectedList.listId !== 'string') {
+        await requestToPromise(currentListStore.clear());
+        return null;
+      }
+
+      const listKey = await requestToPromise(
+        listStore.index('id').getKey(selectedList.listId),
       );
 
-      if (!list) {
+      if (listKey === undefined) {
         await requestToPromise(currentListStore.clear());
-        return '';
+        return null;
       }
 
-      return list.name;
+      return selectedList.listId;
     },
   );
 
-export default getCurrentListName;
+export default getCurrentListId;

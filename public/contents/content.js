@@ -10,7 +10,7 @@ document.addEventListener('keydown', async (event) => {
     return await setCopyText(pressedKeyCode);
 
   if (isShiftKeyDown && isPressedNum)
-    return await setCurrentListName(pressedKeyCode);
+    return await setCurrentListByIndex(pressedKeyCode);
 
   if (isAltKeyDown && isPressedNum)
     return await setCurrentCommand(pressedKeyCode);

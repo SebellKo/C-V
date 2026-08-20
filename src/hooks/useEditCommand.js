@@ -3,9 +3,13 @@ import { useListStore } from '../stores/ListStore';
 import putEditCommand from '../api/putEditCommand';
 import useCommandStore from '../stores/CommandStore';
 import { useEditCommandModalStore } from '../stores/ModalStore';
+import {
+  getListQueryKey,
+  LISTS_QUERY_KEY,
+} from '../constants/queryKeys';
 
 const useEditCommand = (setIsDuplicated) => {
-  const currentListName = useListStore((state) => state.currentListName);
+  const selectedListId = useListStore((state) => state.selectedListId);
   const resetSelectedCommand = useCommandStore(
     (state) => state.resetSelectedCommand,
   );
@@ -16,12 +20,18 @@ const useEditCommand = (setIsDuplicated) => {
 
   const { mutate: editCommandMutate } = useMutation({
     mutationFn: ({ selectedCommand, newCommandValue }) =>
-      putEditCommand(currentListName, selectedCommand, newCommandValue),
+      putEditCommand(selectedListId, selectedCommand, newCommandValue),
     onSuccess: (data) => {
       if (data.isDuplicated) return setIsDuplicated(true);
       resetSelectedCommand();
       closeEditCommandModal();
-      queryClient.invalidateQueries({ queryKey: ['list', currentListName] });
+      queryClient.invalidateQueries({
+        queryKey: getListQueryKey(selectedListId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: LISTS_QUERY_KEY,
+        exact: true,
+      });
     },
   });
 

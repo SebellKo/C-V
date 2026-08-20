@@ -1,9 +1,9 @@
 import sendRuntimeMessage from './sendRuntimeMessage';
 
-const postCommand = async (newCommand, currentListName) => {
+const postCommand = async (newCommand, listId) => {
   return sendRuntimeMessage({
     type: 'add-new-command',
-    message: { newCommand, currentListName },
+    message: { newCommand, listId },
   });
 };
 

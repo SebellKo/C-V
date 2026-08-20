@@ -1,43 +1,28 @@
 import styled from 'styled-components';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
-import { useListStore } from '../../stores/ListStore';
-import useGetList from '../../hooks/useGetList';
-
-const List = ({ isOpen, setIsOpen }) => {
-  const setListName = useListStore((state) => state.setListName);
-  const [updatedList, setUpdatedList] = useState([]);
-  const { list, isSuccess } = useGetList();
+const List = ({ list, onSelect, setIsOpen }) => {
   const listItemRef = useRef(null);
 
   useEffect(() => {
     const handleClickOthers = (event) => {
       if (
         listItemRef.current &&
-        !listItemRef.current.contains(event.target) &&
-        isOpen
+        !listItemRef.current.contains(event.target)
       )
         setIsOpen(false);
     };
-    document.addEventListener('click', (event) => handleClickOthers(event));
+    document.addEventListener('click', handleClickOthers);
 
-    return () =>
-      document.removeEventListener('click', (event) => handleClickItem(event));
-  }, []);
-
-  useEffect(() => {
-    if (isSuccess) setUpdatedList(list);
-  }, [list, isSuccess]);
-
-  const handleClickItem = (event) => {
-    const selectName = event.target.innerText;
-    setListName(selectName);
-  };
+    return () => document.removeEventListener('click', handleClickOthers);
+  }, [setIsOpen]);
 
   return (
-    <ListWrapper ref={listItemRef} onClick={(event) => handleClickItem(event)}>
-      {updatedList.map((listItem, index) => (
-        <li key={index}>{listItem.name}</li>
+    <ListWrapper ref={listItemRef} onClick={(event) => event.stopPropagation()}>
+      {list.map((listItem) => (
+        <li key={listItem.id} onClick={() => onSelect(listItem.id)}>
+          {listItem.name}
+        </li>
       ))}
     </ListWrapper>
   );

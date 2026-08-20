@@ -1,10 +1,10 @@
 import sendRuntimeMessage from './sendRuntimeMessage';
 
-const putEditCommands = async (currentListName, updatedCommands) => {
+const putEditCommands = async (listId, updatedCommands) => {
   return sendRuntimeMessage({
     type: 'edit-commands',
     message: {
-      currentListName,
+      listId,
       updatedCommands,
     },
   });

@@ -2,22 +2,26 @@ const setCurrentCommand = async (pressedKeyCode) => {
   const index =
     pressedKeyCode === 'Digit0' ? 9 : Number(pressedKeyCode.split('')[5]) - 1;
 
-  const currentList = await getCurrentListName();
+  const currentListId = await getCurrentListId();
 
-  const command = await getCurrentCommand(currentList.currentListName, index);
+  if (currentListId === null) return;
 
-  navigator.clipboard.writeText(command.command);
+  const command = await getCurrentCommand(currentListId, index);
+
+  if (typeof command === 'string') {
+    await navigator.clipboard.writeText(command);
+  }
 };
 
-const getCurrentCommand = async (currentListName, index) => {
-  const result = await new Promise((resolve, reject) => {
-    chrome.runtime
-      .sendMessage({
-        type: 'get-current-command',
-        message: { currentListName: currentListName, index: index },
-      })
-      .then((response) => resolve(response));
+const getCurrentCommand = async (listId, index) => {
+  const response = await chrome.runtime.sendMessage({
+    type: 'get-current-command',
+    message: { listId, index },
   });
 
-  return result;
+  if (!response.ok) {
+    throw new Error(response.error.message);
+  }
+
+  return response.data.command;
 };

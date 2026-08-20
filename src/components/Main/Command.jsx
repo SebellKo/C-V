@@ -6,11 +6,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEditCommandModalStore } from '../../stores/ModalStore';
 import useCommandStore from '../../stores/CommandStore';
 import deleteCommand from '../../api/deleteCommand';
+import {
+  getListQueryKey,
+  LISTS_QUERY_KEY,
+} from '../../constants/queryKeys';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
 
-const Command = ({ listName, listItem, index }) => {
+const Command = ({ listId, listItem, index }) => {
   const {
     attributes,
     listeners,
@@ -31,14 +35,21 @@ const Command = ({ listName, listItem, index }) => {
   const command = listItem;
 
   const { mutate: deleteCommandMutate } = useMutation({
-    mutationFn: ({ targetListName, targetCommand }) =>
-      deleteCommand(targetListName, targetCommand),
-    onSuccess: (_data, { targetListName }) =>
-      queryClient.invalidateQueries({ queryKey: ['list', targetListName] }),
+    mutationFn: ({ targetListId, targetCommand }) =>
+      deleteCommand(targetListId, targetCommand),
+    onSuccess: (_data, { targetListId }) => {
+      queryClient.invalidateQueries({
+        queryKey: getListQueryKey(targetListId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: LISTS_QUERY_KEY,
+        exact: true,
+      });
+    },
   });
 
   const handleClickDeleteIcon = () =>
-    deleteCommandMutate({ targetListName: listName, targetCommand: command });
+    deleteCommandMutate({ targetListId: listId, targetCommand: command });
 
   const handleClickCommand = () => {
     openEditCommandModal();

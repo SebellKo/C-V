@@ -7,12 +7,12 @@ const DeleteAllButton = () => {
   const openDeleteConfirmModal = useDeleteConfirmModalStore(
     (state) => state.openModal,
   );
-  const currentListName = useListStore((state) => state.currentListName);
+  const selectedListId = useListStore((state) => state.selectedListId);
 
   return (
     <StyledDeleteAllButton
       onClick={openDeleteConfirmModal}
-      disabled={currentListName === 'Select'}
+      disabled={selectedListId === null}
     >
       Delete All
     </StyledDeleteAllButton>
