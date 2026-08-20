@@ -1,12 +1,15 @@
 import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
+import { CURRENT_LIST_KEY } from '../openDatabase.js';
 
 const getCurrentListName = () =>
   withStore(
     ['currentList', 'list'],
     'readwrite',
     async (currentListStore, listStore) => {
-      const selectedList = await requestToPromise(currentListStore.get(1));
+      const selectedList = await requestToPromise(
+        currentListStore.get(CURRENT_LIST_KEY),
+      );
 
       if (!selectedList) {
         return '';

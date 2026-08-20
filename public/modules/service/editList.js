@@ -1,5 +1,6 @@
 import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
+import { CURRENT_LIST_KEY } from '../openDatabase.js';
 
 const editList = (newList) =>
   withStore(
@@ -17,7 +18,9 @@ const editList = (newList) =>
         return { isDuplicated: true };
       }
 
-      const selectedList = await requestToPromise(currentStore.get(1));
+      const selectedList = await requestToPromise(
+        currentStore.get(CURRENT_LIST_KEY),
+      );
       const requests = [
         store.clear(),
         ...newList.map((item) => store.add(item)),

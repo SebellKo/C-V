@@ -1,6 +1,7 @@
 import requestToPromise from './requestToPromise.js';
 
 const DATABASE_VERSION = 2;
+export const CURRENT_LIST_KEY = 1;
 
 const openDatabase = () => {
   const request = indexedDB.open('CVStore', DATABASE_VERSION);
@@ -86,7 +87,7 @@ const migrateCurrentList = (listStore, currentListStore) => {
 
       if (list) {
         clearRequest.onsuccess = () =>
-          currentListStore.put({ listId: list.id }, 1);
+          currentListStore.put({ listId: list.id }, CURRENT_LIST_KEY);
       }
     };
   };
