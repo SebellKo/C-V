@@ -1,6 +1,6 @@
 import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
-import { CURRENT_LIST_KEY } from '../openDatabase.js';
+import { CURRENT_LIST_KEY } from '../../constants/database.js';
 
 const setCurrentListName = (index) =>
   withStore(['list', 'currentList'], 'readwrite', async (listStore, store) => {

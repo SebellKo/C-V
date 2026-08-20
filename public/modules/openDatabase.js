@@ -1,10 +1,12 @@
 import requestToPromise from './requestToPromise.js';
-
-const DATABASE_VERSION = 2;
-export const CURRENT_LIST_KEY = 1;
+import {
+  CURRENT_LIST_KEY,
+  DATABASE_NAME,
+  DATABASE_VERSION,
+} from '../constants/database.js';
 
 const openDatabase = () => {
-  const request = indexedDB.open('CVStore', DATABASE_VERSION);
+  const request = indexedDB.open(DATABASE_NAME, DATABASE_VERSION);
 
   request.onupgradeneeded = (event) => {
     const db = event.target.result;
