@@ -10,28 +10,12 @@ const editList = ({ orderedIds, renamedLists, deletedIds }) =>
     ['list', 'currentList'],
     'readwrite',
     async (store, currentStore) => {
-      const renamedIds = renamedLists.map(({ id }) => id);
-
-      if (
-        hasDuplicates(orderedIds) ||
-        hasDuplicates(renamedIds) ||
-        hasDuplicates(deletedIds) ||
-        orderedIds.some((id) => deletedIds.includes(id)) ||
-        renamedIds.some((id) => deletedIds.includes(id))
-      ) {
-        throw new Error('Invalid list metadata patch');
-      }
-
       if (
         orderedIds.length === 0 &&
         renamedLists.length === 0 &&
         deletedIds.length === 0
       ) {
         return { isDuplicated: false, isInvalidName: false };
-      }
-
-      if (renamedLists.some(({ name }) => !isValidListName(name))) {
-        return { isInvalidName: true };
       }
 
       const [lists, primaryKeys, selectedList] = await Promise.all([
@@ -48,16 +32,12 @@ const editList = ({ orderedIds, renamedLists, deletedIds }) =>
         records.map((record) => [record.list.id, record]),
       );
 
-      if (renamedIds.some((id) => !recordsById.has(id))) {
-        throw new Error('List to rename was not found');
-      }
-
       const deletedIdSet = new Set(deletedIds);
       const orderedIdSet = new Set(orderedIds);
       const renamedListById = new Map(
         renamedLists.map((list) => [list.id, list.name]),
       );
-      const reorderedRecords = orderedIds
+      const reorderedRecords = [...orderedIdSet]
         .map((id) => recordsById.get(id))
         .filter((record) => record && !deletedIdSet.has(record.list.id));
       const unmentionedRecords = records
