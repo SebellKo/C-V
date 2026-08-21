@@ -1,9 +1,9 @@
 import sendRuntimeMessage from './sendRuntimeMessage';
 
-const putEditList = async (updatedList) => {
+const putEditList = async (metadataPatch) => {
   return sendRuntimeMessage({
     type: 'edit-list',
-    message: { newList: updatedList },
+    message: metadataPatch,
   });
 };
 

@@ -7,7 +7,7 @@ import {
   LISTS_QUERY_KEY,
 } from '../constants/queryKeys';
 
-const useEditList = (setIsDuplicated) => {
+const useEditList = (setIsDuplicated, setIsInvalidName) => {
   const closeEditModal = useEditListModalStore((state) => state.closeModal);
   const selectedListId = useListStore((state) => state.selectedListId);
   const setSelectedListId = useListStore(
@@ -16,22 +16,21 @@ const useEditList = (setIsDuplicated) => {
   const queryClient = useQueryClient();
 
   const { mutate: editListMutate } = useMutation({
-    mutationFn: ({ updatedList }) => putEditList(updatedList),
-    onSuccess: (data, { updatedList }) => {
+    mutationFn: putEditList,
+    onSuccess: (data, { deletedIds }) => {
       if (data.isDuplicated) return setIsDuplicated(true);
+      if (data.isInvalidName) return setIsInvalidName(true);
 
-      const isSelectedListAvailable = updatedList.some(
-        (listItem) => listItem.id === selectedListId,
-      );
-      const nextSelectedListId = isSelectedListAvailable
-        ? selectedListId
-        : null;
+      const nextSelectedListId = deletedIds.includes(selectedListId)
+        ? null
+        : selectedListId;
 
       setSelectedListId(nextSelectedListId);
       queryClient.setQueryData(
         CURRENT_LIST_QUERY_KEY,
         nextSelectedListId,
       );
+      queryClient.invalidateQueries({ queryKey: CURRENT_LIST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: LISTS_QUERY_KEY });
       closeEditModal();
     },
