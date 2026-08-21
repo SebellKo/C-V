@@ -6,6 +6,18 @@ const errorResponse = (code, message) => ({
 const isString = (value) => typeof value === 'string';
 const isNullableString = (value) => value === null || isString(value);
 const isIndex = (value) => Number.isInteger(value) && value >= 0;
+const isStringArray = (value) =>
+  Array.isArray(value) && value.every(isString);
+const isRenamedListArray = (value) =>
+  Array.isArray(value) &&
+  value.every(
+    (list) =>
+      list !== null &&
+      typeof list === 'object' &&
+      !Array.isArray(list) &&
+      isString(list.id) &&
+      isString(list.name),
+  );
 
 const hasPayload = (shape) => (message) =>
   message !== null &&
@@ -17,6 +29,7 @@ const mutationResult = (result) => {
   if (!result) throw new Error('Database operation returned no result');
   if (result.isDuplicated) return { isDuplicated: true };
   if (result.isFull) return { isFull: true };
+  if (result.isInvalidName) return { isInvalidName: true };
   return { success: true };
 };
 
@@ -45,9 +58,13 @@ export const createRpcDispatcher = (services) => {
       }),
     },
     'edit-list': {
-      validate: hasPayload({ newList: Array.isArray }),
-      run: async ({ newList }) =>
-        mutationResult(await services.editList(newList)),
+      validate: hasPayload({
+        orderedIds: isStringArray,
+        renamedLists: isRenamedListArray,
+        deletedIds: isStringArray,
+      }),
+      run: async (metadataPatch) =>
+        mutationResult(await services.editList(metadataPatch)),
     },
     'get-list-by-id': {
       validate: hasPayload({ listId: isString }),

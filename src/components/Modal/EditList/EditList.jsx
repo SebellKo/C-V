@@ -1,43 +1,34 @@
 import { styled } from 'styled-components';
-import { useState } from 'react';
 import { DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 
 import EditListItem from './EditListItem';
 
-const EditList = ({ updatedList, setUpdatedList, setIsDuplicated }) => {
-  const [activeId, setActiveId] = useState();
-
-  const handleDragStart = ({ active }) => {
-    setActiveId(active.id);
-  };
-  const handleDragEnd = ({ over }) => {
-    if (over && activeId) {
+const EditList = ({ updatedList, setUpdatedList, onChange }) => {
+  const handleDragEnd = ({ active, over }) => {
+    if (over && active.id !== over.id) {
       const activeIndex = updatedList.findIndex(
-        (item) => item.name === activeId,
+        (item) => item.id === active.id,
       );
-      const overIndex = updatedList.findIndex((item) => item.name === over.id);
-      const updatedArr = arrayMove(updatedList, activeIndex, overIndex);
+      const overIndex = updatedList.findIndex((item) => item.id === over.id);
 
-      setUpdatedList(updatedArr);
+      setUpdatedList(arrayMove(updatedList, activeIndex, overIndex));
+      onChange();
     }
-    setActiveId(null);
   };
 
   return (
     <EditListWrapper>
-      <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={handleDragEnd}>
         {updatedList.length === 0 && <h5>리스트가 없습니다.</h5>}
-        <SortableContext items={updatedList.map((item) => item.name)}>
-          {updatedList.map((listItem, index) => {
+        <SortableContext items={updatedList.map((item) => item.id)}>
+          {updatedList.map((listItem) => {
             return (
               <EditListItem
-                value={listItem.name}
+                listItem={listItem}
                 key={listItem.id}
-                index={index}
-                updatedList={updatedList}
                 setUpdatedList={setUpdatedList}
-                setIsDuplicated={setIsDuplicated}
+                onChange={onChange}
               />
             );
           })}

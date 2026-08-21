@@ -13,9 +13,14 @@ import Caution from '../../styles/components/Caution';
 function AddListModal() {
   const [isDuplicated, setIsDuplicated] = useState(false);
   const [isFull, setIsFull] = useState(false);
+  const [isInvalidName, setIsInvalidName] = useState(false);
   const [listTitle, setListTitle] = useState('');
   const closeAddModal = useAddListModalStore((state) => state.closeModal);
-  const { addListMutate } = useAddList(setIsDuplicated, setIsFull);
+  const { addListMutate } = useAddList(
+    setIsDuplicated,
+    setIsFull,
+    setIsInvalidName,
+  );
 
   const handleClickConrifm = () => addListMutate({ listTitle: listTitle });
 
@@ -24,6 +29,7 @@ function AddListModal() {
     setListTitle(inputValue);
     setIsDuplicated(false);
     setIsFull(false);
+    setIsInvalidName(false);
   };
 
   return (
@@ -32,6 +38,7 @@ function AddListModal() {
       <EditInput onChange={(event) => handleChangeInput(event)}></EditInput>
       {isDuplicated && <Caution>중복된 리스트 입니다</Caution>}
       {isFull && <Caution>리스트는 10개까지 생성 가능합니다</Caution>}
+      {isInvalidName && <Caution>리스트 이름을 확인해주세요</Caution>}
       <ConfirmButtons>
         <Button onClick={handleClickConrifm}>확인</Button>
         <Button onClick={closeAddModal}>취소</Button>

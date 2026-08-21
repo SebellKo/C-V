@@ -7,13 +7,7 @@ import EditInput from './EditInput';
 import deleteIcon from '../../../assets/images/delete-black.svg';
 import dragDropIcon from '../../../assets/images/drag-drop.svg';
 
-function EditListItem({
-  updatedList,
-  setUpdatedList,
-  value,
-  index,
-  setIsDuplicated,
-}) {
+function EditListItem({ listItem, setUpdatedList, onChange }) {
   const {
     attributes,
     listeners,
@@ -22,21 +16,23 @@ function EditListItem({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: value });
+  } = useSortable({ id: listItem.id });
 
-  const handleChangeInput = (event, index) => {
+  const handleChangeInput = (event) => {
     const inputValue = event.target.value;
-    const convertedList = [...updatedList];
-    convertedList[index].name = inputValue;
-    setUpdatedList(convertedList);
-    setIsDuplicated(false);
+    setUpdatedList((list) =>
+      list.map((item) =>
+        item.id === listItem.id ? { ...item, name: inputValue } : item,
+      ),
+    );
+    onChange();
   };
 
-  const handleClickDelete = (listName) => {
-    const deletedList = updatedList.filter(
-      (listItem) => listItem.name !== listName,
+  const handleClickDelete = () => {
+    setUpdatedList((list) =>
+      list.filter((item) => item.id !== listItem.id),
     );
-    setUpdatedList(deletedList);
+    onChange();
   };
 
   return (
@@ -55,14 +51,11 @@ function EditListItem({
         ref={setActivatorNodeRef}
         {...listeners}
       />
-      <EditInput
-        value={value}
-        onChange={(event) => handleChangeInput(event, index)}
-      ></EditInput>
+      <EditInput value={listItem.name} onChange={handleChangeInput}></EditInput>
       <img
         src={deleteIcon}
         alt="delete icon"
-        onClick={() => handleClickDelete(value)}
+        onClick={handleClickDelete}
       />
     </Item>
   );

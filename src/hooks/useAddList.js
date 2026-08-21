@@ -3,7 +3,7 @@ import postList from '../api/postList';
 import { useAddListModalStore } from '../stores/ModalStore';
 import { LISTS_QUERY_KEY } from '../constants/queryKeys';
 
-const useAddList = (setIsDuplicated, setIsFull) => {
+const useAddList = (setIsDuplicated, setIsFull, setIsInvalidName) => {
   const closeAddModal = useAddListModalStore((state) => state.closeModal);
   const queryClient = useQueryClient();
 
@@ -12,6 +12,7 @@ const useAddList = (setIsDuplicated, setIsFull) => {
     onSuccess: (data) => {
       if (data.isDuplicated) return setIsDuplicated(true);
       if (data.isFull) return setIsFull(true);
+      if (data.isInvalidName) return setIsInvalidName(true);
       queryClient.invalidateQueries({ queryKey: LISTS_QUERY_KEY });
       closeAddModal();
     },
