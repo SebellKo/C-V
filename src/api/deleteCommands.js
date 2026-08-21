@@ -1,10 +1,10 @@
 import sendRuntimeMessage from './sendRuntimeMessage';
 
-const deleteCommands = async (currentListName) => {
+const deleteCommands = async (listId) => {
   return sendRuntimeMessage({
     type: 'delete-commands',
     message: {
-      currentListName,
+      listId,
     },
   });
 };

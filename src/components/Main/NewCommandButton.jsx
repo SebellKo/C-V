@@ -7,12 +7,12 @@ const NewCommandButton = () => {
   const openAddCommandModal = useAddCommandModalStore(
     (state) => state.openModal,
   );
-  const currentListName = useListStore((state) => state.currentListName);
+  const selectedListId = useListStore((state) => state.selectedListId);
 
   return (
     <StyledNewCommandButton
       onClick={openAddCommandModal}
-      disabled={currentListName === 'Select'}
+      disabled={selectedListId === null}
     >
       New Command
     </StyledNewCommandButton>

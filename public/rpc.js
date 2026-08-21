@@ -4,6 +4,7 @@ const errorResponse = (code, message) => ({
 });
 
 const isString = (value) => typeof value === 'string';
+const isNullableString = (value) => value === null || isString(value);
 const isIndex = (value) => Number.isInteger(value) && value >= 0;
 
 const hasPayload = (shape) => (message) =>
@@ -48,92 +49,87 @@ export const createRpcDispatcher = (services) => {
       run: async ({ newList }) =>
         mutationResult(await services.editList(newList)),
     },
-    'get-list-by-name': {
-      validate: hasPayload({ name: isString }),
-      run: async ({ name }) => ({
-        listData: await services.getCurrentListByName(name),
+    'get-list-by-id': {
+      validate: hasPayload({ listId: isString }),
+      run: async ({ listId }) => ({
+        listData: await services.getListById(listId),
       }),
     },
     'add-new-command': {
       validate: hasPayload({
         newCommand: isString,
-        currentListName: isString,
+        listId: isString,
       }),
-      run: async ({ newCommand, currentListName }) =>
-        mutationResult(
-          await services.addCommand(newCommand, currentListName),
-        ),
+      run: async ({ newCommand, listId }) =>
+        mutationResult(await services.addCommand(newCommand, listId)),
     },
     'edit-commands': {
       validate: hasPayload({
-        currentListName: isString,
+        listId: isString,
         updatedCommands: Array.isArray,
       }),
-      run: ({ currentListName, updatedCommands }) =>
-        success(() =>
-          services.editCommands(currentListName, updatedCommands),
-        ),
+      run: ({ listId, updatedCommands }) =>
+        success(() => services.editCommands(listId, updatedCommands)),
     },
     'delete-command': {
       validate: hasPayload({
-        currentListName: isString,
+        listId: isString,
         targetCommand: isString,
       }),
-      run: ({ currentListName, targetCommand }) =>
-        success(() =>
-          services.deleteCommand(currentListName, targetCommand),
-        ),
+      run: ({ listId, targetCommand }) =>
+        success(() => services.deleteCommand(listId, targetCommand)),
     },
     'edit-command': {
       validate: hasPayload({
-        currentListName: isString,
+        listId: isString,
         targetCommand: isString,
         newCommand: isString,
       }),
-      run: async ({ currentListName, targetCommand, newCommand }) =>
+      run: async ({ listId, targetCommand, newCommand }) =>
         mutationResult(
-          await services.editCommand(
-            currentListName,
-            targetCommand,
-            newCommand,
-          ),
+          await services.editCommand(listId, targetCommand, newCommand),
         ),
     },
     'delete-commands': {
-      validate: hasPayload({ currentListName: isString }),
-      run: ({ currentListName }) =>
-        success(() => services.deleteCommands(currentListName)),
+      validate: hasPayload({ listId: isString }),
+      run: ({ listId }) =>
+        success(() => services.deleteCommands(listId)),
     },
-    'get-current-list-name': {
+    'get-current-list-id': {
       run: async () => ({
-        currentListName: requiredResult(
-          await services.getCurrentListName(),
+        currentListId: requiredResult(
+          await services.getCurrentListId(),
         ),
       }),
     },
-    'set-current-list-name': {
+    'set-current-list-id': {
+      validate: hasPayload({ listId: isNullableString }),
+      run: ({ listId }) =>
+        success(() => services.setCurrentListId(listId)),
+    },
+    'set-current-list-by-index': {
       validate: hasPayload({ index: isIndex }),
       run: ({ index }) =>
-        success(() => services.setCurrentListName(index)),
+        success(() => services.setCurrentListByIndex(index)),
     },
     'set-command-by-index': {
       validate: hasPayload({
-        currentListName: isString,
+        listId: isString,
         newCommand: isString,
         index: isIndex,
       }),
-      run: ({ currentListName, newCommand, index }) =>
+      run: ({ listId, newCommand, index }) =>
         success(() =>
-          services.setCommandByIndex(currentListName, newCommand, index),
+          services.setCommandByIndex(listId, newCommand, index),
         ),
     },
     'get-current-command': {
       validate: hasPayload({
-        currentListName: isString,
+        listId: isString,
         index: isIndex,
       }),
-      run: async ({ currentListName, index }) => ({
-        command: await services.getCommandByIndex(currentListName, index),
+      run: async ({ listId, index }) => ({
+        command: await services.getCommandByIndex(listId, index),
       }),
     },
   };

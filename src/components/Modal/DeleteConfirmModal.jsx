@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { useListStore } from '../../stores/ListStore';
 import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
 import useDeleteCommands from '../../hooks/useDeleteCommands';
+import useGetList from '../../hooks/useGetList';
 
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
@@ -12,17 +13,20 @@ import Button from '../common/Button';
 import Caution from '../../styles/components/Caution';
 
 function DeleteConfirmModal() {
-  const currentListName = useListStore((state) => state.currentListName);
+  const selectedListId = useListStore((state) => state.selectedListId);
   const closeDeleteConfirmModal = useDeleteConfirmModalStore(
     (state) => state.closeModal,
   );
-  const { deleteCommandsMutate } = useDeleteCommands(currentListName);
+  const { list = [] } = useGetList();
+  const { deleteCommandsMutate } = useDeleteCommands(selectedListId);
+  const selectedListName =
+    list.find((listItem) => listItem.id === selectedListId)?.name ?? '';
 
   const handleClickConfirm = () => deleteCommandsMutate();
 
   return (
     <ModalCard>
-      <ModalTitle>"{currentListName}" 리스트를 삭제 하시겠습니까 ?</ModalTitle>
+      <ModalTitle>"{selectedListName}" 리스트를 삭제 하시겠습니까 ?</ModalTitle>
       <Caution>저장된 모든 커맨드들이 삭제됩니다</Caution>
       <ConfirmButtons>
         <Button onClick={handleClickConfirm}>확인</Button>

@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 
 const useListStore = create((set) => ({
-  currentListName: 'Select',
-  setListName: (name) => set({ currentListName: name }),
+  selectedListId: null,
+  setSelectedListId: (selectedListId) => set({ selectedListId }),
 }));
 
 export { useListStore };

@@ -1,14 +1,14 @@
-import getListByName from '../getListByName.js';
+import getListById from '../getListById.js';
 import getPrimaryKey from '../getPrimaryKey.js';
 import requestToPromise from '../requestToPromise.js';
 import withStore from '../withStore.js';
 
-const deleteCommands = (currentListName) =>
+const deleteCommands = (listId) =>
   withStore('list', 'readwrite', async (store) => {
-    const nameIndex = store.index('name');
+    const idIndex = store.index('id');
 
-    const currentList = await getListByName(currentListName, nameIndex);
-    const primaryKey = await getPrimaryKey(currentListName, nameIndex);
+    const currentList = await getListById(listId, idIndex);
+    const primaryKey = await getPrimaryKey(listId, idIndex);
 
     currentList.commands = [];
 

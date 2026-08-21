@@ -19,8 +19,8 @@
       "js": [
         "contents/content.js",
         "contents/setCopyText.js",
-        "contents/getCurrentListName.js",
-        "contents/setCurrentListName.js",
+        "contents/getCurrentListId.js",
+        "contents/setCurrentListByIndex.js",
         "contents/setCurrentCommand.js"
       ]
     }
