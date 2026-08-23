@@ -1,17 +1,15 @@
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
+import { readState } from '../appState.js';
 
-const getList = () =>
-  withStore('list', 'readonly', async (store) => {
-    const lists = await requestToPromise(store.getAll());
+const getList = async () => {
+  const state = await readState();
 
-    return lists
-      .map((list, index) => ({
-        list,
-        order: Number.isInteger(list.order) ? list.order : index,
-      }))
-      .sort((a, b) => a.order - b.order)
-      .map(({ list }) => list);
-  });
+  return state.lists
+    .map((list, index) => ({
+      list,
+      order: Number.isInteger(list.order) ? list.order : index,
+    }))
+    .sort((a, b) => a.order - b.order)
+    .map(({ list }) => list);
+};
 
 export default getList;

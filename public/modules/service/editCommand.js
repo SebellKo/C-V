@@ -1,18 +1,16 @@
 import getListById from '../getListById.js';
-import getPrimaryKey from '../getPrimaryKey.js';
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
+import { updateState } from '../appState.js';
 
-const editCommand = (listId, targetCommand, newCommand) =>
-  withStore('list', 'readwrite', async (store) => {
-    const idIndex = store.index('id');
+const editCommand = async (listId, targetCommand, newCommand) => {
+  let result;
 
-    const currentList = await getListById(listId, idIndex);
-    const primaryKey = await getPrimaryKey(listId, idIndex);
+  await updateState((state) => {
+    const currentList = getListById(state.lists, listId);
     const isDuplicated = currentList.commands.includes(newCommand);
 
     if (isDuplicated) {
-      return { isDuplicated: true };
+      result = { isDuplicated: true };
+      return state;
     }
 
     const targetIndex = currentList.commands.findIndex(
@@ -20,9 +18,11 @@ const editCommand = (listId, targetCommand, newCommand) =>
     );
 
     currentList.commands[targetIndex] = newCommand;
-
-    await requestToPromise(store.put(currentList, primaryKey));
-    return { isDuplicated: false };
+    result = { isDuplicated: false };
+    return state;
   });
+
+  return result;
+};
 
 export default editCommand;

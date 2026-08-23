@@ -1,10 +1,9 @@
 import findListById from '../getListById.js';
-import withStore from '../withStore.js';
+import { readState } from '../appState.js';
 
-const getListById = (listId) =>
-  withStore('list', 'readonly', async (store) => {
-    const idIndex = store.index('id');
-    return findListById(listId, idIndex);
-  });
+const getListById = async (listId) => {
+  const state = await readState();
+  return findListById(state.lists, listId);
+};
 
 export default getListById;

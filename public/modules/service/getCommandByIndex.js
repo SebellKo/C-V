@@ -1,12 +1,9 @@
 import getListById from '../getListById.js';
-import withStore from '../withStore.js';
+import { readState } from '../appState.js';
 
-const getCommandByIndex = (listId, index) =>
-  withStore('list', 'readonly', async (store) => {
-    const idIndex = store.index('id');
-
-    const currentList = await getListById(listId, idIndex);
-    return currentList.commands[index];
-  });
+const getCommandByIndex = async (listId, index) => {
+  const state = await readState();
+  return getListById(state.lists, listId).commands[index];
+};
 
 export default getCommandByIndex;

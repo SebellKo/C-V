@@ -1,4 +1,4 @@
-import openDatabase from './modules/openDatabase.js';
+import { readState } from './modules/appState.js';
 
 import editList from './modules/service/editList.js';
 import getList from './modules/service/getList.js';
@@ -18,10 +18,9 @@ import { createMessageListener, createRpcDispatcher } from './rpc.js';
 
 chrome.runtime.onInstalled.addListener(async () => {
   try {
-    const db = await openDatabase();
-    console.log('IndexedDB opened successfully:', db);
+    await readState();
   } catch (error) {
-    console.log(error);
+    console.error('Failed to initialize app state', error);
   }
 });
 

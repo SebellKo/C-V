@@ -1,23 +1,12 @@
 import getListById from '../getListById.js';
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
-import { CURRENT_LIST_KEY } from '../../constants/database.js';
+import { updateState } from '../appState.js';
 
 const setCurrentListId = (listId) =>
-  withStore(
-    ['list', 'currentList'],
-    'readwrite',
-    async (listStore, currentListStore) => {
-      if (listId === null) {
-        await requestToPromise(currentListStore.clear());
-        return;
-      }
+  updateState((state) => {
+    if (listId !== null) getListById(state.lists, listId);
 
-      await getListById(listId, listStore.index('id'));
-      await requestToPromise(
-        currentListStore.put({ listId }, CURRENT_LIST_KEY),
-      );
-    },
-  );
+    state.currentListId = listId;
+    return state;
+  });
 
 export default setCurrentListId;

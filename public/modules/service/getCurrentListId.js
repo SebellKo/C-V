@@ -1,36 +1,26 @@
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
-import { CURRENT_LIST_KEY } from '../../constants/database.js';
+import { readState, updateState } from '../appState.js';
 
-const getCurrentListId = () =>
-  withStore(
-    ['currentList', 'list'],
-    'readwrite',
-    async (currentListStore, listStore) => {
-      const selectedList = await requestToPromise(
-        currentListStore.get(CURRENT_LIST_KEY),
-      );
+const getCurrentListId = async () => {
+  const state = await readState();
+  if (
+    state.currentListId === null ||
+    state.lists.some((list) => list.id === state.currentListId)
+  ) {
+    return state.currentListId;
+  }
 
-      if (!selectedList) {
-        return null;
-      }
+  let currentListId;
+  await updateState((latestState) => {
+    currentListId = latestState.lists.some(
+      (list) => list.id === latestState.currentListId,
+    )
+      ? latestState.currentListId
+      : null;
+    latestState.currentListId = currentListId;
+    return latestState;
+  });
 
-      if (typeof selectedList.listId !== 'string') {
-        await requestToPromise(currentListStore.clear());
-        return null;
-      }
-
-      const listKey = await requestToPromise(
-        listStore.index('id').getKey(selectedList.listId),
-      );
-
-      if (listKey === undefined) {
-        await requestToPromise(currentListStore.clear());
-        return null;
-      }
-
-      return selectedList.listId;
-    },
-  );
+  return currentListId;
+};
 
 export default getCurrentListId;

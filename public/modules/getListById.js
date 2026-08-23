@@ -1,7 +1,5 @@
-import requestToPromise from './requestToPromise.js';
-
-const getListById = async (listId, idIndex) => {
-  const list = await requestToPromise(idIndex.get(listId));
+const getListById = (lists, listId) => {
+  const list = lists.find((item) => item.id === listId);
 
   if (!list) {
     throw new Error(`List not found: ${listId}`);

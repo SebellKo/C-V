@@ -1,26 +1,29 @@
 import isValidListName from '../isValidListName.js';
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
+import { updateState } from '../appState.js';
 import { MAX_LIST_COUNT } from '../../constants/list.js';
 
-const addList = (listName, id) =>
-  withStore('list', 'readwrite', async (store) => {
+const addList = async (listName, id) => {
+  let result;
+
+  await updateState((state) => {
     if (!isValidListName(listName)) {
-      return { isInvalidName: true };
+      result = { isInvalidName: true };
+      return state;
     }
 
-    const lists = await requestToPromise(store.getAll());
-    const existedList = lists.some((list) => list.name === listName);
+    const existedList = state.lists.some((list) => list.name === listName);
 
     if (existedList) {
-      return { isDuplicated: true };
+      result = { isDuplicated: true };
+      return state;
     }
 
-    if (lists.length >= MAX_LIST_COUNT) {
-      return { isFull: true };
+    if (state.lists.length >= MAX_LIST_COUNT) {
+      result = { isFull: true };
+      return state;
     }
 
-    const lastOrder = lists.reduce(
+    const lastOrder = state.lists.reduce(
       (maxOrder, list, index) =>
         Math.max(
           maxOrder,
@@ -36,8 +39,12 @@ const addList = (listName, id) =>
       order: lastOrder + 1,
     };
 
-    await requestToPromise(store.add(newList));
-    return { isDuplicated: false };
+    state.lists.push(newList);
+    result = { isDuplicated: false };
+    return state;
   });
+
+  return result;
+};
 
 export default addList;

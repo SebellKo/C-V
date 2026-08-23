@@ -1,23 +1,15 @@
-import requestToPromise from '../requestToPromise.js';
-import withStore from '../withStore.js';
-import { CURRENT_LIST_KEY } from '../../constants/database.js';
+import { updateState } from '../appState.js';
 
 const setCurrentListByIndex = (index) =>
-  withStore(
-    ['list', 'currentList'],
-    'readwrite',
-    async (listStore, currentListStore) => {
-      const lists = await requestToPromise(listStore.getAll());
-      const selectedList = lists[index];
+  updateState((state) => {
+    const selectedList = state.lists[index];
 
-      if (!selectedList) {
-        throw new Error(`List not found at index: ${index}`);
-      }
+    if (!selectedList) {
+      throw new Error(`List not found at index: ${index}`);
+    }
 
-      await requestToPromise(
-        currentListStore.put({ listId: selectedList.id }, CURRENT_LIST_KEY),
-      );
-    },
-  );
+    state.currentListId = selectedList.id;
+    return state;
+  });
 
 export default setCurrentListByIndex;
