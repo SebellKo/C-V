@@ -1,15 +1,11 @@
 import { styled } from 'styled-components';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { useEditCommandModalStore } from '../../stores/ModalStore';
+import { useListStore } from '../../stores/ListStore';
 import useCommandStore from '../../stores/CommandStore';
 import deleteCommand from '../../api/deleteCommand';
-import {
-  getListQueryKey,
-  LISTS_QUERY_KEY,
-} from '../../constants/queryKeys';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
@@ -30,26 +26,18 @@ const Command = ({ listId, listItem, index }) => {
   const setSelectedCommand = useCommandStore(
     (state) => state.setSelectedCommand,
   );
-  const queryClient = useQueryClient();
+  const refresh = useListStore((state) => state.refresh);
 
   const command = listItem;
 
-  const { mutate: deleteCommandMutate } = useMutation({
-    mutationFn: ({ targetListId, targetCommand }) =>
-      deleteCommand(targetListId, targetCommand),
-    onSuccess: (_data, { targetListId }) => {
-      queryClient.invalidateQueries({
-        queryKey: getListQueryKey(targetListId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: LISTS_QUERY_KEY,
-        exact: true,
-      });
-    },
-  });
-
-  const handleClickDeleteIcon = () =>
-    deleteCommandMutate({ targetListId: listId, targetCommand: command });
+  const handleClickDeleteIcon = async () => {
+    try {
+      const result = await deleteCommand(listId, command);
+      if (result.success) await refresh();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleClickCommand = () => {
     openEditCommandModal();

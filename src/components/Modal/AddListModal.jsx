@@ -16,13 +16,19 @@ function AddListModal() {
   const [isInvalidName, setIsInvalidName] = useState(false);
   const [listTitle, setListTitle] = useState('');
   const closeAddModal = useAddListModalStore((state) => state.closeModal);
-  const { addListMutate } = useAddList(
-    setIsDuplicated,
-    setIsFull,
-    setIsInvalidName,
-  );
+  const { addList } = useAddList();
 
-  const handleClickConrifm = () => addListMutate({ listTitle: listTitle });
+  const handleClickConrifm = async () => {
+    try {
+      const result = await addList(listTitle);
+      if (result.isDuplicated) return setIsDuplicated(true);
+      if (result.isFull) return setIsFull(true);
+      if (result.isInvalidName) return setIsInvalidName(true);
+      closeAddModal();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;

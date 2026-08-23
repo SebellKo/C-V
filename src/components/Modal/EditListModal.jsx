@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useEditListModalStore } from '../../stores/ModalStore';
 import useEditList from '../../hooks/useEditList';
-import useGetList from '../../hooks/useGetList';
+import { useListStore } from '../../stores/ListStore';
 
 import ModalCard from '../../styles/components/ModalCard';
 import EditList from './EditList/EditList';
@@ -42,29 +42,35 @@ function EditListModal() {
   const [updatedList, setUpdatedList] = useState([]);
   const [isDuplicated, setIsDuplicated] = useState(false);
   const [isInvalidName, setIsInvalidName] = useState(false);
-  const { editListMutate } = useEditList(
-    setIsDuplicated,
-    setIsInvalidName,
-  );
-  const { list, isSuccess } = useGetList();
+  const lists = useListStore((state) => state.lists);
+  const isLoading = useListStore((state) => state.isLoading);
+  const { editList } = useEditList();
 
   useEffect(() => {
-    if (isSuccess && initialListRef.current === null) {
-      const listMetadata = list.map(({ id, name }) => ({ id, name }));
+    if (!isLoading && initialListRef.current === null) {
+      const listMetadata = lists.map(({ id, name }) => ({ id, name }));
       initialListRef.current = listMetadata;
       setUpdatedList(listMetadata.map((item) => ({ ...item })));
     }
-  }, [list, isSuccess]);
+  }, [lists, isLoading]);
 
   const resetErrors = () => {
     setIsDuplicated(false);
     setIsInvalidName(false);
   };
 
-  const handleClickConfirm = () =>
-    editListMutate(
-      createMetadataPatch(initialListRef.current ?? [], updatedList),
-    );
+  const handleClickConfirm = async () => {
+    try {
+      const result = await editList(
+        createMetadataPatch(initialListRef.current ?? [], updatedList),
+      );
+      if (result.isDuplicated) return setIsDuplicated(true);
+      if (result.isInvalidName) return setIsInvalidName(true);
+      closeEditModal();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ModalCard>

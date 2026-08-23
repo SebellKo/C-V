@@ -17,7 +17,7 @@ function AddCommandModal() {
   const closeAddCommandModal = useAddCommandModalStore(
     (state) => state.closeModal,
   );
-  const { addCommandMutate } = useAddCommand(setIsDuplicated, setIsFull);
+  const { addCommand } = useAddCommand();
 
   const handleChangeInput = (event) => {
     const inputValue = event.target.value;
@@ -26,7 +26,16 @@ function AddCommandModal() {
     setIsFull(false);
   };
 
-  const handleClickConfirm = () => addCommandMutate({ newCommand: newCommand });
+  const handleClickConfirm = async () => {
+    try {
+      const result = await addCommand(newCommand);
+      if (result.isDuplicated) return setIsDuplicated(true);
+      if (result.isFull) return setIsFull(true);
+      closeAddCommandModal();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ModalCard>

@@ -1,25 +1,16 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import putEditCommands from '../api/putEditCommands';
-import {
-  getListQueryKey,
-  LISTS_QUERY_KEY,
-} from '../constants/queryKeys';
+import { useListStore } from '../stores/ListStore';
 
 const useEditCommands = () => {
-  const queryClient = useQueryClient();
-  const { mutate: editCommandsMutate } = useMutation({
-    mutationFn: ({ listId, updatedCommands }) =>
-      putEditCommands(listId, updatedCommands),
-    onSuccess: (_data, { listId }) => {
-      queryClient.invalidateQueries({ queryKey: getListQueryKey(listId) });
-      queryClient.invalidateQueries({
-        queryKey: LISTS_QUERY_KEY,
-        exact: true,
-      });
-    },
-  });
+  const refresh = useListStore((state) => state.refresh);
 
-  return { editCommandsMutate };
+  const editCommands = async (listId, updatedCommands) => {
+    const result = await putEditCommands(listId, updatedCommands);
+    if (result.success) await refresh();
+    return result;
+  };
+
+  return { editCommands };
 };
 
 export default useEditCommands;

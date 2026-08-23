@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useListStore } from '../../stores/ListStore';
 import { useDeleteConfirmModalStore } from '../../stores/ModalStore';
 import useDeleteCommands from '../../hooks/useDeleteCommands';
-import useGetList from '../../hooks/useGetList';
 
 import ModalCard from '../../styles/components/ModalCard';
 import ModalTitle from '../../styles/components/ModalTitle';
@@ -13,16 +12,23 @@ import Button from '../common/Button';
 import Caution from '../../styles/components/Caution';
 
 function DeleteConfirmModal() {
+  const lists = useListStore((state) => state.lists);
   const selectedListId = useListStore((state) => state.selectedListId);
   const closeDeleteConfirmModal = useDeleteConfirmModalStore(
     (state) => state.closeModal,
   );
-  const { list = [] } = useGetList();
-  const { deleteCommandsMutate } = useDeleteCommands(selectedListId);
+  const { deleteAllCommands } = useDeleteCommands();
   const selectedListName =
-    list.find((listItem) => listItem.id === selectedListId)?.name ?? '';
+    lists.find((list) => list.id === selectedListId)?.name ?? '';
 
-  const handleClickConfirm = () => deleteCommandsMutate();
+  const handleClickConfirm = async () => {
+    try {
+      await deleteAllCommands(selectedListId);
+      closeDeleteConfirmModal();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <ModalCard>

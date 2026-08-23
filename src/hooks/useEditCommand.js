@@ -1,41 +1,21 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useListStore } from '../stores/ListStore';
 import putEditCommand from '../api/putEditCommand';
-import useCommandStore from '../stores/CommandStore';
-import { useEditCommandModalStore } from '../stores/ModalStore';
-import {
-  getListQueryKey,
-  LISTS_QUERY_KEY,
-} from '../constants/queryKeys';
 
-const useEditCommand = (setIsDuplicated) => {
+const useEditCommand = () => {
   const selectedListId = useListStore((state) => state.selectedListId);
-  const resetSelectedCommand = useCommandStore(
-    (state) => state.resetSelectedCommand,
-  );
-  const closeEditCommandModal = useEditCommandModalStore(
-    (state) => state.closeModal,
-  );
-  const queryClient = useQueryClient();
+  const refresh = useListStore((state) => state.refresh);
 
-  const { mutate: editCommandMutate } = useMutation({
-    mutationFn: ({ selectedCommand, newCommandValue }) =>
-      putEditCommand(selectedListId, selectedCommand, newCommandValue),
-    onSuccess: (data) => {
-      if (data.isDuplicated) return setIsDuplicated(true);
-      resetSelectedCommand();
-      closeEditCommandModal();
-      queryClient.invalidateQueries({
-        queryKey: getListQueryKey(selectedListId),
-      });
-      queryClient.invalidateQueries({
-        queryKey: LISTS_QUERY_KEY,
-        exact: true,
-      });
-    },
-  });
+  const editCommand = async (selectedCommand, newCommandValue) => {
+    const result = await putEditCommand(
+      selectedListId,
+      selectedCommand,
+      newCommandValue,
+    );
+    if (result.success) await refresh();
+    return result;
+  };
 
-  return { editCommandMutate };
+  return { editCommand };
 };
 
 export default useEditCommand;
