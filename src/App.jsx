@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import Footer from './components/Footer/Footer';
 import Main from './components/Main/Main';
 import Header from './components/header/Header';
+import getCurrentListId from './api/getCurrentListId';
+import getList from './api/getList';
 import { useListStore } from './stores/ListStore';
 import GlobalStyles from './styles/GlobalStyle';
 
@@ -17,11 +19,13 @@ const AppContainer = styled.div`
 `;
 
 function App() {
-  const load = useListStore((state) => state.load);
+  const initialize = useListStore((state) => state.initialize);
 
   useEffect(() => {
-    load().catch(() => {});
-  }, [load]);
+    Promise.all([getList(), getCurrentListId()])
+      .then(([lists, selectedListId]) => initialize(lists, selectedListId))
+      .catch((error) => console.error(error));
+  }, [initialize]);
 
   return (
     <>

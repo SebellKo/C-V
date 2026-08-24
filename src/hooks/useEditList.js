@@ -1,12 +1,13 @@
 import putEditList from '../api/putEditList';
+import getList from '../api/getList';
 import { useListStore } from '../stores/ListStore';
 
 const useEditList = () => {
-  const refresh = useListStore((state) => state.refresh);
+  const setLists = useListStore((state) => state.setLists);
 
   const editList = async (metadataPatch) => {
     const result = await putEditList(metadataPatch);
-    if (result.success) await refresh();
+    if (result.success) setLists(await getList());
     return result;
   };
 

@@ -6,6 +6,7 @@ import { useEditCommandModalStore } from '../../stores/ModalStore';
 import { useListStore } from '../../stores/ListStore';
 import useCommandStore from '../../stores/CommandStore';
 import deleteCommand from '../../api/deleteCommand';
+import getList from '../../api/getList';
 
 import dragDropIcon from '../../assets/images/drag-drop-icon.svg';
 import deleteIcon from '../../assets/images/delete-white.svg';
@@ -26,14 +27,14 @@ const Command = ({ listId, listItem, index }) => {
   const setSelectedCommand = useCommandStore(
     (state) => state.setSelectedCommand,
   );
-  const refresh = useListStore((state) => state.refresh);
+  const setLists = useListStore((state) => state.setLists);
 
   const command = listItem;
 
   const handleClickDeleteIcon = async () => {
     try {
       const result = await deleteCommand(listId, command);
-      if (result.success) await refresh();
+      if (result.success) setLists(await getList());
     } catch (error) {
       console.error(error);
     }

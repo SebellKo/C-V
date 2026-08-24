@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { useState } from 'react';
 
+import setCurrentListId from '../../api/setCurrentListId';
 import { useListStore } from '../../stores/ListStore';
 
 import openButtonIcon from '../../assets/images/open-button.svg';
@@ -9,14 +10,17 @@ import List from './List';
 const SelectButton = () => {
   const lists = useListStore((state) => state.lists);
   const selectedListId = useListStore((state) => state.selectedListId);
-  const select = useListStore((state) => state.select);
+  const setSelectedListId = useListStore(
+    (state) => state.setSelectedListId,
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const selectList = async (listId) => {
     setIsOpen(false);
 
     try {
-      await select(listId);
+      await setCurrentListId(listId);
+      setSelectedListId(listId);
     } catch (error) {
       console.error(error);
     }

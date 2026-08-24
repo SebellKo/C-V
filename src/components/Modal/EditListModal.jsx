@@ -43,16 +43,16 @@ function EditListModal() {
   const [isDuplicated, setIsDuplicated] = useState(false);
   const [isInvalidName, setIsInvalidName] = useState(false);
   const lists = useListStore((state) => state.lists);
-  const isLoading = useListStore((state) => state.isLoading);
+  const isInitialized = useListStore((state) => state.isInitialized);
   const { editList } = useEditList();
 
   useEffect(() => {
-    if (!isLoading && initialListRef.current === null) {
+    if (isInitialized && initialListRef.current === null) {
       const listMetadata = lists.map(({ id, name }) => ({ id, name }));
       initialListRef.current = listMetadata;
       setUpdatedList(listMetadata.map((item) => ({ ...item })));
     }
-  }, [lists, isLoading]);
+  }, [lists, isInitialized]);
 
   const resetErrors = () => {
     setIsDuplicated(false);

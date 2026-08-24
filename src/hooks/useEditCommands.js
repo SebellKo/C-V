@@ -1,12 +1,13 @@
 import putEditCommands from '../api/putEditCommands';
+import getList from '../api/getList';
 import { useListStore } from '../stores/ListStore';
 
 const useEditCommands = () => {
-  const refresh = useListStore((state) => state.refresh);
+  const setLists = useListStore((state) => state.setLists);
 
   const editCommands = async (listId, updatedCommands) => {
     const result = await putEditCommands(listId, updatedCommands);
-    if (result.success) await refresh();
+    if (result.success) setLists(await getList());
     return result;
   };
 
