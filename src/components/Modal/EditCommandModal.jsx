@@ -21,7 +21,7 @@ function EditCommandModal() {
     (state) => state.closeModal,
   );
   const [newCommandValue, setNewCommandValue] = useState(selectedCommand);
-  const { editCommandMutate } = useEditCommand(setIsDuplicated);
+  const { editCommand } = useEditCommand();
 
   const handleChangeCommand = (event) => {
     const inputValue = event.target.value;
@@ -29,11 +29,15 @@ function EditCommandModal() {
     setIsDuplicated(false);
   };
 
-  const handleClickConfirm = () => {
-    editCommandMutate({
-      selectedCommand: selectedCommand,
-      newCommandValue: newCommandValue,
-    });
+  const handleClickConfirm = async () => {
+    try {
+      const result = await editCommand(selectedCommand, newCommandValue);
+      if (result.isDuplicated) return setIsDuplicated(true);
+      resetSelectedCommand();
+      closeEditCommandModal();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleClickCancel = () => {

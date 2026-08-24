@@ -1,71 +1,42 @@
 import { styled } from 'styled-components';
 import { DndContext } from '@dnd-kit/core';
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import useEditCommands from '../../hooks/useEditCommands';
-import useGetListById from '../../hooks/useGetListById';
 
 import Command from './Command';
 import { useListStore } from '../../stores/ListStore';
 
 const CommandList = () => {
+  const lists = useListStore((state) => state.lists);
   const selectedListId = useListStore((state) => state.selectedListId);
-  const [activeId, setActiveId] = useState();
-  const [commandSnapshot, setCommandSnapshot] = useState({
-    listId: null,
-    commands: [],
-  });
-  const { editCommandsMutate } = useEditCommands();
-  const { list, isSuccess } = useGetListById(selectedListId);
+  const [draggedCommand, setDraggedCommand] = useState(null);
+  const { editCommands } = useEditCommands();
+  const selectedList = lists.find((list) => list.id === selectedListId);
+  const commands = selectedList?.commands ?? [];
 
-  useEffect(() => {
-    if (isSuccess) {
-      setCommandSnapshot({
-        listId: selectedListId,
-        commands: list.commands,
-      });
-    }
-    if (selectedListId === null) {
-      setCommandSnapshot({ listId: null, commands: [] });
-    }
-  }, [list, isSuccess, selectedListId]);
-
-  const isCurrentSnapshot = commandSnapshot.listId === selectedListId;
-  const commands = isCurrentSnapshot ? commandSnapshot.commands : [];
-
-  const handleDragStart = ({ active }) => setActiveId(active.id);
+  const handleDragStart = ({ active }) =>
+    setDraggedCommand({ listId: selectedListId, command: active.id });
 
   const handleDragEnd = ({ over }) => {
-    if (over && activeId && isCurrentSnapshot) {
+    const isCurrentList = draggedCommand?.listId === selectedListId;
+    setDraggedCommand(null);
+
+    if (over && draggedCommand && isCurrentList) {
       const activeIndex = commands.findIndex(
-        (commandItem) => commandItem === activeId,
+        (command) => command === draggedCommand.command,
       );
       const overIndex = commands.findIndex(
-        (commandItem) => commandItem === over.id,
+        (command) => command === over.id,
       );
       if (activeIndex !== -1 && overIndex !== -1) {
-        const previousSnapshot = commandSnapshot;
-        const updatedSnapshot = {
-          listId: commandSnapshot.listId,
-          commands: arrayMove(commands, activeIndex, overIndex),
-        };
-        setCommandSnapshot(updatedSnapshot);
-        editCommandsMutate(
-          {
-            listId: updatedSnapshot.listId,
-            updatedCommands: updatedSnapshot.commands,
-          },
-          {
-            onError: () =>
-              setCommandSnapshot((snapshot) =>
-                snapshot === updatedSnapshot ? previousSnapshot : snapshot,
-              ),
-          },
-        );
+        editCommands(
+          selectedListId,
+          arrayMove(commands, activeIndex, overIndex),
+        ).catch((error) => console.error(error));
       }
     }
-    setActiveId(null);
   };
 
   return (
@@ -76,7 +47,7 @@ const CommandList = () => {
             commands.map((listItem, index) => (
               <Command
                 key={index}
-                listId={commandSnapshot.listId}
+                listId={selectedListId}
                 listItem={listItem}
                 index={index}
               ></Command>

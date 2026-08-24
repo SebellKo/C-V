@@ -1,44 +1,33 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 
-import { useListStore } from '../../stores/ListStore';
-import useGetCurrentListId from '../../hooks/useGetCurrentListId';
-import useGetList from '../../hooks/useGetList';
 import setCurrentListId from '../../api/setCurrentListId';
-import { CURRENT_LIST_QUERY_KEY } from '../../constants/queryKeys';
+import { useListStore } from '../../stores/ListStore';
 
 import openButtonIcon from '../../assets/images/open-button.svg';
 import List from './List';
 
 const SelectButton = () => {
+  const lists = useListStore((state) => state.lists);
   const selectedListId = useListStore((state) => state.selectedListId);
   const setSelectedListId = useListStore(
     (state) => state.setSelectedListId,
   );
   const [isOpen, setIsOpen] = useState(false);
-  const { currentListId, isSuccess: isCurrentListSuccess } =
-    useGetCurrentListId();
-  const { list = [] } = useGetList();
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (isCurrentListSuccess) {
-      setSelectedListId(currentListId);
-    }
-  }, [currentListId, isCurrentListSuccess, setSelectedListId]);
+  const selectList = async (listId) => {
+    setIsOpen(false);
 
-  const { mutate: selectList } = useMutation({
-    mutationFn: setCurrentListId,
-    onSuccess: (_data, listId) => {
+    try {
+      await setCurrentListId(listId);
       setSelectedListId(listId);
-      queryClient.setQueryData(CURRENT_LIST_QUERY_KEY, listId);
-      setIsOpen(false);
-    },
-  });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const selectedListName =
-    list.find((listItem) => listItem.id === selectedListId)?.name ?? 'Select';
+    lists.find((list) => list.id === selectedListId)?.name ?? 'Select';
 
   const handleClickSelect = (event) => {
     event.stopPropagation();
@@ -53,7 +42,7 @@ const SelectButton = () => {
       <ListName>{selectedListName}</ListName>
       <img src={openButtonIcon} alt="" />
       {isOpen && (
-        <List list={list} onSelect={selectList} setIsOpen={setIsOpen} />
+        <List list={lists} onSelect={selectList} setIsOpen={setIsOpen} />
       )}
     </SelectButtonWrapper>
   );

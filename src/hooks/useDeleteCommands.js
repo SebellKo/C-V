@@ -1,30 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import deleteCommands from '../api/deleteCommands';
-import { useDeleteConfirmModalStore } from '../stores/ModalStore';
-import {
-  getListQueryKey,
-  LISTS_QUERY_KEY,
-} from '../constants/queryKeys';
+import getList from '../api/getList';
+import { useListStore } from '../stores/ListStore';
 
-const useDeleteCommands = (listId) => {
-  const queryClient = useQueryClient();
-  const closeDeleteConfirmModal = useDeleteConfirmModalStore(
-    (state) => state.closeModal,
-  );
+const useDeleteCommands = () => {
+  const setLists = useListStore((state) => state.setLists);
 
-  const { mutate: deleteCommandsMutate } = useMutation({
-    mutationFn: () => deleteCommands(listId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: getListQueryKey(listId) });
-      queryClient.invalidateQueries({
-        queryKey: LISTS_QUERY_KEY,
-        exact: true,
-      });
-      closeDeleteConfirmModal();
-    },
-  });
+  const deleteAllCommands = async (listId) => {
+    const result = await deleteCommands(listId);
+    if (result.success) setLists(await getList());
+    return result;
+  };
 
-  return { deleteCommandsMutate };
+  return { deleteAllCommands };
 };
 
 export default useDeleteCommands;

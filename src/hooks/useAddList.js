@@ -1,24 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import postList from '../api/postList';
-import { useAddListModalStore } from '../stores/ModalStore';
-import { LISTS_QUERY_KEY } from '../constants/queryKeys';
+import getList from '../api/getList';
+import { useListStore } from '../stores/ListStore';
 
-const useAddList = (setIsDuplicated, setIsFull, setIsInvalidName) => {
-  const closeAddModal = useAddListModalStore((state) => state.closeModal);
-  const queryClient = useQueryClient();
+const useAddList = () => {
+  const setLists = useListStore((state) => state.setLists);
 
-  const { mutate: addListMutate } = useMutation({
-    mutationFn: ({ listTitle }) => postList(listTitle),
-    onSuccess: (data) => {
-      if (data.isDuplicated) return setIsDuplicated(true);
-      if (data.isFull) return setIsFull(true);
-      if (data.isInvalidName) return setIsInvalidName(true);
-      queryClient.invalidateQueries({ queryKey: LISTS_QUERY_KEY });
-      closeAddModal();
-    },
-  });
+  const addList = async (listTitle) => {
+    const result = await postList(listTitle);
+    if (result.success) setLists(await getList());
+    return result;
+  };
 
-  return { addListMutate };
+  return { addList };
 };
 
 export default useAddList;
