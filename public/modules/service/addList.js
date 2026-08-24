@@ -2,25 +2,20 @@ import isValidListName from '../isValidListName.js';
 import { updateState } from '../appState.js';
 import { MAX_LIST_COUNT } from '../../constants/list.js';
 
-const addList = async (listName, id) => {
-  let result;
-
-  await updateState((state) => {
+const addList = (listName, id) =>
+  updateState((state) => {
     if (!isValidListName(listName)) {
-      result = { isInvalidName: true };
-      return state;
+      return { isInvalidName: true };
     }
 
     const existedList = state.lists.some((list) => list.name === listName);
 
     if (existedList) {
-      result = { isDuplicated: true };
-      return state;
+      return { isDuplicated: true };
     }
 
     if (state.lists.length >= MAX_LIST_COUNT) {
-      result = { isFull: true };
-      return state;
+      return { isFull: true };
     }
 
     const lastOrder = state.lists.reduce(
@@ -40,11 +35,7 @@ const addList = async (listName, id) => {
     };
 
     state.lists.push(newList);
-    result = { isDuplicated: false };
-    return state;
+    return { isDuplicated: false };
   });
-
-  return result;
-};
 
 export default addList;

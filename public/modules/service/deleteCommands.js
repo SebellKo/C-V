@@ -6,7 +6,6 @@ const deleteCommands = (listId) =>
     const currentList = getListById(state.lists, listId);
 
     currentList.commands = [];
-    return state;
   });
 
 export default deleteCommands;

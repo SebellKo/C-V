@@ -9,7 +9,6 @@ const setCurrentListByIndex = (index) =>
     }
 
     state.currentListId = selectedList.id;
-    return state;
   });
 
 export default setCurrentListByIndex;

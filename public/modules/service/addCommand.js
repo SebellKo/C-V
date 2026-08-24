@@ -1,29 +1,21 @@
 import getListById from '../getListById.js';
 import { updateState } from '../appState.js';
 
-const addCommand = async (newCommand, listId) => {
-  let result;
-
-  await updateState((state) => {
+const addCommand = (newCommand, listId) =>
+  updateState((state) => {
     const currentList = getListById(state.lists, listId);
     const isDuplicated = currentList.commands.includes(newCommand);
 
     if (isDuplicated) {
-      result = { isDuplicated: true };
-      return state;
+      return { isDuplicated: true };
     }
 
     if (currentList.commands.length === 10) {
-      result = { isFull: true };
-      return state;
+      return { isFull: true };
     }
 
     currentList.commands = [...currentList.commands, newCommand];
-    result = { isDuplicated: false };
-    return state;
+    return { isDuplicated: false };
   });
-
-  return result;
-};
 
 export default addCommand;

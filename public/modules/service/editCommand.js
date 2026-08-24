@@ -1,16 +1,13 @@
 import getListById from '../getListById.js';
 import { updateState } from '../appState.js';
 
-const editCommand = async (listId, targetCommand, newCommand) => {
-  let result;
-
-  await updateState((state) => {
+const editCommand = (listId, targetCommand, newCommand) =>
+  updateState((state) => {
     const currentList = getListById(state.lists, listId);
     const isDuplicated = currentList.commands.includes(newCommand);
 
     if (isDuplicated) {
-      result = { isDuplicated: true };
-      return state;
+      return { isDuplicated: true };
     }
 
     const targetIndex = currentList.commands.findIndex(
@@ -18,11 +15,7 @@ const editCommand = async (listId, targetCommand, newCommand) => {
     );
 
     currentList.commands[targetIndex] = newCommand;
-    result = { isDuplicated: false };
-    return state;
+    return { isDuplicated: false };
   });
-
-  return result;
-};
 
 export default editCommand;

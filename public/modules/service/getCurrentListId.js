@@ -9,18 +9,15 @@ const getCurrentListId = async () => {
     return state.currentListId;
   }
 
-  let currentListId;
-  await updateState((latestState) => {
-    currentListId = latestState.lists.some(
+  return updateState((latestState) => {
+    const currentListId = latestState.lists.some(
       (list) => list.id === latestState.currentListId,
     )
       ? latestState.currentListId
       : null;
     latestState.currentListId = currentListId;
-    return latestState;
+    return currentListId;
   });
-
-  return currentListId;
 };
 
 export default getCurrentListId;

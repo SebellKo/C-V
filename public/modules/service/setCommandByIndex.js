@@ -7,7 +7,7 @@ const setCommandByIndex = (listId, newCommand, index) =>
     const isDuplicated = currentList.commands.includes(newCommand);
 
     if (isDuplicated) {
-      return state;
+      return;
     }
 
     currentList.commands[index] = newCommand;
@@ -16,8 +16,6 @@ const setCommandByIndex = (listId, newCommand, index) =>
       if (currentList.commands[i] === undefined)
         currentList.commands[i] = `dummy${i}`;
     }
-
-    return state;
   });
 
 export default setCommandByIndex;

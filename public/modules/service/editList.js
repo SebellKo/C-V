@@ -3,17 +3,14 @@ import { updateState } from '../appState.js';
 
 const hasDuplicates = (items) => new Set(items).size !== items.length;
 
-const editList = async ({ orderedIds, renamedLists, deletedIds }) => {
-  let result;
-
-  await updateState((state) => {
+const editList = ({ orderedIds, renamedLists, deletedIds }) =>
+  updateState((state) => {
     if (
       orderedIds.length === 0 &&
       renamedLists.length === 0 &&
       deletedIds.length === 0
     ) {
-      result = { isDuplicated: false, isInvalidName: false };
-      return state;
+      return { isDuplicated: false, isInvalidName: false };
     }
 
     const records = state.lists.map((list, index) => ({
@@ -49,13 +46,11 @@ const editList = async ({ orderedIds, renamedLists, deletedIds }) => {
     const updatedNames = updatedLists.map((list) => list.name);
 
     if (updatedNames.some((name) => !isValidListName(name))) {
-      result = { isInvalidName: true };
-      return state;
+      return { isInvalidName: true };
     }
 
     if (hasDuplicates(updatedNames)) {
-      result = { isDuplicated: true };
-      return state;
+      return { isDuplicated: true };
     }
 
     state.lists = updatedLists;
@@ -66,11 +61,7 @@ const editList = async ({ orderedIds, renamedLists, deletedIds }) => {
       state.currentListId = null;
     }
 
-    result = { isDuplicated: false, isInvalidName: false };
-    return state;
+    return { isDuplicated: false, isInvalidName: false };
   });
-
-  return result;
-};
 
 export default editList;

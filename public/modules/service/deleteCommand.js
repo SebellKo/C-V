@@ -8,7 +8,6 @@ const deleteCommand = (listId, targetCommand) =>
     currentList.commands = currentList.commands.filter(
       (commandItem) => commandItem !== targetCommand,
     );
-    return state;
   });
 
 export default deleteCommand;

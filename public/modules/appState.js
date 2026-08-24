@@ -68,12 +68,13 @@ export const readState = async () => {
   return assertState(await getStoredState());
 };
 
-export const updateState = (updater) => {
+export const updateState = (mutator) => {
   const operation = mutationQueue.then(async () => {
-    const currentState = await readState();
-    const nextState = assertState(await updater(currentState));
-    await chrome.storage.local.set({ [APP_STATE_KEY]: nextState });
-    return nextState;
+    const state = await readState();
+    const result = await mutator(state);
+    assertState(state);
+    await chrome.storage.local.set({ [APP_STATE_KEY]: state });
+    return result;
   });
 
   mutationQueue = operation.then(

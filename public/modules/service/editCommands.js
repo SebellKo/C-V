@@ -6,7 +6,6 @@ const editCommands = (listId, updatedCommands) =>
     const currentList = getListById(state.lists, listId);
 
     currentList.commands = updatedCommands;
-    return state;
   });
 
 export default editCommands;

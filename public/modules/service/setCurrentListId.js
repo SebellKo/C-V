@@ -6,7 +6,6 @@ const setCurrentListId = (listId) =>
     if (listId !== null) getListById(state.lists, listId);
 
     state.currentListId = listId;
-    return state;
   });
 
 export default setCurrentListId;
