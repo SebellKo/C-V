@@ -17,9 +17,9 @@
 1. `product.md`의 사용자 동작과 제품 범위
 2. `data-privacy-policy.md`의 데이터·권한·보안 정책
 3. 새로 합의할 `architecture.md`의 구현 설계
-4. 기존 JavaScript 코드
+4. `legacy-js-final` 태그의 기존 JavaScript 코드
 
-기존 코드는 요구사항의 근거가 아니라 동작을 참고하기 위한 자료입니다.
+기존 JavaScript 코드는 요구사항의 근거가 아니라 과거 동작을 참고하기 위한 자료입니다.
 
 ## 변경 원칙
 

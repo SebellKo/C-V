@@ -2,7 +2,7 @@
 
 ![C:V](https://github.com/user-attachments/assets/d4241dd9-6cd9-4e9e-bbf5-35884586fa03)
 
-> 이 저장소는 기존 JavaScript 구현을 대체할 TypeScript 기반 재구현을 준비하고 있습니다. 현재 코드는 참고 자료이며, 새 구현의 제품 기준은 `docs/` 문서입니다.
+> 현재 저장소는 TypeScript 기반 최소 bootstrap 상태입니다. 기존 JavaScript 구현은 `legacy-js-final` Git 태그에 보존되어 있으며, 새 구현의 제품 기준은 `docs/` 문서입니다.
 
 C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chrome에서 숫자 단축키로 빠르게 클립보드에 복사하는 데스크톱 확장 프로그램입니다.
 
