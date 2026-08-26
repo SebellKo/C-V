@@ -1,7 +1,7 @@
 # 데이터 및 개인정보 정책
 
 - 문서 상태: TypeScript 재구현 기준 v1
-- 최종 수정일: 2026-08-25
+- 최종 수정일: 2026-08-26
 - 적용 대상: C:V Chrome Extension production 기능
 
 ## 1. 목적
@@ -31,7 +31,7 @@
 | 리스트 이름 | popup 표시와 사용자 분류 | `chrome.storage.local` | 리스트 삭제 시까지 |
 | 리스트 순서 | popup과 리스트 선택 단축키 번호 결정 | `chrome.storage.local` | 순서 변경 또는 리스트 삭제 시까지 |
 | command 텍스트 | 사용자가 다시 clipboard로 복사할 내용 | `chrome.storage.local` | command 또는 리스트 삭제 시까지 |
-| command 위치 | 1~10번 단축키와 command 연결 | `chrome.storage.local` | 위치 변경 또는 command 삭제 시까지 |
+| command 순서 | 연속된 목록 순서로 1~10번 단축키와 command 연결 | `chrome.storage.local` | 순서 변경 또는 command 삭제 시까지 |
 | 현재 리스트 ID | 웹 페이지 단축키의 대상 결정 | `chrome.storage.local` | 선택 해제, 리스트 삭제 또는 확장 데이터 삭제 시까지 |
 
 ### 3.2 일시적으로 처리하는 데이터
