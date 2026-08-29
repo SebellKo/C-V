@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | [제품 기획 및 범위](./product.md) | 기준 확정 | MVP 범위, 기능 규칙, 사용자 흐름, 예외 동작, 완료 조건 |
 | [데이터 및 개인정보 정책](./data-privacy-policy.md) | 기준 확정 | 로컬 데이터, 권한, 보존·삭제, 기존 데이터 호환 범위, 보안 원칙 |
+| [디자인 시스템과 와이어프레임](./design-system.md) | 기준 확정 | 디자인 토큰, popup layout, web toast와 상태별 화면 계약 |
 | `architecture.md` | 재설계 예정 | 구현 과정에서 함께 다시 설계하며 현재 내용은 기준으로 사용하지 않음 |
 
 ## 문서 우선순위
@@ -16,8 +17,9 @@
 
 1. `product.md`의 사용자 동작과 제품 범위
 2. `data-privacy-policy.md`의 데이터·권한·보안 정책
-3. 새로 합의할 `architecture.md`의 구현 설계
-4. `legacy-js-final` 태그의 기존 JavaScript 코드
+3. `design-system.md`와 `src/styles/tokens.css`의 UI 계약
+4. 새로 합의할 `architecture.md`의 구현 설계
+5. `legacy-js-final` 태그의 기존 JavaScript 코드
 
 기존 JavaScript 코드는 요구사항의 근거가 아니라 과거 동작을 참고하기 위한 자료입니다.
 
