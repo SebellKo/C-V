@@ -6,132 +6,77 @@
 
 ## 1. 문서 목적
 
-이 문서는 C:V를 구현하는 데 필요한 기술 stack, 실행 환경별 책임, module interface, 영속 state schema, runtime message, 오류 처리, build와 검증 구조를 정의합니다.
+이 문서는 C:V를 구현하고 리뷰할 때 유지해야 하는 기술 선택과 책임 경계를 정의합니다.
+
+주요 범위는 실행 환경, module 책임, 영속 데이터 계약, 상태 변경 방식, runtime 통신, 권한, build와 검증 구조입니다. 구체적인 파일명, 함수 signature와 component 내부 구조는 이 계약을 지키는 범위에서 실제 코드가 기준이 됩니다.
 
 ## 2. 설계 원칙
 
-1. 영속 데이터의 단일 원본은 <code>chrome.storage.local</code>입니다.
-2. Background만 영속 state를 읽고 쓰며 Popup과 Content Script는 runtime message를 사용합니다.
-3. Popup은 영속 원본이 아니라 화면을 그리기 위한 최신 <code>AppState</code> snapshot만 가집니다.
-4. domain 변경 함수는 Chrome과 React에 의존하지 않는 순수 TypeScript로 작성합니다.
-5. 외부 message는 구체적인 사용자 의도를 표현하고 범용 mutate interface를 노출하지 않습니다.
-6. 하나뿐인 storage 구현을 위해 repository나 adapter 계층을 만들지 않습니다.
-7. 현재 필요한 dependency와 module만 추가하고 예상되는 미래 확장용 추상화는 만들지 않습니다.
+1. 영속 데이터의 단일 원본은 `chrome.storage.local`입니다.
+2. Background만 영속 state를 변경합니다.
+3. Popup은 화면을 위한 최신 snapshot과 일시적인 입력 상태만 가집니다.
+4. Content Script는 웹 페이지에서만 가능한 기능을 담당합니다.
+5. domain 규칙은 Chrome API와 React에 의존하지 않습니다.
+6. 실행 환경 사이에는 구체적인 사용자 의도를 message로 전달합니다.
+7. 하나뿐인 구현을 위한 교체 가능성이나 미래 확장용 추상화는 만들지 않습니다.
 
-## 3. 실행 환경과 책임
+## 3. 실행 환경과 데이터 흐름
 
-| 실행 환경 | 책임 | 소유하지 않는 책임 |
-| --- | --- | --- |
-| Popup | React 화면, 입력 draft, loading·dialog 상태, 최신 <code>AppState</code> snapshot 표시 | 영속 state 직접 접근, 장기 cache, mutation 순서 제어 |
-| Content Script | 단축키 감지, 선택 텍스트 읽기, clipboard 쓰기, web toast 표시 | 영속 state 직접 접근, 제품 데이터 cache, React UI |
-| Background Service Worker | runtime message 검증과 dispatch, 최신 state 조회, domain 변경, mutation 직렬화, 영속 저장 | DOM 접근, Popup 화면 상태, clipboard와 web toast 표시 |
-| Domain | state type, 최소 구조 검사, 순수 변경 함수와 domain 오류 | Chrome API, React, 사용자 메시지 렌더링 |
+| 실행 환경 | 책임 |
+| --- | --- |
+| Popup | React UI, 입력 draft, dialog와 loading 상태, 최신 state snapshot 표시 |
+| Content Script | 페이지 단축키, 선택 텍스트 읽기, clipboard 쓰기, web toast 표시 |
+| Background Service Worker | message 검증과 전달, 최신 state 조회, 변경 직렬화와 영속 저장 |
+| Domain | 영속 type, 최소 구조 검사, 순수한 제품 규칙과 오류 표현 |
 
-핵심 데이터 흐름은 다음과 같습니다.
+데이터 흐름은 다음 한 방향을 따릅니다.
 
 ~~~
 Popup ───────┐
-             ├─ typed runtime request ─> Background ─> Domain
-Content ─────┘                               │            │
-                                            │            └─ 새 AppState 또는 DomainError
-                                            └─ chrome.storage.local
+             ├─ runtime message ─> Background ─> Domain
+Content ─────┘                         │             │
+                                      │             └─ 변경 결과 또는 오류
+                                      └─ chrome.storage.local
 ~~~
 
-Popup과 Content Script는 서로 직접 통신하지 않습니다.
+Popup과 Content Script는 storage에 직접 접근하거나 서로 직접 통신하지 않습니다.
 
-## 4. 기술 stack과 dependency
+## 4. 기술 stack
 
-### 4.1 기본 도구
+| 영역 | 선택 |
+| --- | --- |
+| package manager | npm |
+| runtime | Node.js LTS |
+| language | strict TypeScript |
+| extension | Chrome Extension Manifest V3 |
+| build | Vite |
+| Popup UI | React 19 |
+| UI source | shadcn/ui, Base UI, Nova preset |
+| styling | Tailwind CSS v4와 semantic CSS token |
+| icon | Lucide React |
+| drag and drop | `@dnd-kit/react`, `@dnd-kit/helpers` |
 
-- package manager: npm
-- runtime: 현재 로컬 기본 Node.js LTS
-- language: TypeScript strict
-- extension platform: Chrome Extension Manifest V3
-- bundler: Vite
-- Popup UI: React 19
-- UI source: shadcn/ui CLI로 생성한 source component
-- primitive: Base UI
-- style preset: Nova
-- styling: Tailwind CSS v4와 기존 CSS semantic token
-- icon: Lucide React
-- DnD: <code>@dnd-kit/react</code>, <code>@dnd-kit/helpers</code>
+정확한 package version과 shadcn이 생성하는 보조 dependency는 `package.json`과 `package-lock.json`을 기준으로 합니다. architecture에는 직접 선택한 핵심 기술만 기록합니다.
 
-정확한 설치 version은 <code>package-lock.json</code>에 고정합니다. 문서에는 시간이 지나면 낡는 version number를 복제하지 않습니다.
+## 5. Module 경계
 
-### 4.2 추가할 runtime dependency
+| 영역 | 책임 |
+| --- | --- |
+| `domain` | state type, 구조 검사와 순수 변경 규칙 |
+| `storage` | `chrome.storage.local` 읽기와 쓰기 |
+| `messages` | 실행 환경이 공유하는 request와 response 계약 |
+| `background` | message dispatch와 state 변경 조정 |
+| `content` | 페이지 단축키, clipboard와 web toast |
+| `popup` | React 화면과 Popup 전용 component |
+| `styles` | 여러 UI에서 공유하는 semantic token |
 
-- <code>react</code>
-- <code>react-dom</code>
-- <code>@base-ui/react</code>
-- <code>lucide-react</code>
-- <code>class-variance-authority</code>
-- <code>clsx</code>
-- <code>tailwind-merge</code>
-- <code>@dnd-kit/react</code>
-- <code>@dnd-kit/helpers</code>
+shadcn이 생성한 UI source와 C:V 전용 component는 모두 Popup 영역 안에서 관리합니다. 별도의 최상위 공용 component 영역은 만들지 않습니다.
 
-### 4.3 추가할 build dependency
+module은 처음부터 세분화하지 않습니다. 책임이 실제로 둘 이상이 되거나 탐색이 어려워질 때 같은 영역 안에서 분리합니다.
 
-- <code>@vitejs/plugin-react</code>
-- <code>@types/react</code>
-- <code>@types/react-dom</code>
-- <code>tailwindcss</code>
-- <code>@tailwindcss/vite</code>
-- <code>tw-animate-css</code>
-- <code>shadcn</code>
+## 6. 영속 데이터 계약
 
-### 4.4 생성할 shadcn/ui component
-
-- Button
-- Input
-- Textarea
-- Label
-- Dialog
-- Alert Dialog
-- Dropdown Menu
-
-리스트 선택 menu에는 일반 선택 항목뿐 아니라 리스트 관리 action도 있으므로 form용 Select 대신 Dropdown Menu를 사용합니다.
-
-## 5. Source 구조와 module 책임
-
-~~~
-src/
-├── domain/
-│   ├── app-state.ts
-│   ├── parse-app-state.ts
-│   ├── list-operations.ts
-│   └── command-operations.ts
-├── storage/
-│   └── app-state-storage.ts
-├── messages/
-│   └── runtime-message.ts
-├── background/
-│   ├── index.ts
-│   ├── handle-message.ts
-│   └── state.ts
-├── content/
-│   ├── index.ts
-│   ├── shortcuts.ts
-│   ├── clipboard.ts
-│   └── toast.ts
-├── popup/
-│   ├── main.tsx
-│   ├── App.tsx
-│   ├── style.css
-│   └── components/
-│       ├── ui/
-│       └── C:V 화면 component
-└── styles/
-    └── tokens.css
-~~~
-
-처음부터 모든 파일을 만들지는 않습니다. 하나의 파일이 둘 이상의 책임을 가지거나 탐색이 어려워질 때 위 위치로 분리합니다.
-
-<code>popup/components/ui</code>에는 shadcn CLI가 생성한 범용 UI source를 두고 C:V 전용 화면 component도 <code>popup/components</code> 안에서 관리합니다. 최상위 <code>src/components</code> 폴더는 만들지 않습니다.
-
-## 6. 영속 state schema
-
-storage key는 <code>cvState</code> 하나만 사용합니다.
+storage key는 `cvState` 하나만 사용합니다.
 
 ~~~ts
 type Command = {
@@ -152,14 +97,7 @@ type AppState = {
 };
 ~~~
 
-- List와 Command ID는 생성 시 <code>crypto.randomUUID()</code>로 만듭니다.
-- List 표시 순서는 <code>lists</code> 배열 순서입니다.
-- Command 위치는 <code>commands</code> 배열 순서에서 계산합니다.
-- <code>order</code>, <code>position</code>, <code>updatedAt</code>처럼 다른 값에서 계산할 수 있는 필드는 저장하지 않습니다.
-- Command ID는 React key와 dnd-kit item ID에도 사용합니다.
-- 날짜, class instance, <code>Map</code>, <code>Set</code>, 함수처럼 JSON으로 직접 표현되지 않는 값은 저장하지 않습니다.
-
-빈 설치의 초기 state는 다음과 같습니다.
+빈 설치는 다음 state에서 시작합니다.
 
 ~~~ts
 const initialState: AppState = {
@@ -169,414 +107,139 @@ const initialState: AppState = {
 };
 ~~~
 
-## 7. State 읽기와 최소 구조 검사
+- List와 Command ID는 생성 시 UUID로 만듭니다.
+- List와 Command 순서는 배열 순서로 표현합니다.
+- 위치와 순서를 나타내는 별도 숫자 필드는 저장하지 않습니다.
+- 현재 List는 ID로 참조하며 없을 수 있습니다.
+- JSON으로 직접 표현할 수 있는 값만 저장합니다.
+- 이전 IndexedDB 데이터는 가져오지 않습니다.
 
-범용 schema dependency와 migration framework는 사용하지 않습니다. 대신 storage의 <code>unknown</code> 값에서 다음 구조만 확인하는 작은 <code>parseAppState</code> 함수를 둡니다.
+이 schema는 저장 데이터 호환성에 영향을 주는 계약입니다. 변경할 때는 `schemaVersion`과 기존 데이터 처리 방식을 함께 결정합니다.
 
-- 객체이며 <code>schemaVersion</code>이 <code>1</code>인지
-- <code>currentListId</code>가 문자열 또는 <code>null</code>인지
-- <code>lists</code>가 배열인지
-- 각 List의 <code>id</code>, <code>name</code>이 문자열이고 <code>commands</code>가 배열인지
-- 각 Command의 <code>id</code>, <code>text</code>가 문자열인지
+## 7. State 읽기와 검증
 
-동작 규칙과 입력 제한은 domain 변경 함수가 검사하며 <code>parseAppState</code>가 중복 구현하지 않습니다.
+storage에서 읽은 값은 `unknown`으로 취급하고 작은 수동 검사로 `AppState`의 version과 필수 구조를 확인합니다. 별도의 범용 schema 또는 migration framework는 두지 않습니다.
 
-| 저장 값 | 처리 |
+| 저장 상태 | 처리 |
 | --- | --- |
-| <code>cvState</code> key가 없음 | <code>initialState</code>를 반환하고 최초 mutation에서 저장 |
-| 정상적인 version 1 state | 구조를 확인한 뒤 반환 |
-| 알 수 없는 version | <code>INVALID_STATE</code> 반환, 자동 변경하지 않음 |
-| 잘못된 구조 | <code>INVALID_STATE</code> 반환, 자동 초기화하지 않음 |
+| `cvState` 없음 | 메모리에서 `initialState` 사용, 최초 변경 시 저장 |
+| 정상적인 version 1 | 검사한 state 반환 |
+| 알 수 없는 version 또는 잘못된 구조 | 자동 초기화하지 않고 오류 반환 |
+| 존재하지 않는 현재 List ID | 읽은 snapshot에서 `null`로 정리 |
 
-구조가 정상이어도 <code>currentListId</code>가 실제 List를 가리키지 않으면 읽은 snapshot에서는 <code>null</code>로 정리합니다. 다음 mutation에서 정리된 state가 함께 저장됩니다.
+이 검사는 저장 형식의 안전만 보장합니다. 이름, 중복, 최대 개수와 위치 같은 제품 규칙은 domain 변경 과정에서 검사합니다.
 
-현재 version에서 이전 version migration 함수와 IndexedDB cleanup은 구현하지 않습니다. 실제 schema version이 추가될 때 필요한 변환만 추가합니다.
+## 8. State 소유권과 변경 직렬화
 
-## 8. Domain 변경 함수
+Background는 영속 state의 유일한 writer입니다. Content Script의 직접 접근은 Chrome Storage의 trusted context 설정으로 제한합니다.
 
-Domain 함수는 <code>AppState</code>와 명시적인 입력을 받아 새로운 <code>AppState</code>를 반환합니다. 입력 state를 직접 수정하지 않습니다.
+모든 변경은 하나의 직렬 실행 흐름에서 접수 순서대로 처리하며 다음 계약을 지킵니다.
 
-~~~ts
-type StateOperation<Input> = (
-  state: AppState,
-  input: Input,
-) => AppState;
+1. 앞선 변경 완료 대기
+2. storage에서 최신 state 읽기
+3. domain 규칙 적용
+4. 새 state 검사와 저장 완료 대기
+5. 저장된 결과 반환
 
-type ListMetadataPatch = {
-  renamed: Array<{ listId: string; name: string }>;
-  orderedIds: string[];
-  deletedIds: string[];
-};
-~~~
-
-함수 이름은 사용자 의도를 그대로 드러냅니다.
-
-- <code>createList</code>
-- <code>selectList</code>
-- <code>applyListMetadataPatch</code>
-- <code>createCommand</code>
-- <code>updateCommand</code>
-- <code>swapCommands</code>
-- <code>deleteCommand</code>
-- <code>deleteAllCommands</code>
-- <code>saveSelectedText</code>
-
-Domain은 Chrome API와 UI 문구를 import하지 않습니다. 실패는 <code>DomainError</code>와 안정적인 <code>ErrorCode</code>로 표현합니다.
+작업 하나가 실패해도 다음 작업을 처리할 수 있어야 합니다. 조회는 먼저 접수된 변경이 끝난 뒤 storage를 읽어 최신 값을 반환합니다.
 
-## 9. Storage와 mutation 직렬화
+service worker 메모리는 언제든 사라질 수 있으므로 state cache로 사용하지 않습니다. 직렬화 장치는 실행 순서만 제어하며 실제 데이터는 매 변경 시 storage에서 다시 읽습니다.
 
-### 9.1 Storage module
+리스트 관리 화면의 이름·순서·삭제는 전체 snapshot 교체가 아니라 metadata 변경 의도로 전달합니다. Background는 이를 최신 state에 적용해 Popup이 열린 뒤 추가되거나 수정된 Command를 보존합니다.
 
-<code>app-state-storage.ts</code>는 Chrome Storage 호출과 <code>parseAppState</code> 연결만 숨깁니다.
+## 9. Runtime message 계약
 
-~~~ts
-readState(): Promise<AppState>
-writeState(state: AppState): Promise<void>
-~~~
-
-다른 storage 구현을 가정한 repository interface는 만들지 않습니다. 테스트에서는 Chrome API를 직접 stub합니다.
-
-Background 시작 시 <code>chrome.storage.local.setAccessLevel({ accessLevel: "TRUSTED_CONTEXTS" })</code>을 설정해 Content Script의 직접 storage 접근을 막습니다.
-
-### 9.2 Background state module
+실행 환경 통신은 Chrome의 일회성 runtime message를 사용합니다. 장기 연결과 외부 extension message는 사용하지 않습니다.
 
-외부 message에는 범용 mutation을 노출하지 않지만 Background 내부에서는 다음 두 함수로 저장 절차를 통합합니다.
-
-~~~ts
-getState(): Promise<AppState>
-
-mutateState(
-  update: (current: AppState) => AppState,
-): Promise<AppState>
-~~~
-
-<code>mutateState</code>는 다음 과정을 하나의 깊은 module 뒤에 숨깁니다.
-
-1. 이전 mutation 완료 대기
-2. 최신 state 읽기
-3. domain 변경 함수 실행
-4. 새 state 최소 구조 확인
-5. storage 저장 완료 대기
-6. 저장된 새 state 반환
-
-### 9.3 Queue
-
-Background가 유일한 writer이므로 process 안의 Promise queue 하나로 mutation을 직렬화합니다. queue는 영속 데이터가 아니며 service worker가 다시 시작되면 빈 상태로 시작합니다.
-
-- 각 작업 구현은 <code>async/await</code>를 사용합니다.
-- queue는 작업 시작 순서만 제어합니다.
-- 작업 하나가 실패해도 다음 작업을 실행할 수 있게 queue tail의 rejection을 복구합니다.
-- state를 전역 변수에 cache하지 않고 각 mutation 시작 시 storage에서 다시 읽습니다.
-- <code>getState</code>는 queue tail을 기다린 뒤 storage를 읽어 먼저 접수된 mutation까지 반영된 값을 반환합니다.
-
-## 10. Runtime message interface
+| 요청 주체 | 요청 범위 | 성공 결과 |
+| --- | --- | --- |
+| Popup | state 조회, List와 Command 관리 | 최신 `AppState` |
+| Content Script | 위치 기반 List 선택 | 선택된 List 정보 |
+| Content Script | 위치 기반 Command 조회 | clipboard에 쓸 Command 정보 |
+| Content Script | 선택 텍스트 저장 | 저장된 위치와 toast 요약 정보 |
 
-Chrome의 일회성 <code>runtime.sendMessage</code>만 사용합니다. long-lived Port와 외부 extension message는 사용하지 않습니다.
+message는 범용 state patch가 아니라 생성, 선택, 이름 변경, 순서 변경, 삭제처럼 구체적인 의도를 표현합니다. 단, 리스트 관리의 여러 metadata 변경은 최신 Command 보존을 위해 하나의 요청으로 묶습니다.
 
-### 10.1 공통 응답
+Background는 모든 message를 `unknown`으로 받아 알려진 동작과 필요한 primitive 값을 검사한 뒤 처리합니다. 성공 응답은 필요한 결과만 반환하고 실패 응답은 안정적인 오류 code만 반환합니다.
 
-~~~ts
-type RuntimeResponse<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: ErrorCode };
-~~~
+사용자 콘텐츠, raw Error와 stack trace는 오류 응답이나 log에 포함하지 않습니다.
 
-raw <code>Error</code>, stack trace와 사용자 콘텐츠는 실행 환경 사이에 전달하지 않습니다.
+## 10. Popup 상태 소유권
 
-### 10.2 Popup request
-
-~~~ts
-type PopupRequest =
-  | { type: "state/get" }
-  | { type: "list/create"; name: string }
-  | { type: "list/select"; listId: string }
-  | {
-      type: "list/apply-metadata";
-      renamed: Array<{ listId: string; name: string }>;
-      orderedIds: string[];
-      deletedIds: string[];
-    }
-  | { type: "command/create"; listId: string; text: string }
-  | {
-      type: "command/update";
-      listId: string;
-      commandId: string;
-      text: string;
-    }
-  | {
-      type: "command/swap";
-      listId: string;
-      sourceId: string;
-      targetId: string;
-    }
-  | { type: "command/delete"; listId: string; commandId: string }
-  | { type: "command/delete-all"; listId: string };
-~~~
-
-<code>state/get</code>과 모든 성공한 Popup mutation은 최신 <code>AppState</code>를 반환합니다. Popup은 응답 state로 기존 snapshot을 교체합니다.
-
-리스트 관리 화면은 이름, 순서와 삭제를 local draft로 편집합니다. 확인 시 <code>list/apply-metadata</code> 하나만 보내며 Background는 저장 직전 최신 state에 다음 순서로 patch를 적용합니다.
-
-1. <code>deletedIds</code>에 있는 기존 List 삭제
-2. 남아 있는 List에 <code>renamed</code> 적용
-3. <code>orderedIds</code>의 ID 순서 적용
-4. draft에 없던 최신 List가 있다면 기존 상대 순서를 유지한 채 뒤에 보존
-
-따라서 오래된 Popup snapshot으로 전체 List를 덮어쓰지 않으며 그 사이 최신 state에 저장된 Command도 보존합니다.
-
-### 10.3 Content Script request
-
-~~~ts
-type ContentRequest =
-  | { type: "shortcut/select-list"; position: number }
-  | { type: "shortcut/resolve-command"; position: number }
-  | {
-      type: "shortcut/save-selection";
-      position: number;
-      text: string;
-    };
-~~~
-
-숫자 key는 Content Script에서 사용자 위치 값으로 변환한 뒤 전달합니다. <code>"0"</code>은 위치 <code>10</code>으로 변환합니다.
-
-~~~ts
-type SelectedListReceipt = {
-  listName: string;
-};
-
-type ResolvedCommand = {
-  listName: string;
-  position: number;
-  text: string;
-};
-
-type SavedCommandReceipt = {
-  listName: string;
-  position: number;
-  preview: string;
-};
-~~~
-
-Background는 clipboard에 직접 쓰거나 한국어 toast 문장을 만들지 않습니다. receipt의 <code>preview</code>는 줄바꿈을 공백으로 바꾸고 60자로 제한한 일반 텍스트입니다.
-
-### 10.4 Message 검증
-
-Background handler는 message를 <code>unknown</code>으로 받아 다음을 확인한 뒤 dispatch합니다.
-
-- 객체인지
-- 알려진 <code>type</code>인지
-- 해당 type에 필요한 field가 올바른 primitive type인지
-- 알 수 없는 추가 동작을 유도하지 않는지
-
-지원하지 않는 message는 <code>INVALID_REQUEST</code>를 반환합니다. message type과 response type의 대응은 하나의 <code>RuntimeRequestMap</code> type으로 관리해 sender와 handler가 같은 계약을 사용합니다.
-
-## 11. Popup 구조와 상태 소유권
-
-Popup은 <code>createRoot</code>로 하나의 React root를 만듭니다.
-
-<code>App</code>이 소유하는 상태는 다음뿐입니다.
-
-- 최신 <code>AppState | null</code>
-- 초기 조회 상태 <code>loading | ready | error</code>
-- 현재 화면 <code>commands | manage-lists</code>
-
-Dialog open 상태, 입력 draft, validation message와 pending 상태는 해당 기능 component가 소유합니다. Popup 전체 Context, reducer와 전역 store는 만들지 않습니다.
-
-Popup 흐름은 다음과 같습니다.
-
-1. mount 후 <code>state/get</code> 요청
-2. 성공하면 받은 snapshot으로 화면 구성
-3. 사용자가 변경 action 실행
-4. 해당 action만 pending 처리하고 중복 요청 방지
-5. 성공하면 응답 <code>AppState</code>로 snapshot 교체
-6. 실패하면 기존 snapshot과 입력 draft 유지
-
-optimistic update와 background refetch loop는 사용하지 않습니다.
-
-## 12. shadcn/ui와 style 구성
-
-- shadcn CLI의 Base UI + Nova 구성을 <code>components.json</code>에 고정합니다.
-- import alias는 <code>@/*</code> → <code>src/*</code>로 설정합니다.
-- shadcn 생성 source는 <code>src/popup/components/ui</code>에 둡니다.
-- C:V 전용 component는 같은 <code>src/popup/components</code> 아래에 둡니다.
-- Tailwind utility는 Popup React source에서 사용합니다.
-- 색상, spacing, radius와 typography의 정확한 값은 <code>src/styles/tokens.css</code>에만 둡니다.
-- Tailwind <code>@theme inline</code>에는 기존 semantic CSS variable을 연결하고 색상 값을 복제하지 않습니다.
-- Popup content scroll은 native <code>overflow-y: auto</code>를 사용합니다.
-- web toast는 Tailwind와 shadcn component를 사용하지 않습니다.
-
-## 13. DnD 구현
-
-List와 Command row는 <code>@dnd-kit/react</code>의 <code>DragDropProvider</code>와 <code>useSortable</code>을 사용합니다. List 삽입 순서는 <code>arrayMove</code>, Command 교환은 <code>arraySwap</code>을 사용합니다.
-
-- drag는 row 전체가 아니라 전용 handle에서 시작합니다.
-- List와 Command는 서로 다른 sortable type을 사용합니다.
-- domain state는 drag 중 변경하지 않습니다.
-- Command의 유효한 drag end에서 ID 기반 <code>command/swap</code> message를 한 번 전송합니다.
-- Command는 저장 성공 응답을 받은 뒤 Popup snapshot을 교체합니다.
-- List drag는 리스트 관리 화면의 local draft 순서만 바꾸며 확인 시 다른 metadata 변경과 함께 한 번 저장합니다.
-- 취소, 같은 대상과 목록 밖 drop은 영속 message를 보내지 않습니다.
-- 위·아래 이동 action은 pointer DnD와 같은 domain operation을 호출합니다.
-- keyboard sensor와 screen reader announcement는 작은 prototype에서 확인한 구성을 그대로 사용합니다.
-
-DnD prototype이 현재 package에서 요구 동작을 만족하지 못할 때만 legacy package를 재검토하며 두 세대를 함께 설치하지 않습니다.
-
-React 19와 strict TypeScript를 사용한 임시 prototype에서 <code>DragDropProvider</code>, <code>useSortable</code>, 전용 <code>handleRef</code>, <code>arrayMove</code>와 <code>arraySwap</code> 조합의 typecheck를 확인했습니다. 검증용 prototype은 production source에 포함하지 않습니다.
-
-## 14. Content Script, clipboard와 web toast
-
-Content Script는 React를 사용하지 않는 vanilla TypeScript입니다. 최상위 frame에서 단축키, 선택 텍스트, clipboard와 web toast만 처리합니다.
-
-### 14.1 리스트 선택
-
-1. 위치를 <code>shortcut/select-list</code>로 전달
-2. Background 저장 성공 응답 대기
-3. <code>listName</code>으로 성공 toast 표시
-
-### 14.2 Command 복사
-
-1. 위치를 <code>shortcut/resolve-command</code>로 전달
-2. Background가 현재 List와 Command를 확인해 <code>ResolvedCommand</code> 반환
-3. Content Script가 <code>navigator.clipboard.writeText(text)</code> 실행
-4. clipboard 성공 후 List와 Command 정보를 toast로 표시
-5. clipboard 실패 시 성공 toast를 표시하지 않음
-
-clipboard 쓰기의 안정성을 위해 manifest에 <code>clipboardWrite</code> 권한을 포함합니다. <code>clipboardRead</code> 권한은 포함하지 않습니다.
-
-### 14.3 선택 텍스트 저장
-
-1. 단축키 event 시점의 <code>window.getSelection()</code>만 읽기
-2. 위치와 텍스트를 <code>shortcut/save-selection</code>으로 전달
-3. Background 저장 성공 응답 대기
-4. 반환된 receipt로 성공 toast 표시
-
-### 14.4 Web toast
-
-- Content Script가 하나의 host element를 현재 document에 생성합니다.
-- <code>attachShadow({ mode: "closed" })</code>로 style과 markup을 격리합니다.
-- 사용자 콘텐츠는 <code>textContent</code>로만 렌더링합니다.
-- action과 닫기 버튼이 없는 <code>role="status"</code>, <code>aria-live="polite"</code> 상태입니다.
-- 새 결과가 오면 기존 host를 재사용하고 표시 timer를 다시 시작합니다.
-- timer 완료 시 host element를 DOM에서 제거합니다.
-- <code>chrome.notifications</code>와 운영체제 알림은 사용하지 않습니다.
-
-## 15. Error contract와 UI mapping
-
-~~~ts
-type ErrorCode =
-  | "INVALID_REQUEST"
-  | "INVALID_STATE"
-  | "INVALID_INPUT"
-  | "STORAGE_READ_FAILED"
-  | "STORAGE_WRITE_FAILED"
-  | "LIST_NOT_FOUND"
-  | "COMMAND_NOT_FOUND"
-  | "DUPLICATE_LIST_NAME"
-  | "DUPLICATE_COMMAND"
-  | "LIST_LIMIT_REACHED"
-  | "COMMAND_LIMIT_REACHED"
-  | "NO_CURRENT_LIST"
-  | "INVALID_POSITION"
-  | "EMPTY_SELECTION"
-  | "CLIPBOARD_WRITE_FAILED";
-~~~
-
-| 오류 분류 | 표시 위치와 처리 |
-| --- | --- |
-| 입력, 중복, 최대 개수 | 관련 Field 또는 열린 Dialog에 표시하고 draft 유지 |
-| storage 초기 조회 | Popup 오류 화면과 다시 시도 action 표시 |
-| storage mutation | 현재 화면과 draft를 유지하고 action 근처에 실패 표시 |
-| 잘못된 저장 state | 자동 초기화하지 않고 Popup 오류 화면 표시 |
-| 존재하지 않는 단축키 대상 | 페이지 동작을 방해하지 않고 성공 toast 미표시 |
-| clipboard 실패 | 성공 toast 미표시, 실패 feedback 표시 |
-| 알 수 없는 runtime request | 사용자에게 노출하지 않고 실패 응답 |
-
-Background는 code만 반환하고 Popup과 Content Script가 실행 환경에 맞는 한국어 문구로 변환합니다. 같은 code의 사용자 문구 mapping은 각 실행 환경에서 한 곳에만 둡니다.
-
-## 16. Manifest와 권한
-
-필수 manifest 구성은 다음과 같습니다.
-
-- <code>manifest_version: 3</code>
+Popup은 React 내장 상태로 다음 범주의 값만 관리합니다.
+
+- Background에서 받은 최신 `AppState` snapshot
+- 초기 조회와 저장 요청의 진행 상태
+- 현재 화면, dialog, 입력 draft와 validation message
+
+영속 변경은 성공 응답으로 받은 최신 state를 기준으로 화면에 확정합니다. 실패하면 기존 snapshot과 사용자의 입력 draft를 유지합니다.
+
+Popup을 별도 장기 cache로 사용하지 않습니다. Popup을 다시 열면 Background에서 최신 state를 다시 읽습니다.
+
+## 11. Content Script와 페이지 기능
+
+Content Script는 React를 사용하지 않는 vanilla TypeScript로 유지합니다. 최상위 frame에서 다음 기능만 담당합니다.
+
+- C:V 단축키 감지
+- 단축키 시점의 선택 텍스트 읽기
+- Web Clipboard API를 사용한 쓰기
+- 성공 결과를 현재 페이지의 web toast로 표시
+
+clipboard 작업은 사용자 단축키에서만 실행하며 읽기 기능은 사용하지 않습니다. clipboard 쓰기가 성공한 뒤에만 성공 toast를 표시합니다.
+
+web toast는 닫힌 Shadow DOM으로 페이지 style과 분리하고 사용자 값을 일반 텍스트로 렌더링합니다. Chrome 시스템 알림이나 운영체제 알림은 사용하지 않습니다.
+
+## 12. Popup UI와 DnD
+
+Popup은 shadcn/ui source component와 C:V 전용 component를 조합합니다. Base UI를 primitive로 사용하고 Nova preset을 기준으로 생성합니다.
+
+색상, spacing, radius와 typography 값은 semantic CSS token을 단일 원본으로 사용합니다. Tailwind는 해당 token을 소비하며 같은 값을 별도로 복제하지 않습니다.
+
+List와 Command DnD는 현재 dnd-kit React package를 사용합니다. DnD 계층은 drag 결과의 ID만 domain 변경으로 전달하며 제품 데이터 규칙을 직접 구현하지 않습니다.
+
+drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공한 뒤 결과를 확정합니다. pointer 외에도 keyboard와 위·아래 이동 action이 같은 domain 규칙을 사용해야 합니다.
+
+## 13. 오류와 보안 경계
+
+오류는 다음 범주를 구분할 수 있는 안정적인 code로 표현합니다.
+
+- 잘못된 request와 입력
+- 존재하지 않는 List, Command 또는 위치
+- 중복과 최대 개수
+- storage 읽기와 쓰기 실패
+- 지원하지 않는 저장 schema
+- clipboard 쓰기 실패
+
+Background와 domain은 사용자에게 표시할 한국어 문장을 만들지 않습니다. Popup과 Content Script가 각 실행 환경의 한 곳에서 오류 code를 사용자 문구로 변환합니다.
+
+잘못된 state나 저장 실패를 빈 데이터로 복구하지 않습니다. 사용자 콘텐츠는 HTML로 해석하거나 console log, 오류 응답과 외부 서비스로 전달하지 않습니다.
+
+## 14. Manifest와 build
+
+Manifest V3 구성에는 다음 기능에 필요한 선언만 포함합니다.
+
+- Popup action과 Popup 열기 command
 - module Background Service Worker
-- <code>http://*/*</code>, <code>https://*/*</code>의 정적 Content Script
-- Popup action
-- Popup 열기 command
-- <code>storage</code> permission
-- <code>clipboardWrite</code> permission
+- HTTP와 HTTPS 페이지의 정적 Content Script
+- `storage` permission
+- `clipboardWrite` permission
 
-요청하지 않는 권한은 다음과 같습니다.
+Content Script의 페이지 접근 범위와 clipboard 쓰기 권한은 사용자에게 보이는 Chrome 경고에 영향을 줄 수 있으므로 기능 범위를 넓힐 때 함께 검토합니다.
 
-- <code>clipboardRead</code>
-- <code>notifications</code>
-- <code>unlimitedStorage</code>
-- <code>scripting</code>
-- <code>tabs</code>
-- 외부 network host permission
+Vite는 Popup, Background와 Content Script를 하나의 project에서 build합니다. Manifest가 직접 참조하는 Background와 Content Script entry는 안정적인 output 이름을 사용하고 나머지 asset은 Vite가 관리합니다.
 
-Content Script match pattern 자체가 사이트 접근 경고를 만들 수 있으므로 실제 기능에 필요한 HTTP와 HTTPS만 유지합니다.
+production source는 TypeScript로 작성하며 typecheck가 성공해야 production build를 생성합니다. 배포 artifact에는 build 결과물만 포함합니다.
 
-## 17. Build 구성
+## 15. 검증 전략
 
-Vite는 하나의 project에서 세 entry를 build합니다.
+검증은 다음 세 수준으로 구성합니다.
 
-| entry | output |
+| 수준 | 검증 대상 |
 | --- | --- |
-| Popup HTML과 React | <code>index.html</code>, hashed asset |
-| Background | <code>background.js</code> |
-| Content Script | <code>content.js</code> |
+| Unit | domain 규칙과 state 구조 검사 |
+| Integration | Chrome Storage, mutation 직렬화와 runtime message 경계 |
+| Extension E2E | Popup, 단축키, clipboard와 web toast의 사용자 흐름 |
 
-- <code>public/manifest.json</code>과 icon은 Vite public asset으로 복사합니다.
-- Background와 Content Script entry filename은 manifest와 일치하도록 고정합니다.
-- 공통 chunk는 hashed asset으로 출력합니다.
-- <code>npm run typecheck</code>는 <code>tsc --noEmit</code>을 실행합니다.
-- <code>npm run build</code>는 typecheck 성공 후 Vite production build를 실행합니다.
-- 배포 zip은 <code>dist</code> 내용만 포함합니다.
+테스트 dependency와 테스트 코드는 기능 구현이 완료된 뒤 추가합니다. GitHub Actions workflow는 만들지 않습니다.
 
-## 18. 테스트와 release 검증
-
-이번 architecture 작업에서는 테스트 dependency를 설치하지 않습니다. 최종 검증 작업에서 다음 범위를 추가합니다.
-
-### Unit
-
-- Vitest
-- state 구조 검사
-- List와 Command 순수 변경 함수
-- 단축키 숫자와 위치 변환
-- error mapping
-
-### Integration
-
-- Chrome Storage stub을 사용한 read, write와 mutation queue
-- runtime request 검증과 response mapping
-- storage 실패와 손상 state 처리
-- clipboard 성공·실패에 따른 toast 조건
-
-### Extension E2E
-
-- Playwright의 Chrome Extension 실행
-- 빈 설치부터 List와 Command 생성
-- Popup 재실행 뒤 영속 state 확인
-- List와 Command DnD
-- 웹페이지 단축키, clipboard와 web toast
-
-GitHub Actions workflow는 만들지 않습니다. merge와 release 전 gate는 다음과 같습니다.
-
-1. <code>npm run typecheck</code>
-2. <code>npm run build</code>
-3. 자동 테스트
-4. macOS 최신 안정 Chrome에서 unpacked extension 수동 검증
-5. <code>dist</code>만 포함한 배포 artifact 확인
-
-## 19. 확정 사항 요약
-
-- npm, React 19, Base UI, Tailwind CSS v4, shadcn Nova와 Lucide React를 사용합니다.
-- 필요한 shadcn component와 dnd-kit package만 설치합니다.
-- Popup은 React 내장 상태만 사용하고 Content Script는 vanilla TypeScript로 유지합니다.
-- <code>cvState</code> 단일 key와 <code>schemaVersion: 1</code>을 사용합니다.
-- migration framework 없이 최소 구조 검사만 수행합니다.
-- Background가 유일한 writer이며 Promise queue로 mutation을 직렬화합니다.
-- 외부에는 구체적인 typed runtime request만 노출합니다.
-- C:V 전용 component와 shadcn source는 모두 <code>src/popup/components</code> 아래에 둡니다.
-- web toast는 페이지 내부 Shadow DOM overlay이며 Chrome 시스템 알림이 아닙니다.
-- 테스트 dependency와 테스트 코드는 최종 검증 작업에서 추가합니다.
+merge와 release 전에는 typecheck, production build, 자동 테스트와 macOS 최신 안정 Chrome의 unpacked extension 수동 검증을 통과해야 합니다.
