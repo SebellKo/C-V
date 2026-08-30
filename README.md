@@ -15,9 +15,15 @@ C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chr
 
 ## 기준 문서
 
-- [제품 기획 및 범위](./docs/product.md): 사용자 문제, MVP 기능, 기능 계약, 예외 동작, 완료 조건
-- [데이터 및 개인정보 정책](./docs/data-privacy-policy.md): 저장 데이터, 권한, 보존·삭제, 기존 데이터 호환 범위, 보안 원칙
-- `docs/architecture.md`: TypeScript 구현을 진행하면서 다시 설계할 예정이며 현재 재구현의 기준으로 사용하지 않습니다.
+문서별 목적, 범위와 상태는 [C:V 문서 안내](./docs/README.md)에서 관리합니다.
+
+## 디자인 보드 확인
+
+저장소 안의 CSS token과 HTML 와이어프레임을 디자인 원본으로 사용합니다. 개발 서버를 실행하고 `/design/wireframes/`를 열면 10개 popup 상태와 3개 web toast 상태를 확인할 수 있습니다.
+
+```sh
+npm run dev
+```
 
 ## 재구현 기본 조건
 

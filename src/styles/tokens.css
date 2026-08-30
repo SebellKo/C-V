@@ -1,0 +1,79 @@
+:root {
+  color-scheme: light;
+
+  /* Primitive colors: components must not reference these directly. */
+  --cv-neutral-0: #ffffff;
+  --cv-neutral-50: #fbfbfd;
+  --cv-neutral-100: #f5f5f7;
+  --cv-neutral-200: #e5e5ea;
+  --cv-neutral-400: #aeaeb2;
+  --cv-neutral-500: #6e6e73;
+  --cv-neutral-700: #3a3a3c;
+  --cv-neutral-900: #1d1d1f;
+  --cv-blue-50: #f2f8ff;
+  --cv-blue-100: #e6f1ff;
+  --cv-blue-600: #007aff;
+  --cv-blue-700: #0066cc;
+  --cv-blue-800: #0055b3;
+  --cv-red-50: #fff2f3;
+  --cv-red-600: #d70015;
+
+  /* shadcn-style semantic colors. */
+  --background: var(--cv-neutral-0);
+  --foreground: var(--cv-neutral-900);
+  --card: var(--cv-neutral-0);
+  --card-foreground: var(--cv-neutral-900);
+  --muted: var(--cv-neutral-50);
+  --muted-foreground: var(--cv-neutral-500);
+  --border: var(--cv-neutral-200);
+  --input: var(--cv-neutral-200);
+  --primary: var(--cv-blue-700);
+  --primary-hover: var(--cv-blue-800);
+  --primary-foreground: var(--cv-neutral-0);
+  --accent: var(--cv-blue-50);
+  --accent-foreground: var(--cv-blue-700);
+  --destructive: var(--cv-red-600);
+  --destructive-foreground: var(--cv-neutral-0);
+  --destructive-muted: var(--cv-red-50);
+  --ring: var(--cv-blue-600);
+
+  /* Typography. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI",
+    sans-serif;
+  --text-title-size: 16px;
+  --text-title-line-height: 24px;
+  --text-body-size: 14px;
+  --text-body-line-height: 20px;
+  --text-label-size: 12px;
+  --text-label-line-height: 16px;
+  --text-caption-size: 11px;
+  --text-caption-line-height: 16px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Spacing and shape. */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  /* Fixed popup contract. */
+  --control-height-sm: 32px;
+  --control-height-md: 36px;
+  --control-height-lg: 40px;
+  --popup-width: 300px;
+  --popup-height: 380px;
+  --popup-header-height: 52px;
+  --popup-footer-height: 52px;
+
+  --shadow-popover: 0 12px 32px rgb(29 29 31 / 14%);
+  --shadow-dialog: 0 24px 64px rgb(29 29 31 / 22%);
+  --focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+}

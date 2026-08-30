@@ -1,7 +1,7 @@
 # 데이터 및 개인정보 정책
 
 - 문서 상태: TypeScript 재구현 기준 v1
-- 최종 수정일: 2026-08-26
+- 최종 수정일: 2026-08-29
 - 적용 대상: C:V Chrome Extension production 기능
 
 ## 1. 목적
@@ -40,6 +40,7 @@
 | --- | --- |
 | 현재 웹 페이지의 선택 텍스트 | `Shift+Alt+숫자`를 누른 시점에만 읽고 저장 요청에 사용 |
 | 단축키와 숫자 위치 | 해당 동작을 실행하는 동안만 메모리에서 처리 |
+| web toast 미리보기 | 성공한 단축키 결과의 리스트 이름, command 번호와 최대 60자 미리보기를 현재 페이지 위에 2.5초 동안 표시한 뒤 DOM에서 제거 |
 | popup 입력 draft | modal이 열려 있는 동안만 popup 메모리에 유지 |
 | 오류 정보 | 사용자 콘텐츠를 제외한 오류 code와 일반 메시지만 현재 실행 환경에서 처리 |
 
@@ -117,6 +118,15 @@ MVP는 `unlimitedStorage` 권한을 요청하지 않습니다. Chrome이 `storag
 2. 현재 리스트의 해당 command를 읽습니다.
 3. command가 존재할 때만 clipboard에 씁니다.
 4. 기존 clipboard 내용을 읽거나 별도로 보관하지 않습니다.
+5. 성공하면 리스트 이름, command 번호와 최대 60자의 미리보기만 격리된 web toast에 표시합니다.
+
+### 단축키 결과 toast
+
+- toast는 성공한 리스트 선택, command 복사와 선택 텍스트 저장 결과만 표시합니다.
+- command 전체 문자열을 페이지 DOM에 넣지 않고 줄바꿈을 공백으로 바꾼 최대 60자 미리보기만 사용합니다.
+- toast 내용은 페이지 CSS와 분리된 닫힌 Shadow DOM에 일반 텍스트로 렌더링합니다.
+- toast는 2.5초 뒤 host element와 함께 제거하며 방문 기록이나 별도 log로 남기지 않습니다.
+- toast는 현재 화면을 보는 사람에게 내용 일부가 보일 수 있으므로 C:V를 비밀정보 저장소로 사용하지 않는 기존 안내를 유지합니다.
 
 ### 삭제
 
@@ -160,6 +170,7 @@ MVP에는 별도 서버 백업이나 복구 기능이 없습니다. 사용자는
 - extension 내부 메시지의 type과 payload를 런타임에서 검증합니다.
 - 알 수 없는 메시지와 잘못된 payload는 저장 작업을 실행하지 않습니다.
 - 사용자 command를 HTML로 해석하지 않고 일반 텍스트로 렌더링합니다.
+- web toast에는 전체 command 대신 최대 60자의 일반 텍스트 미리보기만 렌더링하고 사용 후 DOM에서 제거합니다.
 - 사용자 콘텐츠를 오류 응답, console log, 분석 event에 포함하지 않습니다.
 - content script는 C:V 단축키에 필요한 event만 처리합니다.
 - 가능한 경우 storage direct access를 service worker 등 trusted extension context로 제한합니다.
