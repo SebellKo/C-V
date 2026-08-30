@@ -1,23 +1,20 @@
 # 디자인 시스템과 와이어프레임
 
 - 문서 상태: v1 기준 확정
-- 최종 수정일: 2026-08-29
+- 최종 수정일: 2026-08-30
 - 대상: C:V Chrome Extension popup과 web toast
 
 ## 1. 문서 목적
 
 C:V는 Figma 파일 대신 저장소 안의 CSS와 HTML을 디자인 원본으로 사용합니다. 이 문서는 토큰과 컴포넌트의 의도를 설명하고, 정확한 값은 [`src/styles/tokens.css`](../src/styles/tokens.css), 화면 계약은 [`design/wireframes/index.html`](../design/wireframes/index.html)에서 관리합니다.
 
-원본의 책임은 다음처럼 나눕니다.
+디자인 원본의 책임은 다음처럼 나눕니다.
 
-1. `product.md`: 사용자 동작과 제품 정책
-2. `tokens.css`: 색상, 간격, typography와 크기의 정확한 값
-3. `design/wireframes`: 300×380px 화면 구성과 상태별 표현
-4. React와 shadcn/ui 구현: 승인된 화면을 실제 동작으로 구현
+1. `tokens.css`: 색상, 간격, typography와 크기의 정확한 값
+2. `design/wireframes`: 300×380px 화면 구성과 상태별 표현
+3. React와 shadcn/ui 구현: 승인된 화면을 실제 동작으로 구현
 
 Markdown에 같은 값을 별도로 복제해 새로운 원본을 만들지 않습니다. 이 문서의 표는 토큰의 역할을 설명하며 값이 충돌하면 CSS를 따릅니다.
-
-DnD 결과, 단축키 동작, 저장 성공 조건과 toast 표시 시점처럼 사용자 동작을 결정하는 규칙은 [`product.md`](./product.md)에서만 관리합니다.
 
 ## 2. 참고 디자인 시스템
 
@@ -122,7 +119,7 @@ Popup viewport는 항상 `300×380px`입니다.
 9. 삭제 확인 dialog
 10. 저장소 오류와 재시도
 
-Command row의 default, dragging과 swap target 표현은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다. 실제 위치 변경 규칙은 `product.md`를 따릅니다.
+Command row의 default, dragging과 swap target 표현은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다.
 
 ### Web toast 상태
 
