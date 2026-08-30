@@ -17,6 +17,8 @@ C:V는 Figma 파일 대신 저장소 안의 CSS와 HTML을 디자인 원본으�
 
 Markdown에 같은 값을 별도로 복제해 새로운 원본을 만들지 않습니다. 이 문서의 표는 토큰의 역할을 설명하며 값이 충돌하면 CSS를 따릅니다.
 
+DnD 결과, 단축키 동작, 저장 성공 조건과 toast 표시 시점처럼 사용자 동작을 결정하는 규칙은 [`product.md`](./product.md)에서만 관리합니다.
+
 ## 2. 참고 디자인 시스템
 
 시각 언어와 컴포넌트 구조는 **Obra shadcn/ui Kit Community Edition 2.2.0**을 참고해 C:V의 작은 popup 환경에 맞게 수정했습니다.
@@ -94,28 +96,18 @@ Popup viewport는 항상 `300×380px`입니다.
 | --- | --- |
 | Popup shell | 300×380px 영역과 고정 Header/Content/Footer 경계 |
 | Button | primary, secondary, ghost, destructive action |
-| Icon button | 리스트 관리, drag 대체 이동, 닫기와 뒤로가기 |
-| List selector | 현재 리스트 표시와 다른 리스트 선택 |
-| Command row | 번호, 미리보기, drag handle, 대체 이동 action |
-| List row | 이름, 현재 여부, drag handle, 대체 이동과 편집 action |
+| Icon button | 설정, 닫기, 뒤로가기와 이동 action의 icon 표현 |
+| List selector | 현재 리스트와 펼쳐진 선택 menu 표현 |
+| Command row | 번호, 미리보기, drag handle과 DnD 상태 표현 |
+| List row | 이름, 현재 여부, drag handle과 편집 action 표현 |
 | Field | label, input/textarea, 설명과 오류 메시지 |
 | Dialog | 생성·수정 입력과 삭제 확인 |
 | Empty state | 다음 행동이 명확한 초기/빈 상태 |
 | Error state | 원인을 숨기지 않고 재시도 제공 |
 | Skeleton/Spinner | 조회 전 상태를 실제 빈 데이터와 구분 |
-| Web toast | popup 밖의 단축키 성공 결과와 선택된 리스트·command를 현재 페이지 위에 표시 |
+| Web toast | icon, 결과 제목과 대상 요약을 담는 페이지 overlay 표현 |
 
-## 7. DnD와 keyboard 정책
-
-- 리스트를 다른 리스트 위치에 drop하면 대상 위치에 삽입하고 주변 리스트를 한 칸 이동합니다.
-- command를 다른 command에 drop하면 두 command의 위치만 교환합니다.
-- command 목록에는 빈 슬롯을 만들지 않습니다.
-- 같은 위치나 목록 밖 drop은 아무것도 변경하지 않습니다.
-- drag는 전용 handle에서 시작합니다.
-- 위·아래 action과 keyboard 조작은 drag와 같은 결과를 제공해야 합니다.
-- 영속 저장이 성공한 뒤에만 순서 변경을 화면에 확정합니다.
-
-## 8. 상태별 와이어프레임
+## 7. 상태별 와이어프레임
 
 와이어프레임 보드는 다음 상태를 모두 실제 크기로 제공합니다.
 
@@ -130,7 +122,7 @@ Popup viewport는 항상 `300×380px`입니다.
 9. 삭제 확인 dialog
 10. 저장소 오류와 재시도
 
-DnD 중인 row와 drop 대상은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다.
+Command row의 default, dragging과 swap target 표현은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다. 실제 위치 변경 규칙은 `product.md`를 따릅니다.
 
 ### Web toast 상태
 
@@ -140,23 +132,19 @@ DnD 중인 row와 drop 대상은 별도 popup 화면을 늘리지 않고 컴포�
 
 - viewport 하단 중앙에 16px 여백을 두고 표시합니다.
 - 최대 너비는 360px이며 좁은 viewport에서는 좌우 16px을 남깁니다.
-- 리스트 이름은 항상 표시하고, command 작업은 번호와 최대 60자의 한 줄 미리보기를 함께 표시합니다.
-- toast는 2.5초 뒤 사라지고 새 결과가 오면 쌓지 않고 교체합니다.
-- 성공이 확정되기 전에는 표시하지 않으며 no-op 입력에는 표시하지 않습니다.
+- 결과 제목과 대상 요약을 각각 한 줄로 표시하고 긴 내용은 말줄임 처리합니다.
+- icon은 결과를 보조하며 텍스트 없이 의미를 전달하는 유일한 수단으로 사용하지 않습니다.
 
-## 9. 접근성과 검토 기준
+## 8. 접근성과 시각 검토 기준
 
-- 모든 action은 keyboard로 접근할 수 있어야 합니다.
-- drag만이 유일한 순서 변경 방법이면 안 됩니다.
 - focus는 색상 변화만으로 표시하지 않고 ring을 함께 사용합니다.
 - 삭제 dialog는 대상과 영향을 한국어로 명시합니다.
 - loading, empty, error 상태를 같은 화면처럼 표현하지 않습니다.
-- web toast는 `role="status"`, `aria-live="polite"`로 읽히며 페이지 조작을 가로막지 않습니다.
+- web toast의 비긴급 상태는 `role="status"`, `aria-live="polite"`로 표현합니다.
 - 모션 감소 설정에서는 toast의 이동 animation을 제거합니다.
 - 200% 확대에서도 핵심 action에 접근할 수 있도록 scroll 경계를 유지합니다.
-- 와이어프레임 승인 후 React/shadcn 구현에서 실제 사용자 동작과 저장 성공 조건을 연결합니다.
 
-## 10. 로컬 확인
+## 9. 로컬 확인
 
 저장소 루트에서 다음 명령을 실행한 뒤 브라우저에서 `/design/wireframes/`를 엽니다.
 
