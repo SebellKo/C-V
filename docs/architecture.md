@@ -92,18 +92,6 @@ Popup과 Content Script는 서로 직접 통신하지 않습니다.
 
 리스트 선택 menu에는 일반 선택 항목뿐 아니라 리스트 관리 action도 있으므로 form용 Select 대신 Dropdown Menu를 사용합니다.
 
-### 4.5 사용하지 않는 dependency
-
-- Zustand와 다른 전역 state store
-- TanStack Query와 별도 client cache
-- Zod와 범용 runtime schema library
-- React Hook Form과 form framework
-- CSS Modules, styled-components와 CSS-in-JS
-- ScrollArea와 별도 scroll library
-- Sonner와 Popup toast library
-- legacy <code>@dnd-kit/core</code>, <code>@dnd-kit/sortable</code>, <code>@dnd-kit/utilities</code>
-- IndexedDB wrapper와 migration library
-
 ## 5. Source 구조와 module 책임
 
 ~~~
