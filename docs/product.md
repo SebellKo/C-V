@@ -8,16 +8,6 @@
 
 이 문서는 기존 코드를 보지 않고도 C:V를 다시 구현할 수 있도록 제품 목표, MVP 범위, 사용자에게 보이는 동작과 완료 조건을 정의합니다.
 
-이 문서에서 다루지 않는 내용은 다음과 같습니다.
-
-- framework와 library 선택
-- module과 폴더 구조
-- popup과 service worker 사이의 구체적인 메시지 형태
-- 상태 관리 방식
-- 테스트 도구와 배포 pipeline
-
-위 항목은 이 문서의 범위에 포함하지 않습니다.
-
 ## 2. 제품 한 문장
 
 C:V는 사용자가 자주 쓰는 텍스트를 최대 10개 리스트의 1~10번 command 위치에 저장하고, 웹 페이지에서 단축키로 선택·저장·클립보드 복사할 수 있게 하는 로컬 전용 Chrome 확장 프로그램입니다.
@@ -293,16 +283,3 @@ C:V는 여러 텍스트를 번호가 있는 위치에 보관해 다음 작업을
 - 성공한 웹 페이지 단축키는 선택된 리스트와 command를 toast로 확인할 수 있습니다.
 - 민감정보가 외부로 전송되거나 log에 노출되지 않습니다.
 - 제품 동작과 데이터 정책을 검증하는 자동 테스트 및 macOS Chrome 수동 검증이 완료됩니다.
-
-## 14. 구현 설계 비범위
-
-다음은 사용자에게 보이는 제품 요구사항이 아니므로 이 문서에서 정의하지 않습니다.
-
-- popup UI framework와 상태 관리 방식
-- source 폴더와 module 책임
-- popup, content script, service worker 사이 메시지 계약
-- `chrome.storage.local` state schema와 schema versioning 방식
-- 동시 mutation 직렬화 방식
-- 오류 type과 사용자 메시지 매핑
-- unit, integration, extension E2E 테스트 범위
-- build, packaging, release 절차
