@@ -62,7 +62,7 @@
     <main class="design-board">
       <header class="board-header">
         <div>
-          <p class="eyebrow">C:V · Design source v1</p>
+          <p class="eyebrow">C:V · Design source v2</p>
           <h1>C:V UI 디자인 시스템</h1>
           <p class="board-description">
             정확한 값은 CSS token, 사용 의도는 Markdown, 화면 계약은 이 HTML 보드에서 관리합니다.
@@ -71,7 +71,7 @@
         <div class="board-meta">
           <span class="meta-chip">Light only</span>
           <span class="meta-chip">shadcn/ui reference</span>
-          <span class="meta-chip">2026-08-29</span>
+          <span class="meta-chip">2026-08-31</span>
         </div>
       </header>
 
@@ -128,7 +128,7 @@
 
           <article class="doc-card popup-contract-card">
             <h3>Popup contract</h3>
-            <div class="mini-popup" aria-label="팝업 영역 비율 예시">
+            <div class="mini-popup" role="img" aria-label="팝업 영역 비율 예시">
               <span class="mini-header">Header 52</span>
               <span class="mini-content">Scrollable content 276</span>
               <span class="mini-footer">Footer 52</span>
@@ -148,38 +148,71 @@
         </div>
 
         <div class="component-grid">
-          <article class="doc-card component-demo">
-            <h3>Buttons</h3>
-            <div class="demo-row">
-              <button class="button button-primary" type="button">저장</button>
-              <button class="button button-secondary" type="button">취소</button>
-              <button class="button button-ghost" type="button">편집</button>
-              <button class="button button-destructive" type="button">삭제</button>
+          <article class="doc-card component-demo component-demo-wide">
+            <h3>Button variants &amp; states</h3>
+            <div class="component-stack">
+              <div>
+                <span class="state-label">Variants</span>
+                <div class="demo-row">
+                  <button class="button button-primary" type="button">저장</button>
+                  <button class="button button-secondary" type="button">취소</button>
+                  <button class="button button-ghost" type="button">편집</button>
+                  <button class="button button-destructive" type="button">삭제</button>
+                </div>
+              </div>
+              <div class="button-state-grid">
+                <div><span class="state-label">Hover</span><button class="button button-primary is-hovered" type="button">저장</button></div>
+                <div><span class="state-label">Focus</span><button class="button button-secondary is-focused" type="button">취소</button></div>
+                <div><span class="state-label">Loading</span><button class="button button-primary is-loading" type="button" disabled><span class="button-spinner" aria-hidden="true"></span>저장 중</button></div>
+                <div><span class="state-label">Disabled</span><button class="button button-primary" type="button" disabled>저장</button></div>
+                <div><span class="state-label">Destructive</span><button class="button button-destructive is-focused" type="button">삭제</button></div>
+              </div>
             </div>
           </article>
 
           <article class="doc-card component-demo">
-            <h3>Fields</h3>
-            <label class="field">
-              <span>리스트 이름</span>
-              <input value="업무 답변" aria-label="리스트 이름 예시" />
-              <small>1자 이상 100자 이하로 입력하세요.</small>
-            </label>
+            <h3>Icon actions</h3>
+            <div class="icon-state-grid">
+              <div><span class="state-label">Default</span><button class="icon-button" type="button" aria-label="리스트 관리"><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg></button></div>
+              <div><span class="state-label">Hover</span><button class="icon-button is-hovered" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div>
+              <div><span class="state-label">Focus</span><button class="icon-button is-focused" type="button" aria-label="위로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></button></div>
+              <div><span class="state-label">Disabled</span><button class="icon-button" type="button" aria-label="아래로 이동" disabled><svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></button></div>
+              <div><span class="state-label">Destructive</span><button class="icon-button icon-button-destructive" type="button" aria-label="삭제"><svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg></button></div>
+            </div>
+          </article>
+
+          <article class="doc-card component-demo">
+            <h3>Inline feedback</h3>
+            <div class="feedback-stack">
+              <div class="feedback-item"><span class="feedback-icon"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span><div><strong>저장했습니다</strong><p>최신 command 목록을 반영했습니다.</p></div></div>
+              <div class="feedback-item is-error"><span class="feedback-icon"><svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg></span><div><strong>저장하지 못했습니다</strong><p>입력 내용은 유지됩니다. 다시 시도해주세요.</p></div></div>
+            </div>
+          </article>
+
+          <article class="doc-card component-demo component-demo-fields">
+            <h3>Input &amp; textarea states</h3>
+            <div class="field-state-grid">
+              <label class="field"><span>Default</span><input value="업무 답변" /><small>1자 이상 100자 이하</small></label>
+              <label class="field is-focused"><span>Focus</span><input value="코드 리뷰" /><small>현재 입력 위치</small></label>
+              <label class="field is-invalid"><span>Validation error</span><input value="   " aria-invalid="true" /><small>리스트 이름을 입력해주세요.</small></label>
+              <label class="field"><span>Disabled</span><input value="저장 중에는 수정할 수 없습니다" disabled /><small>저장 완료 후 다시 입력할 수 있습니다.</small></label>
+              <label class="field field-textarea"><span>Textarea</span><textarea rows="4">여러 줄 command도 입력한 형태 그대로 보존합니다.</textarea><small>내용은 자르지 않고 저장합니다.</small></label>
+            </div>
           </article>
 
           <article class="doc-card component-demo component-demo-wide">
             <h3>Command row states</h3>
-            <div class="row-state-grid">
+            <div class="row-state-grid row-state-grid-four">
               <div>
                 <span class="state-label">Default</span>
                 <div class="command-row">
                   <button class="drag-handle" type="button" aria-label="1번 command 이동">
-                    <svg class="icon"><use href="#icon-grip"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg>
                   </button>
                   <kbd>1</kbd>
                   <p>고객 문의에 답변해주셔서 감사합니다.</p>
                   <button class="icon-button compact" type="button" aria-label="command 메뉴">
-                    <svg class="icon"><use href="#icon-more"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg>
                   </button>
                 </div>
               </div>
@@ -187,12 +220,12 @@
                 <span class="state-label">Dragging</span>
                 <div class="command-row is-dragging">
                   <button class="drag-handle" type="button" aria-label="2번 command 이동">
-                    <svg class="icon"><use href="#icon-grip"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg>
                   </button>
                   <kbd>2</kbd>
                   <p>선택한 command를 이동하고 있습니다.</p>
                   <button class="icon-button compact" type="button" aria-label="command 메뉴">
-                    <svg class="icon"><use href="#icon-more"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg>
                   </button>
                 </div>
               </div>
@@ -200,15 +233,37 @@
                 <span class="state-label">Swap target</span>
                 <div class="command-row is-swap-target">
                   <button class="drag-handle" type="button" aria-label="3번 command 이동">
-                    <svg class="icon"><use href="#icon-grip"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg>
                   </button>
                   <kbd>3</kbd>
                   <p>drop하면 source와 이 command만 교환합니다.</p>
                   <button class="icon-button compact" type="button" aria-label="command 메뉴">
-                    <svg class="icon"><use href="#icon-more"></use></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg>
                   </button>
                 </div>
               </div>
+              <div>
+                <span class="state-label">Keyboard focus</span>
+                <div class="command-row is-keyboard-target">
+                  <button class="drag-handle is-focused" type="button" aria-label="4번 command 이동">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg>
+                  </button>
+                  <kbd>4</kbd>
+                  <p>위·아래 action으로 인접 command와 교환합니다.</p>
+                  <button class="icon-button compact" type="button" aria-label="command 메뉴">
+                    <svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="doc-card component-demo component-demo-wide">
+            <h3>List row states</h3>
+            <div class="row-state-grid">
+              <div><span class="state-label">Default</span><div class="list-row"><button class="drag-handle" type="button" aria-label="블로그 문구 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><div><strong>블로그 문구</strong><span>3 commands</span></div><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div></div>
+              <div><span class="state-label">Current</span><div class="list-row is-current"><button class="drag-handle" type="button" aria-label="업무 답변 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><div><strong>업무 답변</strong><span>현재 리스트</span></div><svg class="icon current-check" aria-hidden="true"><use href="#icon-check"></use></svg></div></div>
+              <div><span class="state-label">Insert target</span><div class="list-row is-insert-target"><button class="drag-handle" type="button" aria-label="코드 리뷰 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><div><strong>코드 리뷰</strong><span>6 commands</span></div><button class="icon-button compact" type="button" aria-label="아래로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></button></div></div>
             </div>
           </article>
         </div>
@@ -231,7 +286,7 @@
                 <div class="skeleton skeleton-select"></div>
                 <div class="skeleton skeleton-icon"></div>
               </header>
-              <div class="popup-content skeleton-list" aria-label="불러오는 중">
+              <div class="popup-content skeleton-list" role="status" aria-label="불러오는 중">
                 <div class="skeleton skeleton-row"></div>
                 <div class="skeleton skeleton-row"></div>
                 <div class="skeleton skeleton-row"></div>
@@ -251,13 +306,13 @@
                 <span class="header-caption">빠른 텍스트 복사</span>
               </header>
               <div class="popup-content empty-state">
-                <div class="empty-icon"><svg class="icon"><use href="#icon-copy"></use></svg></div>
+                <div class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg></div>
                 <h4>첫 리스트를 만들어보세요</h4>
                 <p>자주 사용하는 문장을 리스트별로 저장하고 숫자 단축키로 복사할 수 있습니다.</p>
               </div>
               <footer class="popup-footer">
                 <button class="button button-primary button-full" type="button">
-                  <svg class="icon"><use href="#icon-plus"></use></svg>리스트 만들기
+                  <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>리스트 만들기
                 </button>
               </footer>
             </div>
@@ -268,20 +323,20 @@
             <div class="popup" data-screen="no-commands">
               <header class="popup-header">
                 <button class="list-trigger" type="button">
-                  <span>업무 답변</span><svg class="icon"><use href="#icon-chevron-down"></use></svg>
+                  <span>업무 답변</span><svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
                 </button>
                 <button class="icon-button" type="button" aria-label="리스트 관리">
-                  <svg class="icon"><use href="#icon-settings"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
                 </button>
               </header>
               <div class="popup-content empty-state compact-empty">
-                <div class="empty-icon"><svg class="icon"><use href="#icon-plus"></use></svg></div>
+                <div class="empty-icon"><svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg></div>
                 <h4>저장된 command가 없습니다</h4>
                 <p>popup에서 추가하거나 웹 페이지의 선택 텍스트를 <kbd>⇧⌥1</kbd>로 저장하세요.</p>
               </div>
               <footer class="popup-footer">
                 <button class="button button-primary button-full" type="button">
-                  <svg class="icon"><use href="#icon-plus"></use></svg>Command 추가
+                  <svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>Command 추가
                 </button>
               </footer>
             </div>
@@ -292,36 +347,36 @@
             <div class="popup" data-screen="commands">
               <header class="popup-header">
                 <button class="list-trigger" type="button">
-                  <span>업무 답변</span><svg class="icon"><use href="#icon-chevron-down"></use></svg>
+                  <span>업무 답변</span><svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
                 </button>
                 <button class="icon-button" type="button" aria-label="리스트 관리">
-                  <svg class="icon"><use href="#icon-settings"></use></svg>
+                  <svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg>
                 </button>
               </header>
               <div class="popup-content command-list">
                 <div class="command-row">
-                  <button class="drag-handle" type="button" aria-label="1번 command 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="1번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <kbd>1</kbd><p>고객 문의에 답변해주셔서 감사합니다. 확인 후 오늘 안으로 다시 안내드리겠습니다.</p>
-                  <button class="icon-button compact" type="button" aria-label="1번 command 메뉴"><svg class="icon"><use href="#icon-more"></use></svg></button>
+                  <button class="icon-button compact" type="button" aria-label="1번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button>
                 </div>
                 <div class="command-row">
-                  <button class="drag-handle" type="button" aria-label="2번 command 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="2번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <kbd>2</kbd><p>안녕하세요. 요청하신 자료를 첨부드립니다. 추가로 필요한 내용이 있다면 말씀해주세요.</p>
-                  <button class="icon-button compact" type="button" aria-label="2번 command 메뉴"><svg class="icon"><use href="#icon-more"></use></svg></button>
+                  <button class="icon-button compact" type="button" aria-label="2번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button>
                 </div>
                 <div class="command-row">
-                  <button class="drag-handle" type="button" aria-label="3번 command 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="3번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <kbd>3</kbd><p>https://github.com/SebellKo/C-V</p>
-                  <button class="icon-button compact" type="button" aria-label="3번 command 메뉴"><svg class="icon"><use href="#icon-more"></use></svg></button>
+                  <button class="icon-button compact" type="button" aria-label="3번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button>
                 </div>
                 <div class="command-row">
-                  <button class="drag-handle" type="button" aria-label="4번 command 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="4번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <kbd>4</kbd><p>회의 일정은 8월 28일 오후 2시입니다. 변경이 필요하면 캘린더 초대를 수정해주세요.</p>
-                  <button class="icon-button compact" type="button" aria-label="4번 command 메뉴"><svg class="icon"><use href="#icon-more"></use></svg></button>
+                  <button class="icon-button compact" type="button" aria-label="4번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button>
                 </div>
               </div>
               <footer class="popup-footer">
-                <button class="button button-primary button-full" type="button"><svg class="icon"><use href="#icon-plus"></use></svg>Command 추가</button>
+                <button class="button button-primary button-full" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>Command 추가</button>
               </footer>
             </div>
           </article>
@@ -331,22 +386,22 @@
             <div class="popup has-floating-layer" data-screen="list-menu">
               <header class="popup-header">
                 <button class="list-trigger is-open" type="button">
-                  <span>업무 답변</span><svg class="icon"><use href="#icon-chevron-down"></use></svg>
+                  <span>업무 답변</span><svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg>
                 </button>
-                <button class="icon-button" type="button" aria-label="리스트 관리"><svg class="icon"><use href="#icon-settings"></use></svg></button>
+                <button class="icon-button" type="button" aria-label="리스트 관리"><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg></button>
               </header>
-              <div class="popup-content command-list is-muted-behind">
-                <div class="command-row"><span class="drag-handle"><svg class="icon"><use href="#icon-grip"></use></svg></span><kbd>1</kbd><p>고객 문의에 답변해주셔서 감사합니다.</p><span></span></div>
-                <div class="command-row"><span class="drag-handle"><svg class="icon"><use href="#icon-grip"></use></svg></span><kbd>2</kbd><p>안녕하세요. 요청하신 자료를 첨부드립니다.</p><span></span></div>
+              <div class="popup-content command-list">
+                <div class="command-row"><span class="drag-handle"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></span><kbd>1</kbd><p>고객 문의에 답변해주셔서 감사합니다.</p><span></span></div>
+                <div class="command-row"><span class="drag-handle"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></span><kbd>2</kbd><p>안녕하세요. 요청하신 자료를 첨부드립니다.</p><span></span></div>
               </div>
               <footer class="popup-footer"><button class="button button-primary button-full" type="button">Command 추가</button></footer>
               <div class="list-menu" role="menu" aria-label="리스트 선택">
-                <button class="menu-item is-selected" type="button" role="menuitem"><span><svg class="icon"><use href="#icon-check"></use></svg>업무 답변</span><kbd>⇧1</kbd></button>
+                <button class="menu-item is-selected" type="button" role="menuitem"><span><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg>업무 답변</span><kbd>⇧1</kbd></button>
                 <button class="menu-item" type="button" role="menuitem"><span>블로그 문구</span><kbd>⇧2</kbd></button>
                 <button class="menu-item" type="button" role="menuitem"><span>코드 리뷰</span><kbd>⇧3</kbd></button>
                 <button class="menu-item" type="button" role="menuitem"><span>개인 메모</span><kbd>⇧4</kbd></button>
                 <div class="menu-separator"></div>
-                <button class="menu-item" type="button" role="menuitem"><span><svg class="icon"><use href="#icon-settings"></use></svg>리스트 관리</span></button>
+                <button class="menu-item" type="button" role="menuitem"><span><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg>리스트 관리</span></button>
               </div>
             </div>
           </article>
@@ -355,45 +410,45 @@
             <div class="flow-label"><span>06</span><h3>리스트 관리</h3></div>
             <div class="popup" data-screen="manage-lists">
               <header class="popup-header page-header">
-                <button class="icon-button" type="button" aria-label="command 목록으로 돌아가기"><svg class="icon"><use href="#icon-back"></use></svg></button>
+                <button class="icon-button" type="button" aria-label="command 목록으로 돌아가기"><svg class="icon" aria-hidden="true"><use href="#icon-back"></use></svg></button>
                 <strong>리스트 관리</strong>
                 <span class="count-label">4/10</span>
               </header>
               <div class="popup-content list-manager">
                 <div class="list-row is-current">
-                  <button class="drag-handle" type="button" aria-label="업무 답변 리스트 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="업무 답변 리스트 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <div><strong>업무 답변</strong><span>현재 리스트</span></div>
-                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="아래로 이동"><svg class="icon"><use href="#icon-arrow-down"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon"><use href="#icon-pencil"></use></svg></button></div>
+                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="아래로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-down"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div>
                 </div>
                 <div class="list-row">
-                  <button class="drag-handle" type="button" aria-label="블로그 문구 리스트 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="블로그 문구 리스트 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <div><strong>블로그 문구</strong><span>3 commands</span></div>
-                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon"><use href="#icon-pencil"></use></svg></button></div>
+                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div>
                 </div>
                 <div class="list-row">
-                  <button class="drag-handle" type="button" aria-label="코드 리뷰 리스트 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="코드 리뷰 리스트 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <div><strong>코드 리뷰</strong><span>6 commands</span></div>
-                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon"><use href="#icon-pencil"></use></svg></button></div>
+                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div>
                 </div>
                 <div class="list-row">
-                  <button class="drag-handle" type="button" aria-label="개인 메모 리스트 이동"><svg class="icon"><use href="#icon-grip"></use></svg></button>
+                  <button class="drag-handle" type="button" aria-label="개인 메모 리스트 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button>
                   <div><strong>개인 메모</strong><span>1 command</span></div>
-                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon"><use href="#icon-pencil"></use></svg></button></div>
+                  <div class="row-actions"><button class="icon-button compact" type="button" aria-label="위로 이동"><svg class="icon" aria-hidden="true"><use href="#icon-arrow-up"></use></svg></button><button class="icon-button compact" type="button" aria-label="편집"><svg class="icon" aria-hidden="true"><use href="#icon-pencil"></use></svg></button></div>
                 </div>
               </div>
-              <footer class="popup-footer"><button class="button button-primary button-full" type="button"><svg class="icon"><use href="#icon-plus"></use></svg>리스트 추가</button></footer>
+              <footer class="popup-footer"><button class="button button-primary button-full" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-plus"></use></svg>리스트 추가</button></footer>
             </div>
           </article>
 
           <article class="flow-item">
             <div class="flow-label"><span>07</span><h3>리스트 이름 변경</h3></div>
             <div class="popup has-floating-layer" data-screen="edit-list">
-              <header class="popup-header page-header"><button class="icon-button" type="button" aria-label="뒤로"><svg class="icon"><use href="#icon-back"></use></svg></button><strong>리스트 관리</strong><span></span></header>
-              <div class="popup-content list-manager is-muted-behind"><div class="list-row"><span class="drag-handle"><svg class="icon"><use href="#icon-grip"></use></svg></span><div><strong>업무 답변</strong><span>현재 리스트</span></div></div></div>
-              <footer class="popup-footer"><button class="button button-primary button-full" type="button">리스트 추가</button></footer>
+              <header class="popup-header page-header" aria-hidden="true"><button class="icon-button" type="button" tabindex="-1" aria-label="뒤로"><svg class="icon" aria-hidden="true"><use href="#icon-back"></use></svg></button><strong>리스트 관리</strong><span></span></header>
+              <div class="popup-content list-manager is-muted-behind" aria-hidden="true"><div class="list-row"><span class="drag-handle"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></span><div><strong>업무 답변</strong><span>현재 리스트</span></div></div></div>
+              <footer class="popup-footer" aria-hidden="true"><button class="button button-primary button-full" type="button" tabindex="-1">리스트 추가</button></footer>
               <div class="scrim"></div>
-              <section class="dialog" role="dialog" aria-labelledby="edit-list-title">
-                <div class="dialog-header"><div><h4 id="edit-list-title">리스트 이름 변경</h4><p>이름을 바꿔도 저장된 command는 유지됩니다.</p></div><button class="icon-button compact" type="button" aria-label="닫기"><svg class="icon"><use href="#icon-x"></use></svg></button></div>
+              <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="edit-list-title">
+                <div class="dialog-header"><div><h4 id="edit-list-title">리스트 이름 변경</h4><p>이름을 바꿔도 저장된 command는 유지됩니다.</p></div><button class="icon-button compact" type="button" aria-label="닫기"><svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg></button></div>
                 <div class="dialog-body"><label class="field"><span>리스트 이름</span><input value="업무 답변" /><small>1자 이상 100자 이하</small></label></div>
                 <div class="dialog-footer"><button class="button button-secondary" type="button">취소</button><button class="button button-primary" type="button">변경 저장</button></div>
               </section>
@@ -403,12 +458,12 @@
           <article class="flow-item">
             <div class="flow-label"><span>08</span><h3>Command 수정</h3></div>
             <div class="popup has-floating-layer" data-screen="edit-command">
-              <header class="popup-header"><button class="list-trigger" type="button"><span>업무 답변</span><svg class="icon"><use href="#icon-chevron-down"></use></svg></button><button class="icon-button" type="button" aria-label="리스트 관리"><svg class="icon"><use href="#icon-settings"></use></svg></button></header>
-              <div class="popup-content command-list is-muted-behind"><div class="command-row"><span class="drag-handle"><svg class="icon"><use href="#icon-grip"></use></svg></span><kbd>1</kbd><p>고객 문의에 답변해주셔서 감사합니다.</p><span></span></div></div>
-              <footer class="popup-footer"><button class="button button-primary button-full" type="button">Command 추가</button></footer>
+              <header class="popup-header" aria-hidden="true"><button class="list-trigger" type="button" tabindex="-1"><span>업무 답변</span><svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></button><button class="icon-button" type="button" tabindex="-1" aria-label="리스트 관리"><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg></button></header>
+              <div class="popup-content command-list is-muted-behind" aria-hidden="true"><div class="command-row"><span class="drag-handle"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></span><kbd>1</kbd><p>고객 문의에 답변해주셔서 감사합니다.</p><span></span></div></div>
+              <footer class="popup-footer" aria-hidden="true"><button class="button button-primary button-full" type="button" tabindex="-1">Command 추가</button></footer>
               <div class="scrim"></div>
-              <section class="dialog dialog-tall" role="dialog" aria-labelledby="edit-command-title">
-                <div class="dialog-header"><div><h4 id="edit-command-title">1번 Command 수정</h4><p>저장하면 <kbd>⌥1</kbd>로 복사할 내용이 변경됩니다.</p></div><button class="icon-button compact" type="button" aria-label="닫기"><svg class="icon"><use href="#icon-x"></use></svg></button></div>
+              <section class="dialog dialog-tall" role="dialog" aria-modal="true" aria-labelledby="edit-command-title">
+                <div class="dialog-header"><div><h4 id="edit-command-title">1번 Command 수정</h4><p>저장하면 <kbd>⌥1</kbd>로 복사할 내용이 변경됩니다.</p></div><button class="icon-button compact" type="button" aria-label="닫기"><svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg></button></div>
                 <div class="dialog-body"><label class="field"><span>Command</span><textarea rows="5">고객 문의에 답변해주셔서 감사합니다. 확인 후 오늘 안으로 다시 안내드리겠습니다.</textarea><small>앞뒤 공백과 줄바꿈은 입력한 그대로 보존합니다.</small></label></div>
                 <div class="dialog-footer"><button class="button button-secondary" type="button">취소</button><button class="button button-primary" type="button">저장</button></div>
               </section>
@@ -418,12 +473,12 @@
           <article class="flow-item">
             <div class="flow-label"><span>09</span><h3>삭제 확인</h3></div>
             <div class="popup has-floating-layer" data-screen="confirm-delete">
-              <header class="popup-header page-header"><button class="icon-button" type="button" aria-label="뒤로"><svg class="icon"><use href="#icon-back"></use></svg></button><strong>리스트 관리</strong><span></span></header>
-              <div class="popup-content list-manager is-muted-behind"><div class="list-row"><span class="drag-handle"><svg class="icon"><use href="#icon-grip"></use></svg></span><div><strong>블로그 문구</strong><span>3 commands</span></div></div></div>
-              <footer class="popup-footer"><button class="button button-primary button-full" type="button">리스트 추가</button></footer>
+              <header class="popup-header page-header" aria-hidden="true"><button class="icon-button" type="button" tabindex="-1" aria-label="뒤로"><svg class="icon" aria-hidden="true"><use href="#icon-back"></use></svg></button><strong>리스트 관리</strong><span></span></header>
+              <div class="popup-content list-manager is-muted-behind" aria-hidden="true"><div class="list-row"><span class="drag-handle"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></span><div><strong>블로그 문구</strong><span>3 commands</span></div></div></div>
+              <footer class="popup-footer" aria-hidden="true"><button class="button button-primary button-full" type="button" tabindex="-1">리스트 추가</button></footer>
               <div class="scrim"></div>
-              <section class="dialog alert-dialog" role="alertdialog" aria-labelledby="delete-title">
-                <div class="destructive-icon"><svg class="icon"><use href="#icon-trash"></use></svg></div>
+              <section class="dialog alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+                <div class="destructive-icon"><svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg></div>
                 <div class="dialog-header alert-heading"><div><h4 id="delete-title">‘블로그 문구’를 삭제할까요?</h4><p>리스트에 저장된 command 3개도 함께 삭제되며 되돌릴 수 없습니다.</p></div></div>
                 <div class="dialog-footer"><button class="button button-secondary" type="button">취소</button><button class="button button-destructive" type="button">리스트 삭제</button></div>
               </section>
@@ -435,12 +490,35 @@
             <div class="popup" data-screen="storage-error">
               <header class="popup-header brand-header"><strong>C:V</strong><span class="header-caption">데이터를 불러오지 못함</span></header>
               <div class="popup-content error-state">
-                <div class="error-icon"><svg class="icon"><use href="#icon-alert"></use></svg></div>
+                <div class="error-icon"><svg class="icon" aria-hidden="true"><use href="#icon-alert"></use></svg></div>
                 <h4>저장된 데이터를 불러오지 못했습니다</h4>
                 <p>기존 데이터는 변경하지 않았습니다. 잠시 후 다시 시도해주세요.</p>
                 <p class="error-code">STORAGE_READ_FAILED</p>
               </div>
-              <footer class="popup-footer"><button class="button button-secondary button-full" type="button"><svg class="icon"><use href="#icon-refresh"></use></svg>다시 시도</button></footer>
+              <footer class="popup-footer"><button class="button button-secondary button-full" type="button"><svg class="icon" aria-hidden="true"><use href="#icon-refresh"></use></svg>다시 시도</button></footer>
+            </div>
+          </article>
+
+          <article class="flow-item">
+            <div class="flow-label"><span>11</span><h3>최대 목록과 내부 scroll</h3></div>
+            <div class="popup" data-screen="commands-scroll">
+              <header class="popup-header">
+                <button class="list-trigger" type="button"><span>업무 답변</span><svg class="icon" aria-hidden="true"><use href="#icon-chevron-down"></use></svg></button>
+                <button class="icon-button" type="button" aria-label="리스트 관리"><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg></button>
+              </header>
+              <div class="popup-content command-list scroll-demo" role="region" tabindex="0" aria-label="10개 command 목록">
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="1번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>1</kbd><p>고객 문의 답변</p><button class="icon-button compact" type="button" aria-label="1번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="2번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>2</kbd><p>자료 전달 안내</p><button class="icon-button compact" type="button" aria-label="2번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="3번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>3</kbd><p>프로젝트 링크</p><button class="icon-button compact" type="button" aria-label="3번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="4번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>4</kbd><p>회의 일정 안내</p><button class="icon-button compact" type="button" aria-label="4번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="5번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>5</kbd><p>검토 요청 문구</p><button class="icon-button compact" type="button" aria-label="5번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="6번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>6</kbd><p>배포 완료 안내</p><button class="icon-button compact" type="button" aria-label="6번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="7번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>7</kbd><p>확인 요청 문구</p><button class="icon-button compact" type="button" aria-label="7번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="8번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>8</kbd><p>감사 인사</p><button class="icon-button compact" type="button" aria-label="8번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="9번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>9</kbd><p>부재중 안내</p><button class="icon-button compact" type="button" aria-label="9번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+                <div class="command-row"><button class="drag-handle" type="button" aria-label="10번 command 이동"><svg class="icon" aria-hidden="true"><use href="#icon-grip"></use></svg></button><kbd>0</kbd><p>마지막 command</p><button class="icon-button compact" type="button" aria-label="10번 command 메뉴"><svg class="icon" aria-hidden="true"><use href="#icon-more"></use></svg></button></div>
+              </div>
+              <footer class="popup-footer"><button class="button button-primary button-full" type="button" disabled>최대 10개 저장됨</button></footer>
             </div>
           </article>
         </div>
@@ -462,7 +540,7 @@
               <div class="fake-browser-bar"><i></i><i></i><i></i><span>example.com</span></div>
               <div class="fake-page"><span></span><span></span><span></span></div>
               <div class="web-toast" role="status" aria-live="polite">
-                <span class="toast-icon"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span>
                 <div><strong>리스트를 선택했습니다</strong><p>업무 답변</p></div>
               </div>
             </div>
@@ -474,7 +552,7 @@
               <div class="fake-browser-bar"><i></i><i></i><i></i><span>example.com</span></div>
               <div class="fake-page"><span></span><span></span><span></span></div>
               <div class="web-toast" role="status" aria-live="polite">
-                <span class="toast-icon"><svg class="icon"><use href="#icon-copy"></use></svg></span>
+                <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg></span>
                 <div><strong>Command 2를 복사했습니다</strong><p>업무 답변 · 안녕하세요. 요청하신 자료를 첨부드립니다.</p></div>
               </div>
             </div>
@@ -486,8 +564,20 @@
               <div class="fake-browser-bar"><i></i><i></i><i></i><span>example.com</span></div>
               <div class="fake-page"><span></span><span></span><span></span></div>
               <div class="web-toast" role="status" aria-live="polite">
-                <span class="toast-icon"><svg class="icon"><use href="#icon-check"></use></svg></span>
+                <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span>
                 <div><strong>Command 3에 저장했습니다</strong><p>업무 답변 · 확인 후 오늘 안으로 다시 안내드리겠습니다.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="web-flow-item narrow-demo">
+            <div class="flow-label"><span>04</span><h3>좁은 viewport 대응</h3></div>
+            <div class="web-viewport is-narrow">
+              <div class="fake-browser-bar"><i></i><i></i><i></i><span>mobile.example</span></div>
+              <div class="fake-page"><span></span><span></span><span></span></div>
+              <div class="web-toast" role="status" aria-live="polite">
+                <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg></span>
+                <div><strong>Command 10을 복사했습니다</strong><p>개인 메모 · viewport가 좁아도 좌우 여백을 유지합니다.</p></div>
               </div>
             </div>
           </article>

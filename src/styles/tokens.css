@@ -17,6 +17,7 @@
   --cv-blue-800: #0055b3;
   --cv-red-50: #fff2f3;
   --cv-red-600: #d70015;
+  --cv-red-700: #b50012;
 
   /* shadcn-style semantic colors. */
   --background: var(--cv-neutral-0);
@@ -33,6 +34,7 @@
   --accent: var(--cv-blue-50);
   --accent-foreground: var(--cv-blue-700);
   --destructive: var(--cv-red-600);
+  --destructive-hover: var(--cv-red-700);
   --destructive-foreground: var(--cv-neutral-0);
   --destructive-muted: var(--cv-red-50);
   --ring: var(--cv-blue-600);
