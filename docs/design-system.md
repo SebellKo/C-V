@@ -1,7 +1,7 @@
 # 디자인 시스템과 와이어프레임
 
-- 문서 상태: v1 기준 확정
-- 최종 수정일: 2026-08-30
+- 문서 상태: v2 high-fidelity 기준 확정
+- 최종 수정일: 2026-08-31
 - 대상: C:V Chrome Extension popup과 web toast
 
 ## 1. 문서 목적
@@ -38,7 +38,7 @@ Primitive는 브랜드와 중립 색상의 원시 값입니다. 컴포넌트가 
 | --- | --- | --- |
 | Cool neutral | `--cv-neutral-0`~`--cv-neutral-900` | 흰 surface, 글자, border와 비활성 상태 |
 | Blue | `--cv-blue-50`~`--cv-blue-800` | primary, 선택 상태와 focus |
-| Red | `--cv-red-50`, `--cv-red-600` | 오류와 destructive action |
+| Red | `--cv-red-50`, `--cv-red-600`, `--cv-red-700` | 오류와 destructive action 상태 |
 
 ### Semantic
 
@@ -51,7 +51,7 @@ Semantic token은 UI의 역할을 나타냅니다. 컴포넌트는 이 계층만
 | 보조 정보 | `--muted`, `--muted-foreground` |
 | 주요 action | `--primary`, `--primary-foreground` |
 | 선택·강조 | `--accent`, `--accent-foreground` |
-| 삭제·오류 | `--destructive`, `--destructive-foreground`, `--destructive-muted` |
+| 삭제·오류 | `--destructive`, `--destructive-hover`, `--destructive-foreground`, `--destructive-muted` |
 | keyboard focus | `--ring`, `--focus-ring` |
 
 Dark mode는 MVP 범위에 포함하지 않습니다. 필요해질 때 semantic token 값만 새 theme에서 교체하고 컴포넌트 구조는 유지합니다.
@@ -92,16 +92,17 @@ Popup viewport는 항상 `300×380px`입니다.
 | 컴포넌트 | 책임 |
 | --- | --- |
 | Popup shell | 300×380px 영역과 고정 Header/Content/Footer 경계 |
-| Button | primary, secondary, ghost, destructive action |
-| Icon button | 설정, 닫기, 뒤로가기와 이동 action의 icon 표현 |
+| Button | primary, secondary, ghost, destructive와 hover·focus·loading·disabled 상태 |
+| Icon button | 설정, 닫기, 뒤로가기와 이동 action의 default·hover·focus·disabled 상태 |
 | List selector | 현재 리스트와 펼쳐진 선택 menu 표현 |
-| Command row | 번호, 미리보기, drag handle과 DnD 상태 표현 |
-| List row | 이름, 현재 여부, drag handle과 편집 action 표현 |
-| Field | label, input/textarea, 설명과 오류 메시지 |
+| Command row | 번호, 미리보기, drag handle, dragging·swap target·keyboard focus 표현 |
+| List row | 이름, 현재 여부, drag handle, 삽입 위치와 이동 action 표현 |
+| Field | label, input/textarea, 설명, focus·disabled와 validation 오류 표현 |
 | Dialog | 생성·수정 입력과 삭제 확인 |
 | Empty state | 다음 행동이 명확한 초기/빈 상태 |
 | Error state | 원인을 숨기지 않고 재시도 제공 |
 | Skeleton/Spinner | 조회 전 상태를 실제 빈 데이터와 구분 |
+| Inline feedback | 저장 성공과 실패를 action 근처에서 구분해 표현 |
 | Web toast | icon, 결과 제목과 대상 요약을 담는 페이지 overlay 표현 |
 
 ## 7. 상태별 와이어프레임
@@ -118,6 +119,7 @@ Popup viewport는 항상 `300×380px`입니다.
 8. command 생성·수정 dialog
 9. 삭제 확인 dialog
 10. 저장소 오류와 재시도
+11. command 10개 목록의 내부 scroll
 
 Command row의 default, dragging과 swap target 표현은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다.
 
@@ -135,8 +137,10 @@ Command row의 default, dragging과 swap target 표현은 별도 popup 화면을
 ## 8. 접근성과 시각 검토 기준
 
 - focus는 색상 변화만으로 표시하지 않고 ring을 함께 사용합니다.
+- DnD는 dragging과 target의 border·surface 차이 외에 keyboard focus와 위·아래 이동 action도 함께 표현합니다.
 - 삭제 dialog는 대상과 영향을 한국어로 명시합니다.
 - loading, empty, error 상태를 같은 화면처럼 표현하지 않습니다.
+- dialog가 열린 상태의 배경은 접근성 tree와 tab 순서에서 제외합니다.
 - web toast의 비긴급 상태는 `role="status"`, `aria-live="polite"`로 표현합니다.
 - 모션 감소 설정에서는 toast의 이동 animation을 제거합니다.
 - 200% 확대에서도 핵심 action에 접근할 수 있도록 scroll 경계를 유지합니다.
