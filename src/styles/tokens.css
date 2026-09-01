@@ -24,6 +24,10 @@
   --foreground: var(--cv-neutral-900);
   --card: var(--cv-neutral-0);
   --card-foreground: var(--cv-neutral-900);
+  --popover: var(--cv-neutral-0);
+  --popover-foreground: var(--cv-neutral-900);
+  --secondary: var(--cv-neutral-100);
+  --secondary-foreground: var(--cv-neutral-900);
   --muted: var(--cv-neutral-50);
   --muted-foreground: var(--cv-neutral-500);
   --border: var(--cv-neutral-200);
