@@ -1,4 +1,4 @@
-import { applyStateMutation, parseAppState } from '../domain/state.ts';
+import { applyStateMutation } from '../domain/state.ts';
 import type { AppState, StateMutation } from '../domain/type.d.ts';
 import { readState, writeState } from '../storage/state.ts';
 
@@ -26,9 +26,7 @@ export const mutateState = (mutation: StateMutation): Promise<AppState> =>
       return currentState;
     }
 
-    const stateToSave = parseAppState(nextState);
+    await writeState(nextState);
 
-    await writeState(stateToSave);
-
-    return stateToSave;
+    return nextState;
   });

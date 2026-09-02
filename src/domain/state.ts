@@ -55,12 +55,11 @@ export const parseAppState = (value: unknown): AppState => {
     throw new StateError('INVALID_STATE');
   }
 
-  if (!Array.isArray(storedLists) || storedLists.length > MAX_LIST_COUNT) {
+  if (!Array.isArray(storedLists)) {
     throw new StateError('INVALID_STATE');
   }
 
   const listIds = new Set<string>();
-  const listNames = new Set<string>();
   const commandIds = new Set<string>();
   const lists: List[] = [];
 
@@ -79,26 +78,12 @@ export const parseAppState = (value: unknown): AppState => {
       throw new StateError('INVALID_STATE');
     }
 
-    if (
-      name !== name.trim() ||
-      name.length === 0 ||
-      name.length > MAX_LIST_NAME_LENGTH
-    ) {
-      throw new StateError('INVALID_STATE');
-    }
-
-    if (storedCommands.length > MAX_COMMAND_COUNT) {
-      throw new StateError('INVALID_STATE');
-    }
-
-    if (listIds.has(id) || listNames.has(name)) {
+    if (listIds.has(id)) {
       throw new StateError('INVALID_STATE');
     }
 
     listIds.add(id);
-    listNames.add(name);
 
-    const commandTexts = new Set<string>();
     const commands: Command[] = [];
 
     for (const storedCommand of storedCommands) {
@@ -112,16 +97,11 @@ export const parseAppState = (value: unknown): AppState => {
         throw new StateError('INVALID_STATE');
       }
 
-      if (text.trim().length === 0) {
-        throw new StateError('INVALID_STATE');
-      }
-
-      if (commandIds.has(commandId) || commandTexts.has(text)) {
+      if (commandIds.has(commandId)) {
         throw new StateError('INVALID_STATE');
       }
 
       commandIds.add(commandId);
-      commandTexts.add(text);
       commands.push({ id: commandId, text });
     }
 
