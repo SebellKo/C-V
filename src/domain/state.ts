@@ -24,111 +24,128 @@ export const createInitialState = (): AppState => ({
 const isValidId = (value: unknown): value is string =>
   typeof value === 'string' && value.trim().length > 0;
 
-const invalidState = (): never => {
-  throw new StateError('INVALID_STATE');
-};
-
-const normalizeListName = (name: string): string => {
-  const normalizedName = name.trim();
-
-  if (normalizedName.length === 0) {
+const validateListName = (name: string): void => {
+  if (name.length === 0) {
     throw new StateError('LIST_NAME_REQUIRED');
   }
 
-  if (normalizedName.length > MAX_LIST_NAME_LENGTH) {
+  if (name.length > MAX_LIST_NAME_LENGTH) {
     throw new StateError('LIST_NAME_TOO_LONG');
   }
-
-  return normalizedName;
 };
 
-const validateCommandText = (text: string): string => {
+const validateCommandText = (text: string): void => {
   if (text.trim().length === 0) {
     throw new StateError('COMMAND_REQUIRED');
   }
-
-  return text;
 };
 
 export const parseAppState = (value: unknown): AppState => {
-  if (
-    !isRecord(value) ||
-    value.schemaVersion !== APP_STATE_SCHEMA_VERSION ||
-    (value.currentListId !== null && !isValidId(value.currentListId)) ||
-    !Array.isArray(value.lists) ||
-    value.lists.length > MAX_LIST_COUNT
-  ) {
-    return invalidState();
+  if (!isRecord(value)) {
+    throw new StateError('INVALID_STATE');
+  }
+
+  const { currentListId, lists: storedLists, schemaVersion } = value;
+
+  if (schemaVersion !== APP_STATE_SCHEMA_VERSION) {
+    throw new StateError('INVALID_STATE');
+  }
+
+  if (currentListId !== null && !isValidId(currentListId)) {
+    throw new StateError('INVALID_STATE');
+  }
+
+  if (!Array.isArray(storedLists) || storedLists.length > MAX_LIST_COUNT) {
+    throw new StateError('INVALID_STATE');
   }
 
   const listIds = new Set<string>();
   const listNames = new Set<string>();
   const commandIds = new Set<string>();
-  const lists: List[] = value.lists.map((candidate) => {
-    if (
-      !isRecord(candidate) ||
-      !isValidId(candidate.id) ||
-      typeof candidate.name !== 'string' ||
-      candidate.name !== candidate.name.trim() ||
-      candidate.name.length === 0 ||
-      candidate.name.length > MAX_LIST_NAME_LENGTH ||
-      !Array.isArray(candidate.commands) ||
-      candidate.commands.length > MAX_COMMAND_COUNT ||
-      listIds.has(candidate.id) ||
-      listNames.has(candidate.name)
-    ) {
-      return invalidState();
+  const lists: List[] = [];
+
+  for (const storedList of storedLists) {
+    if (!isRecord(storedList)) {
+      throw new StateError('INVALID_STATE');
     }
 
-    listIds.add(candidate.id);
-    listNames.add(candidate.name);
+    const { commands: storedCommands, id, name } = storedList;
+
+    if (!isValidId(id) || typeof name !== 'string') {
+      throw new StateError('INVALID_STATE');
+    }
+
+    if (!Array.isArray(storedCommands)) {
+      throw new StateError('INVALID_STATE');
+    }
+
+    if (
+      name !== name.trim() ||
+      name.length === 0 ||
+      name.length > MAX_LIST_NAME_LENGTH
+    ) {
+      throw new StateError('INVALID_STATE');
+    }
+
+    if (storedCommands.length > MAX_COMMAND_COUNT) {
+      throw new StateError('INVALID_STATE');
+    }
+
+    if (listIds.has(id) || listNames.has(name)) {
+      throw new StateError('INVALID_STATE');
+    }
+
+    listIds.add(id);
+    listNames.add(name);
 
     const commandTexts = new Set<string>();
-    const commands: Command[] = candidate.commands.map((command) => {
-      if (
-        !isRecord(command) ||
-        !isValidId(command.id) ||
-        typeof command.text !== 'string' ||
-        command.text.trim().length === 0 ||
-        commandIds.has(command.id) ||
-        commandTexts.has(command.text)
-      ) {
-        return invalidState();
+    const commands: Command[] = [];
+
+    for (const storedCommand of storedCommands) {
+      if (!isRecord(storedCommand)) {
+        throw new StateError('INVALID_STATE');
       }
 
-      commandIds.add(command.id);
-      commandTexts.add(command.text);
+      const { id: commandId, text } = storedCommand;
 
-      return { id: command.id, text: command.text };
-    });
+      if (!isValidId(commandId) || typeof text !== 'string') {
+        throw new StateError('INVALID_STATE');
+      }
 
-    return { id: candidate.id, name: candidate.name, commands };
-  });
+      if (text.trim().length === 0) {
+        throw new StateError('INVALID_STATE');
+      }
+
+      if (commandIds.has(commandId) || commandTexts.has(text)) {
+        throw new StateError('INVALID_STATE');
+      }
+
+      commandIds.add(commandId);
+      commandTexts.add(text);
+      commands.push({ id: commandId, text });
+    }
+
+    lists.push({ id, name, commands });
+  }
 
   return {
     schemaVersion: APP_STATE_SCHEMA_VERSION,
     currentListId:
-      value.currentListId !== null && listIds.has(value.currentListId)
-        ? value.currentListId
+      currentListId !== null && listIds.has(currentListId)
+        ? currentListId
         : null,
     lists,
   };
 };
 
-const assertMutationId = (id: string): void => {
-  if (!isValidId(id)) {
-    throw new StateError('INVALID_ID');
-  }
-};
+const findList = (
+  state: AppState,
+  listId: string,
+): { list: List; listIndex: number } | undefined => {
+  const listIndex = state.lists.findIndex((list) => list.id === listId);
+  const list = state.lists[listIndex];
 
-const findListIndex = (state: AppState, listId: string): number => {
-  const index = state.lists.findIndex((list) => list.id === listId);
-
-  if (index === -1) {
-    throw new StateError('LIST_NOT_FOUND');
-  }
-
-  return index;
+  return list ? { list, listIndex } : undefined;
 };
 
 const replaceList = (
@@ -136,37 +153,28 @@ const replaceList = (
   listIndex: number,
   list: List,
 ): AppState => {
-  const currentList = state.lists[listIndex];
-
-  if (currentList === list) {
-    return state;
-  }
-
   const lists = [...state.lists];
   lists[listIndex] = list;
 
   return { ...state, lists };
 };
 
-const assertUniqueCommandText = (
+const hasDuplicateCommandText = (
   list: List,
   text: string,
   ignoredCommandId?: string,
-): void => {
-  if (
-    list.commands.some(
-      (command) => command.id !== ignoredCommandId && command.text === text,
-    )
-  ) {
-    throw new StateError('COMMAND_DUPLICATED');
-  }
-};
+): boolean =>
+  list.commands.some(
+    (command) => command.id !== ignoredCommandId && command.text === text,
+  );
 
 const createList = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'list.create' }>,
 ): AppState => {
-  assertMutationId(mutation.listId);
+  if (!isValidId(mutation.listId)) {
+    throw new StateError('INVALID_ID');
+  }
 
   if (state.lists.some((list) => list.id === mutation.listId)) {
     throw new StateError('DUPLICATE_ID');
@@ -176,7 +184,8 @@ const createList = (
     throw new StateError('LIST_LIMIT_REACHED');
   }
 
-  const name = normalizeListName(mutation.name);
+  const name = mutation.name.trim();
+  validateListName(name);
 
   if (state.lists.some((list) => list.name === name)) {
     throw new StateError('LIST_NAME_DUPLICATED');
@@ -193,11 +202,18 @@ const selectList = (
   listId: string | null,
 ): AppState => {
   if (listId !== null) {
-    assertMutationId(listId);
-    findListIndex(state, listId);
+    if (!isValidId(listId)) {
+      throw new StateError('INVALID_ID');
+    }
+
+    if (!findList(state, listId)) {
+      throw new StateError('LIST_NOT_FOUND');
+    }
   }
 
-  return state.currentListId === listId ? state : { ...state, currentListId: listId };
+  return state.currentListId === listId
+    ? state
+    : { ...state, currentListId: listId };
 };
 
 const updateListMetadata = (
@@ -218,7 +234,8 @@ const updateListMetadata = (
       throw new StateError('INVALID_LIST_METADATA');
     }
 
-    const normalizedName = normalizeListName(name);
+    const normalizedName = name.trim();
+    validateListName(normalizedName);
 
     if (nextNames.has(normalizedName)) {
       throw new StateError('LIST_NAME_DUPLICATED');
@@ -247,13 +264,17 @@ const createCommand = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.create' }>,
 ): AppState => {
-  assertMutationId(mutation.commandId);
-  const listIndex = findListIndex(state, mutation.listId);
-  const list = state.lists[listIndex];
+  if (!isValidId(mutation.commandId)) {
+    throw new StateError('INVALID_ID');
+  }
 
-  if (!list) {
+  const foundList = findList(state, mutation.listId);
+
+  if (!foundList) {
     throw new StateError('LIST_NOT_FOUND');
   }
+
+  const { list, listIndex } = foundList;
 
   if (
     state.lists.some((candidate) =>
@@ -267,8 +288,12 @@ const createCommand = (
     throw new StateError('COMMAND_LIMIT_REACHED');
   }
 
-  const text = validateCommandText(mutation.text);
-  assertUniqueCommandText(list, text);
+  const { text } = mutation;
+  validateCommandText(text);
+
+  if (hasDuplicateCommandText(list, text)) {
+    throw new StateError('COMMAND_DUPLICATED');
+  }
 
   return replaceList(state, listIndex, {
     ...list,
@@ -280,29 +305,33 @@ const updateCommand = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.update' }>,
 ): AppState => {
-  const listIndex = findListIndex(state, mutation.listId);
-  const list = state.lists[listIndex];
+  const foundList = findList(state, mutation.listId);
 
-  if (!list) {
+  if (!foundList) {
     throw new StateError('LIST_NOT_FOUND');
   }
 
+  const { list, listIndex } = foundList;
   const commandIndex = list.commands.findIndex(
     (command) => command.id === mutation.commandId,
   );
+  const currentCommand = list.commands[commandIndex];
 
-  if (commandIndex === -1) {
+  if (!currentCommand) {
     throw new StateError('COMMAND_NOT_FOUND');
   }
 
-  const currentCommand = list.commands[commandIndex];
-  const text = validateCommandText(mutation.text);
+  const { text } = mutation;
+  validateCommandText(text);
 
-  if (!currentCommand || currentCommand.text === text) {
+  if (currentCommand.text === text) {
     return state;
   }
 
-  assertUniqueCommandText(list, text, mutation.commandId);
+  if (hasDuplicateCommandText(list, text, mutation.commandId)) {
+    throw new StateError('COMMAND_DUPLICATED');
+  }
+
   const commands = [...list.commands];
   commands[commandIndex] = { ...currentCommand, text };
 
@@ -314,13 +343,13 @@ const deleteCommand = (
   listId: string,
   commandId: string,
 ): AppState => {
-  const listIndex = findListIndex(state, listId);
-  const list = state.lists[listIndex];
+  const foundList = findList(state, listId);
 
-  if (!list) {
+  if (!foundList) {
     throw new StateError('LIST_NOT_FOUND');
   }
 
+  const { list, listIndex } = foundList;
   const commandIndex = list.commands.findIndex(
     (command) => command.id === commandId,
   );
@@ -336,12 +365,13 @@ const deleteCommand = (
 };
 
 const clearCommands = (state: AppState, listId: string): AppState => {
-  const listIndex = findListIndex(state, listId);
-  const list = state.lists[listIndex];
+  const foundList = findList(state, listId);
 
-  if (!list) {
+  if (!foundList) {
     throw new StateError('LIST_NOT_FOUND');
   }
+
+  const { list, listIndex } = foundList;
 
   return list.commands.length === 0
     ? state
@@ -352,13 +382,17 @@ const swapCommands = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.swap' }>,
 ): AppState => {
-  const listIndex = findListIndex(state, mutation.listId);
-  const list = state.lists[listIndex];
+  const foundList = findList(state, mutation.listId);
 
-  if (!list || mutation.sourceId === mutation.targetId) {
+  if (!foundList) {
+    throw new StateError('LIST_NOT_FOUND');
+  }
+
+  if (mutation.sourceId === mutation.targetId) {
     return state;
   }
 
+  const { list, listIndex } = foundList;
   const sourceIndex = list.commands.findIndex(
     (command) => command.id === mutation.sourceId,
   );
@@ -371,12 +405,8 @@ const swapCommands = (
   }
 
   const commands = [...list.commands];
-  const sourceCommand = commands[sourceIndex];
-  const targetCommand = commands[targetIndex];
-
-  if (!sourceCommand || !targetCommand) {
-    return state;
-  }
+  const sourceCommand = commands[sourceIndex]!;
+  const targetCommand = commands[targetIndex]!;
 
   commands[sourceIndex] = targetCommand;
   commands[targetIndex] = sourceCommand;
@@ -388,18 +418,21 @@ const setCommandAt = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.setAt' }>,
 ): AppState => {
-  const listIndex = findListIndex(state, mutation.listId);
-  const list = state.lists[listIndex];
+  const foundList = findList(state, mutation.listId);
+
+  if (!foundList) {
+    throw new StateError('LIST_NOT_FOUND');
+  }
 
   if (
-    !list ||
     !Number.isInteger(mutation.index) ||
     mutation.index < 0 ||
-    mutation.index > list.commands.length
+    mutation.index > foundList.list.commands.length
   ) {
     return state;
   }
 
+  const { list } = foundList;
   const currentCommand = list.commands[mutation.index];
 
   if (currentCommand) {
