@@ -1,124 +1,35 @@
+import type {
+  AppState,
+  Command,
+  List,
+  ListMetadata,
+  StateMutation,
+} from './type.d.ts';
+import {
+  assertMutationId,
+  assertUniqueCommandText,
+  findListIndex,
+  invalidState,
+  isRecord,
+  isValidId,
+  normalizeListName,
+  replaceList,
+  StateError,
+  validateCommandText,
+} from './utils.ts';
+
+export { StateError } from './utils.ts';
+
 export const APP_STATE_SCHEMA_VERSION = 1 as const;
 export const MAX_LIST_COUNT = 10;
 export const MAX_COMMAND_COUNT = 10;
 export const MAX_LIST_NAME_LENGTH = 100;
-
-export type Command = {
-  id: string;
-  text: string;
-};
-
-export type List = {
-  id: string;
-  name: string;
-  commands: Command[];
-};
-
-export type AppState = {
-  schemaVersion: typeof APP_STATE_SCHEMA_VERSION;
-  currentListId: string | null;
-  lists: List[];
-};
-
-export type ListMetadata = {
-  id: string;
-  name: string;
-};
-
-export type StateMutation =
-  | { type: 'list.create'; listId: string; name: string }
-  | { type: 'list.select'; listId: string | null }
-  | { type: 'lists.updateMetadata'; lists: ListMetadata[] }
-  | {
-      type: 'command.create';
-      listId: string;
-      commandId: string;
-      text: string;
-    }
-  | {
-      type: 'command.update';
-      listId: string;
-      commandId: string;
-      text: string;
-    }
-  | { type: 'command.delete'; listId: string; commandId: string }
-  | { type: 'command.clear'; listId: string }
-  | {
-      type: 'command.swap';
-      listId: string;
-      sourceId: string;
-      targetId: string;
-    }
-  | {
-      type: 'command.setAt';
-      listId: string;
-      index: number;
-      newCommandId: string;
-      text: string;
-    };
-
-export type StateErrorCode =
-  | 'INVALID_STATE'
-  | 'INVALID_ID'
-  | 'DUPLICATE_ID'
-  | 'LIST_NOT_FOUND'
-  | 'LIST_LIMIT_REACHED'
-  | 'LIST_NAME_REQUIRED'
-  | 'LIST_NAME_TOO_LONG'
-  | 'LIST_NAME_DUPLICATED'
-  | 'INVALID_LIST_METADATA'
-  | 'COMMAND_NOT_FOUND'
-  | 'COMMAND_LIMIT_REACHED'
-  | 'COMMAND_REQUIRED'
-  | 'COMMAND_DUPLICATED';
-
-export class StateError extends Error {
-  readonly code: StateErrorCode;
-
-  constructor(code: StateErrorCode) {
-    super(code);
-    this.name = 'StateError';
-    this.code = code;
-  }
-}
 
 export const createInitialState = (): AppState => ({
   schemaVersion: APP_STATE_SCHEMA_VERSION,
   currentListId: null,
   lists: [],
 });
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const isValidId = (value: unknown): value is string =>
-  typeof value === 'string' && value.trim().length > 0;
-
-const invalidState = (): never => {
-  throw new StateError('INVALID_STATE');
-};
-
-const normalizeListName = (name: string): string => {
-  const normalizedName = name.trim();
-
-  if (normalizedName.length === 0) {
-    throw new StateError('LIST_NAME_REQUIRED');
-  }
-
-  if (normalizedName.length > MAX_LIST_NAME_LENGTH) {
-    throw new StateError('LIST_NAME_TOO_LONG');
-  }
-
-  return normalizedName;
-};
-
-const validateCommandText = (text: string): string => {
-  if (text.trim().length === 0) {
-    throw new StateError('COMMAND_REQUIRED');
-  }
-
-  return text;
-};
 
 export const parseAppState = (value: unknown): AppState => {
   if (
@@ -185,53 +96,6 @@ export const parseAppState = (value: unknown): AppState => {
   };
 };
 
-const assertMutationId = (id: string): void => {
-  if (!isValidId(id)) {
-    throw new StateError('INVALID_ID');
-  }
-};
-
-const findListIndex = (state: AppState, listId: string): number => {
-  const index = state.lists.findIndex((list) => list.id === listId);
-
-  if (index === -1) {
-    throw new StateError('LIST_NOT_FOUND');
-  }
-
-  return index;
-};
-
-const replaceList = (
-  state: AppState,
-  listIndex: number,
-  list: List,
-): AppState => {
-  const currentList = state.lists[listIndex];
-
-  if (currentList === list) {
-    return state;
-  }
-
-  const lists = [...state.lists];
-  lists[listIndex] = list;
-
-  return { ...state, lists };
-};
-
-const assertUniqueCommandText = (
-  list: List,
-  text: string,
-  ignoredCommandId?: string,
-): void => {
-  if (
-    list.commands.some(
-      (command) => command.id !== ignoredCommandId && command.text === text,
-    )
-  ) {
-    throw new StateError('COMMAND_DUPLICATED');
-  }
-};
-
 const createList = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'list.create' }>,
@@ -246,7 +110,7 @@ const createList = (
     throw new StateError('LIST_LIMIT_REACHED');
   }
 
-  const name = normalizeListName(mutation.name);
+  const name = normalizeListName(mutation.name, MAX_LIST_NAME_LENGTH);
 
   if (state.lists.some((list) => list.name === name)) {
     throw new StateError('LIST_NAME_DUPLICATED');
@@ -288,7 +152,7 @@ const updateListMetadata = (
       throw new StateError('INVALID_LIST_METADATA');
     }
 
-    const normalizedName = normalizeListName(name);
+    const normalizedName = normalizeListName(name, MAX_LIST_NAME_LENGTH);
 
     if (nextNames.has(normalizedName)) {
       throw new StateError('LIST_NAME_DUPLICATED');
