@@ -9,7 +9,7 @@
 | [제품 기획 및 범위](./product.md) | 기준 확정 | 사용자 문제, MVP 범위, 기능 규칙, 사용자 흐름, 예외 동작과 완료 조건 |
 | [데이터 및 개인정보 정책](./data-privacy-policy.md) | 기준 확정 | 처리 데이터, 저장 위치, 권한, 보존·삭제, 외부 전송과 보안 원칙 |
 | [디자인 시스템과 와이어프레임](./design-system.md) | 기준 확정 | 색상·간격·typography token의 역할, popup layout, 컴포넌트 표현과 상태별 화면 |
-| [아키텍처](./architecture.md) | 설계 예정 | 기술 stack, module 책임, 실행 환경 간 interface, 저장 schema와 테스트·build 설계 |
+| [아키텍처](./architecture.md) | 구현 기준 v1 | 기술 stack, module 책임, 실행 환경 간 interface, 저장 schema와 테스트·build 설계 |
 
 ## 문서 독립성 원칙
 
