@@ -5,20 +5,10 @@ import type {
   ListMetadata,
   StateMutation,
 } from './type.d.ts';
-import {
-  assertMutationId,
-  assertUniqueCommandText,
-  findListIndex,
-  invalidState,
-  isRecord,
-  isValidId,
-  normalizeListName,
-  replaceList,
-  StateError,
-  validateCommandText,
-} from './utils.ts';
+import { StateError } from './stateError.ts';
+import { isRecord } from './utils.ts';
 
-export { StateError } from './utils.ts';
+export { StateError } from './stateError.ts';
 
 export const APP_STATE_SCHEMA_VERSION = 1 as const;
 export const MAX_LIST_COUNT = 10;
@@ -30,6 +20,35 @@ export const createInitialState = (): AppState => ({
   currentListId: null,
   lists: [],
 });
+
+const isValidId = (value: unknown): value is string =>
+  typeof value === 'string' && value.trim().length > 0;
+
+const invalidState = (): never => {
+  throw new StateError('INVALID_STATE');
+};
+
+const normalizeListName = (name: string): string => {
+  const normalizedName = name.trim();
+
+  if (normalizedName.length === 0) {
+    throw new StateError('LIST_NAME_REQUIRED');
+  }
+
+  if (normalizedName.length > MAX_LIST_NAME_LENGTH) {
+    throw new StateError('LIST_NAME_TOO_LONG');
+  }
+
+  return normalizedName;
+};
+
+const validateCommandText = (text: string): string => {
+  if (text.trim().length === 0) {
+    throw new StateError('COMMAND_REQUIRED');
+  }
+
+  return text;
+};
 
 export const parseAppState = (value: unknown): AppState => {
   if (
@@ -96,6 +115,53 @@ export const parseAppState = (value: unknown): AppState => {
   };
 };
 
+const assertMutationId = (id: string): void => {
+  if (!isValidId(id)) {
+    throw new StateError('INVALID_ID');
+  }
+};
+
+const findListIndex = (state: AppState, listId: string): number => {
+  const index = state.lists.findIndex((list) => list.id === listId);
+
+  if (index === -1) {
+    throw new StateError('LIST_NOT_FOUND');
+  }
+
+  return index;
+};
+
+const replaceList = (
+  state: AppState,
+  listIndex: number,
+  list: List,
+): AppState => {
+  const currentList = state.lists[listIndex];
+
+  if (currentList === list) {
+    return state;
+  }
+
+  const lists = [...state.lists];
+  lists[listIndex] = list;
+
+  return { ...state, lists };
+};
+
+const assertUniqueCommandText = (
+  list: List,
+  text: string,
+  ignoredCommandId?: string,
+): void => {
+  if (
+    list.commands.some(
+      (command) => command.id !== ignoredCommandId && command.text === text,
+    )
+  ) {
+    throw new StateError('COMMAND_DUPLICATED');
+  }
+};
+
 const createList = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'list.create' }>,
@@ -110,7 +176,7 @@ const createList = (
     throw new StateError('LIST_LIMIT_REACHED');
   }
 
-  const name = normalizeListName(mutation.name, MAX_LIST_NAME_LENGTH);
+  const name = normalizeListName(mutation.name);
 
   if (state.lists.some((list) => list.name === name)) {
     throw new StateError('LIST_NAME_DUPLICATED');
@@ -152,7 +218,7 @@ const updateListMetadata = (
       throw new StateError('INVALID_LIST_METADATA');
     }
 
-    const normalizedName = normalizeListName(name, MAX_LIST_NAME_LENGTH);
+    const normalizedName = normalizeListName(name);
 
     if (nextNames.has(normalizedName)) {
       throw new StateError('LIST_NAME_DUPLICATED');
