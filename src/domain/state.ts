@@ -6,9 +6,7 @@ import type {
   StateMutation,
 } from './type.d.ts';
 import { StateError } from './stateError.ts';
-import { isRecord } from './utils.ts';
-
-export { StateError } from './stateError.ts';
+import { isRecord } from '../utils/isRecord.ts';
 
 export const APP_STATE_SCHEMA_VERSION = 1 as const;
 export const MAX_LIST_COUNT = 10;

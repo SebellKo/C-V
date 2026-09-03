@@ -1,6 +1,6 @@
-import { StateError } from '../domain/state.ts';
+import { StateError } from '../domain/stateError.ts';
 import type { AppState, List } from '../domain/type.d.ts';
-import { parseMessageRequest } from '../messages/request.ts';
+import { parseMessageRequest } from '../messages/parseRequest.ts';
 import type {
   MessageData,
   MessageErrorCode,
@@ -49,14 +49,14 @@ const toCommandResult = (
     : undefined;
 };
 
-const dispatchMessage = async (
+const dispatchRequest = async (
   request: MessageRequest,
 ): Promise<MessageResponse> => {
   switch (request.type) {
     case 'state.get':
-      return success(await getState());
+      return success<typeof request>(await getState());
     case 'list.create':
-      return success(
+      return success<typeof request>(
         await mutateState({
           type: request.type,
           listId: crypto.randomUUID(),
@@ -64,11 +64,11 @@ const dispatchMessage = async (
         }),
       );
     case 'list.select':
-      return success(await mutateState(request));
+      return success<typeof request>(await mutateState(request));
     case 'lists.updateMetadata':
-      return success(await mutateState(request));
+      return success<typeof request>(await mutateState(request));
     case 'command.create':
-      return success(
+      return success<typeof request>(
         await mutateState({
           type: request.type,
           listId: request.listId,
@@ -80,7 +80,7 @@ const dispatchMessage = async (
     case 'command.delete':
     case 'command.clear':
     case 'command.swap':
-      return success(await mutateState(request));
+      return success<typeof request>(await mutateState(request));
     case 'shortcut.list.select': {
       const state = await mutateState({
         type: 'list.selectAt',
@@ -89,7 +89,7 @@ const dispatchMessage = async (
       const list = state.lists[request.position - 1];
 
       return list
-        ? success(toListResult(list, request.position))
+        ? success<typeof request>(toListResult(list, request.position))
         : failure('POSITION_NOT_FOUND');
     }
     case 'shortcut.command.get': {
@@ -101,7 +101,9 @@ const dispatchMessage = async (
 
       const result = toCommandResult(list, request.position);
 
-      return result ? success(result) : failure('POSITION_NOT_FOUND');
+      return result
+        ? success<typeof request>(result)
+        : failure('POSITION_NOT_FOUND');
     }
     case 'shortcut.command.set': {
       const state = await mutateState({
@@ -118,7 +120,9 @@ const dispatchMessage = async (
 
       const result = toCommandResult(list, request.position);
 
-      return result ? success(result) : failure('POSITION_NOT_FOUND');
+      return result
+        ? success<typeof request>(result)
+        : failure('POSITION_NOT_FOUND');
     }
   }
 };
@@ -133,7 +137,7 @@ export const handleMessage = async (
   }
 
   try {
-    return await dispatchMessage(request);
+    return await dispatchRequest(request);
   } catch (error) {
     return error instanceof StateError
       ? failure(error.code)

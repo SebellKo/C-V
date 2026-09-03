@@ -1,4 +1,4 @@
-import { handleMessage } from './message.ts';
+import { handleMessage } from './dispatcher.ts';
 
 const storageAccessReady = chrome.storage.local.setAccessLevel({
   accessLevel: 'TRUSTED_CONTEXTS',
