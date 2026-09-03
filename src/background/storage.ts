@@ -1,5 +1,5 @@
-import { createInitialState, parseAppState } from '../domain/state.ts';
-import type { AppState } from '../domain/type.d.ts';
+import type { AppState } from '../shared/type.d.ts';
+import { createInitialState, parseAppState } from './stateRules.ts';
 
 const STORAGE_KEY = 'cvState';
 

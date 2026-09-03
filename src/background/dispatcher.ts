@@ -1,15 +1,16 @@
-import { StateError } from '../domain/stateError.ts';
-import type { AppState, List } from '../domain/type.d.ts';
-import { parseMessageRequest } from '../messages/parseRequest.ts';
 import type {
+  AppState,
+  List,
   MessageData,
   MessageErrorCode,
   MessageRequest,
   MessageResponse,
   ShortcutCommandResult,
   ShortcutListResult,
-} from '../messages/type.d.ts';
-import { getState, mutateState } from './state.ts';
+} from '../shared/type.d.ts';
+import { parseMessageRequest } from './parseRequest.ts';
+import { StateError } from './stateError.ts';
+import { getState, mutateState } from './stateCoordinator.ts';
 
 const success = <Request extends MessageRequest>(
   data: MessageData<Request>,

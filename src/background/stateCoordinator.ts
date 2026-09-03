@@ -1,6 +1,7 @@
-import { applyStateMutation } from '../domain/state.ts';
-import type { AppState, StateMutation } from '../domain/type.d.ts';
-import { readState, writeState } from '../storage/state.ts';
+import type { AppState } from '../shared/type.d.ts';
+import { applyStateMutation } from './stateRules.ts';
+import { readState, writeState } from './storage.ts';
+import type { StateMutation } from './type.d.ts';
 
 let operationQueue: Promise<void> = Promise.resolve();
 

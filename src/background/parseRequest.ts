@@ -1,4 +1,4 @@
-import type { MessageRequest } from './type.d.ts';
+import type { MessageRequest } from '../shared/type.d.ts';
 import { isRecord } from '../utils/isRecord.ts';
 
 const hasString = <Key extends string>(

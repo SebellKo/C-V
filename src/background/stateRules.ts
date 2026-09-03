@@ -3,8 +3,8 @@ import type {
   Command,
   List,
   ListMetadata,
-  StateMutation,
-} from './type.d.ts';
+} from '../shared/type.d.ts';
+import type { StateMutation } from './type.d.ts';
 import { StateError } from './stateError.ts';
 import { isRecord } from '../utils/isRecord.ts';
 
