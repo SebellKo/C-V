@@ -23,6 +23,7 @@ export type ListMetadata = {
 export type StateMutation =
   | { type: 'list.create'; listId: string; name: string }
   | { type: 'list.select'; listId: string | null }
+  | { type: 'list.selectAt'; index: number }
   | { type: 'lists.updateMetadata'; lists: ListMetadata[] }
   | {
       type: 'command.create';
@@ -47,6 +48,12 @@ export type StateMutation =
   | {
       type: 'command.setAt';
       listId: string;
+      index: number;
+      newCommandId: string;
+      text: string;
+    }
+  | {
+      type: 'command.setCurrentAt';
       index: number;
       newCommandId: string;
       text: string;

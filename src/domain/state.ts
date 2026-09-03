@@ -196,6 +196,12 @@ const selectList = (
     : { ...state, currentListId: listId };
 };
 
+const selectListAt = (state: AppState, index: number): AppState => {
+  const list = state.lists[index];
+
+  return list ? selectList(state, list.id) : state;
+};
+
 const updateListMetadata = (
   state: AppState,
   metadata: ListMetadata[],
@@ -432,6 +438,23 @@ const setCommandAt = (
   });
 };
 
+const setCommandAtCurrentList = (
+  state: AppState,
+  mutation: Extract<StateMutation, { type: 'command.setCurrentAt' }>,
+): AppState => {
+  if (state.currentListId === null) {
+    return state;
+  }
+
+  return setCommandAt(state, {
+    type: 'command.setAt',
+    listId: state.currentListId,
+    index: mutation.index,
+    newCommandId: mutation.newCommandId,
+    text: mutation.text,
+  });
+};
+
 export const applyStateMutation = (
   state: AppState,
   mutation: StateMutation,
@@ -441,6 +464,8 @@ export const applyStateMutation = (
       return createList(state, mutation);
     case 'list.select':
       return selectList(state, mutation.listId);
+    case 'list.selectAt':
+      return selectListAt(state, mutation.index);
     case 'lists.updateMetadata':
       return updateListMetadata(state, mutation.lists);
     case 'command.create':
@@ -455,5 +480,7 @@ export const applyStateMutation = (
       return swapCommands(state, mutation);
     case 'command.setAt':
       return setCommandAt(state, mutation);
+    case 'command.setCurrentAt':
+      return setCommandAtCurrentList(state, mutation);
   }
 };
