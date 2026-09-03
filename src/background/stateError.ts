@@ -1,4 +1,4 @@
-import type { StateErrorCode } from './type.d.ts';
+import type { StateErrorCode } from '../shared/type.d.ts';
 
 export class StateError extends Error {
   readonly code: StateErrorCode;
