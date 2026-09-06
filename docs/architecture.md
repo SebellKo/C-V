@@ -1,7 +1,7 @@
 # 아키텍처
 
 - 문서 상태: 구현 기준 v1
-- 최종 수정일: 2026-09-01
+- 최종 수정일: 2026-09-03
 - 적용 대상: C:V Chrome Extension TypeScript 구현
 
 ## 1. 문서 목적
@@ -16,7 +16,7 @@
 2. Background만 영속 state를 변경합니다.
 3. Popup은 화면을 위한 최신 snapshot과 일시적인 입력 상태만 가집니다.
 4. Content Script는 웹 페이지에서만 가능한 기능을 담당합니다.
-5. domain 규칙은 Chrome API와 React에 의존하지 않습니다.
+5. 순수 state 규칙은 Chrome API와 React에 의존하지 않습니다.
 6. 실행 환경 사이에는 구체적인 사용자 의도를 message로 전달합니다.
 7. 하나뿐인 구현을 위한 교체 가능성이나 미래 확장용 추상화는 만들지 않습니다.
 
@@ -26,17 +26,13 @@
 | --- | --- |
 | Popup | React UI, 입력 draft, dialog와 loading 상태, 최신 state snapshot 표시 |
 | Content Script | 페이지 단축키, 선택 텍스트 읽기, clipboard 쓰기, web toast 표시 |
-| Background Service Worker | message 검증과 전달, 최신 state 조회, 변경 직렬화와 영속 저장 |
-| Domain | 영속 type, 최소 구조 검사, 순수한 제품 규칙과 오류 표현 |
+| Background Service Worker | message 검증과 전달, 제품 규칙 적용, 최신 state 조회, 변경 직렬화와 영속 저장 |
 
 데이터 흐름은 다음 한 방향을 따릅니다.
 
 ~~~
-Popup ───────┐
-             ├─ runtime message ─> Background ─> Domain
-Content ─────┘                         │             │
-                                      │             └─ 변경 결과 또는 오류
-                                      └─ chrome.storage.local
+Popup / Content ── request ──> Background ── read/write ──> chrome.storage.local
+Popup / Content <─ result ──── Background
 ~~~
 
 Popup과 Content Script는 storage에 직접 접근하거나 서로 직접 통신하지 않습니다.
@@ -62,13 +58,22 @@ Popup과 Content Script는 storage에 직접 접근하거나 서로 직접 통�
 
 | 영역 | 책임 |
 | --- | --- |
-| `domain` | state type, 구조 검사와 순수 변경 규칙 |
-| `storage` | `chrome.storage.local` 읽기와 쓰기 |
-| `messages` | 실행 환경이 공유하는 request와 response 계약 |
-| `background` | message dispatch와 state 변경 조정 |
+| `background` | message 검사와 dispatch, state 변경 조정, 순수 제품 규칙, `chrome.storage.local` 읽기와 쓰기 |
 | `content` | 페이지 단축키, clipboard와 web toast |
 | `popup` | React 화면과 Popup 전용 component |
+| `shared` | 실행 환경이 공유하는 state·message 계약과 message client |
 | `styles` | 여러 UI에서 공유하는 semantic token |
+| `utils` | 제품 의미와 실행 환경에 의존하지 않는 범용 순수 함수 |
+
+Background 내부에서는 다음 책임을 파일 단위로 구분합니다.
+
+| 책임 | 역할 |
+| --- | --- |
+| request 경계 | `unknown` message의 구조 검사 |
+| dispatch | 검사된 요청을 조회 또는 변경 작업에 연결 |
+| state 조정 | 요청 순서 보장과 읽기·변경·쓰기 조정 |
+| state 규칙 | 저장 구조 검사와 List·Command 제품 규칙 적용 |
+| storage | Chrome Storage 읽기와 쓰기 |
 
 shadcn이 생성한 UI source와 C:V 전용 component는 모두 Popup 영역 안에서 관리합니다. 별도의 최상위 공용 component 영역은 만들지 않습니다.
 
@@ -127,7 +132,7 @@ storage에서 읽은 값은 `unknown`으로 취급하고 작은 수동 검사로
 | 알 수 없는 version 또는 잘못된 구조 | 자동 초기화하지 않고 오류 반환 |
 | 존재하지 않는 현재 List ID | 읽은 snapshot에서 `null`로 정리 |
 
-이 검사는 저장 형식의 안전만 보장합니다. 이름, 중복, 최대 개수와 위치 같은 제품 규칙은 domain 변경 과정에서 검사합니다.
+이 검사는 저장 형식의 안전만 보장합니다. 이름, 중복, 최대 개수와 위치 같은 제품 규칙은 순수 state 변경 과정에서 검사합니다.
 
 ## 8. State 소유권과 변경 직렬화
 
@@ -137,13 +142,13 @@ Background는 영속 state의 유일한 writer입니다. Content Script의 직�
 
 1. 앞선 변경 완료 대기
 2. storage에서 최신 state를 읽고 최소 schema 검사
-3. domain 규칙으로 요청을 검증하고 새 state 생성
+3. 순수 state 규칙으로 요청을 검증하고 새 state 생성
 4. 새 state의 storage 저장 완료 대기
 5. 저장된 결과 반환
 
 작업 하나가 실패해도 다음 작업을 처리할 수 있어야 합니다. 조회는 먼저 접수된 변경이 끝난 뒤 storage를 읽어 최신 값을 반환합니다.
 
-domain 변경 과정에서 요청한 제품 규칙을 검사하므로, 그 결과를 저장 직전에 외부 입력처럼 다시 구조 검사하지 않습니다.
+state 변경 과정에서 요청한 제품 규칙을 검사하므로, 그 결과를 저장 직전에 외부 입력처럼 다시 구조 검사하지 않습니다.
 
 service worker 메모리는 언제든 사라질 수 있으므로 state cache로 사용하지 않습니다. 직렬화 장치는 실행 순서만 제어하며 실제 데이터는 매 변경 시 storage에서 다시 읽습니다.
 
@@ -197,9 +202,9 @@ Popup은 shadcn/ui source component와 C:V 전용 component를 조합합니다. 
 
 색상, spacing, radius와 typography 값은 semantic CSS token을 단일 원본으로 사용합니다. Tailwind는 해당 token을 소비하며 같은 값을 별도로 복제하지 않습니다.
 
-List와 Command DnD는 현재 dnd-kit React package를 사용합니다. DnD 계층은 drag 결과의 ID만 domain 변경으로 전달하며 제품 데이터 규칙을 직접 구현하지 않습니다.
+List와 Command DnD는 현재 dnd-kit React package를 사용합니다. DnD 계층은 drag 결과의 ID만 Background의 state 변경으로 전달하며 제품 데이터 규칙을 직접 구현하지 않습니다.
 
-drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공한 뒤 결과를 확정합니다. pointer 외에도 keyboard와 위·아래 이동 action이 같은 domain 규칙을 사용해야 합니다.
+drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공한 뒤 결과를 확정합니다. pointer 외에도 keyboard와 위·아래 이동 action이 같은 state 규칙을 사용해야 합니다.
 
 ## 13. 오류와 보안 경계
 
@@ -212,7 +217,7 @@ drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공�
 - 지원하지 않는 저장 schema
 - clipboard 쓰기 실패
 
-Background와 domain은 사용자에게 표시할 한국어 문장을 만들지 않습니다. Popup과 Content Script가 각 실행 환경의 한 곳에서 오류 code를 사용자 문구로 변환합니다.
+Background는 사용자에게 표시할 한국어 문장을 만들지 않습니다. Popup과 Content Script가 각 실행 환경의 한 곳에서 오류 code를 사용자 문구로 변환합니다.
 
 잘못된 state나 저장 실패를 빈 데이터로 복구하지 않습니다. 사용자 콘텐츠는 HTML로 해석하거나 console log, 오류 응답과 외부 서비스로 전달하지 않습니다.
 
@@ -238,7 +243,7 @@ production source는 TypeScript로 작성하며 typecheck가 성공해야 produc
 
 | 수준 | 검증 대상 |
 | --- | --- |
-| Unit | domain 규칙과 state 구조 검사 |
+| Unit | 순수 state 규칙과 저장 구조 검사 |
 | Integration | Chrome Storage, mutation 직렬화와 runtime message 경계 |
 | Extension E2E | Popup, 단축키, clipboard와 web toast의 사용자 흐름 |
 
