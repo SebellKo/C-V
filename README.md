@@ -2,7 +2,7 @@
 
 ![C:V](https://github.com/user-attachments/assets/d4241dd9-6cd9-4e9e-bbf5-35884586fa03)
 
-> 현재 저장소는 TypeScript 기반 최소 bootstrap 상태입니다. 기존 JavaScript 구현은 `legacy-js-final` Git 태그에 보존되어 있으며, 새 구현의 제품 기준은 `docs/` 문서입니다.
+> 현재 저장소는 TypeScript로 재구현 중이며, Popup의 상태 조회와 초기 화면까지 연결되어 있습니다. 기존 JavaScript 구현은 `legacy-js-final` Git 태그에 보존되어 있으며, 새 구현의 제품 기준은 `docs/` 문서입니다.
 
 C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chrome에서 숫자 단축키로 빠르게 클립보드에 복사하는 데스크톱 확장 프로그램입니다.
 
@@ -24,6 +24,15 @@ C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chr
 ```sh
 npm run dev
 ```
+
+## Popup 확인
+
+`npm run build` 후 Chrome의 `chrome://extensions`에서 개발자 모드를 켜고 `dist/`를 압축 해제된 확장 프로그램으로 로드합니다.
+
+- Popup을 열 때마다 Background에서 최신 상태를 조회합니다.
+- 조회 중, 리스트 없음, 현재 리스트 미선택, Command 없음, 목록과 재시도 가능한 오류 화면을 구분합니다.
+- 현재 단계는 조회 전용입니다. 리스트·Command 생성, 선택, 편집과 DnD 버튼은 후속 구현 전까지 비활성화되어 있습니다.
+- 일반 브라우저의 개발 서버에서는 확장 runtime에 연결할 수 없으므로 연결 오류 화면이 표시됩니다.
 
 ## 재구현 기본 조건
 
