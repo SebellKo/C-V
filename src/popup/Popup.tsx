@@ -136,7 +136,7 @@ export function Popup() {
             <p>{getLoadErrorMessage(loadState.error)}</p>
           </section>
         ) : (
-          <SnapshotContent hasLists={hasLists} currentList={currentList} />
+          <PopupContent hasLists={hasLists} currentList={currentList} />
         )}
       </main>
 
@@ -163,7 +163,7 @@ export function Popup() {
   );
 }
 
-function SnapshotContent({
+function PopupContent({
   hasLists,
   currentList,
 }: {
