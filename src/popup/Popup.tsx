@@ -183,7 +183,8 @@ function SnapshotContent({
             >
               <GripVertical aria-hidden="true" />
             </Button>
-            <span className="command-number">{index + 1}</span>
+            {/* 숫자 키 0은 10번 위치에 대응한다. */}
+            <kbd className="command-number">{(index + 1) % 10}</kbd>
             <p>{command.text}</p>
             <Button
               variant="ghost"
