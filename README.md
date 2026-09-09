@@ -2,8 +2,6 @@
 
 ![C:V](https://github.com/user-attachments/assets/d4241dd9-6cd9-4e9e-bbf5-35884586fa03)
 
-> 현재 저장소는 TypeScript 기반 최소 bootstrap 상태입니다. 기존 JavaScript 구현은 `legacy-js-final` Git 태그에 보존되어 있으며, 새 구현의 제품 기준은 `docs/` 문서입니다.
-
 C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chrome에서 숫자 단축키로 빠르게 클립보드에 복사하는 데스크톱 확장 프로그램입니다.
 
 ## 제품 목표
@@ -25,12 +23,14 @@ C:V는 자주 사용하는 여러 텍스트를 리스트별로 저장하고, Chr
 npm run dev
 ```
 
-## 재구현 기본 조건
+## 로컬 설치
+
+`npm run build` 후 Chrome의 `chrome://extensions`에서 개발자 모드를 켜고 `dist/`를 압축 해제된 확장 프로그램으로 로드합니다.
+
+## 기술 구성
 
 - Chrome Extension Manifest V3
 - production source 전체 TypeScript 사용
 - `chrome.storage.local` 기반 로컬 영속 저장
 - 외부 서버, 계정, 원격 동기화, 분석 SDK 없음
 - 최신 Chrome 데스크톱을 대상으로 하며 macOS를 우선 검증 환경으로 사용
-
-구체적인 framework, 상태 관리 방식, module 구조, 테스트 전략은 architecture 설계 단계에서 결정합니다.
