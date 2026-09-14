@@ -3,8 +3,9 @@ import type { ComponentProps } from 'react';
 
 // shadcn Base UI/Nova Button을 C:V의 semantic CSS와 사용하는 variant에 맞췄다.
 type ButtonProps = ComponentProps<'button'> & {
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: 'default' | 'outline' | 'ghost' | 'destructive';
   size?: 'default' | 'icon' | 'compact';
+  focusableWhenDisabled?: boolean;
 };
 
 export function Button({
