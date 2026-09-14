@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ChevronDown,
+  ArrowLeft,
   Copy,
   GripVertical,
   List as ListIcon,
@@ -10,55 +10,37 @@ import {
   Settings,
   TriangleAlert,
 } from 'lucide-react';
-import { sendMessage } from '../shared/messageClient.ts';
-import type { AppState, List, MessageErrorCode } from '../shared/type.d.ts';
+import type { List } from '../shared/type.d.ts';
 import { Button } from './components/ui/button.tsx';
-
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'ready'; snapshot: AppState }
-  | { status: 'error'; error: MessageErrorCode };
-
-function getLoadErrorMessage(error: MessageErrorCode): string {
-  switch (error) {
-    case 'INVALID_STATE':
-      return '저장된 데이터 형식을 확인할 수 없습니다. 기존 데이터는 변경하지 않았습니다.';
-    case 'MESSAGE_UNAVAILABLE':
-      return '확장 프로그램에 연결하지 못했습니다. 잠시 후 다시 시도해주세요.';
-    case 'STORAGE_ERROR':
-      return '저장소에서 데이터를 읽지 못했습니다. 잠시 후 다시 시도해주세요.';
-    default:
-      return '데이터를 불러오지 못했습니다. 팝업을 다시 열거나 다시 시도해주세요.';
-  }
-}
+import { ListSelector } from './components/ListSelector.tsx';
+import { ListManager } from './components/ListManager.tsx';
+import { ListDialog } from './components/ListDialog.tsx';
+import type { ListDialogAction } from './components/ListDialog.tsx';
+import { getErrorMessage } from './errorMessage.ts';
+import { usePopupState } from './usePopupState.ts';
+import type { ListMutation } from './usePopupState.ts';
 
 export function Popup() {
-  const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' });
-  const [loadAttempt, setLoadAttempt] = useState(0);
+  const { loadState, saving, save, reload } = usePopupState();
+  const [managing, setManaging] = useState(false);
+  const [dialog, setDialog] = useState<{
+    action: ListDialogAction;
+    trigger: HTMLElement | null;
+  } | null>(null);
+  const [feedback, setFeedback] = useState<{
+    message: string;
+    retry?: ListMutation;
+  } | null>(null);
   const retryButton = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoadState({ status: 'loading' });
-
-    void sendMessage({ type: 'state.get' }).then((response) => {
-      // 닫힌 Popup이나 이전 조회의 응답은 현재 화면에 반영하지 않는다.
-      if (cancelled) return;
-      setLoadState(
-        response.ok
-          ? { status: 'ready', snapshot: response.data }
-          : { status: 'error', error: response.error },
-      );
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [loadAttempt]);
+  const navigationButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (loadState.status === 'error') retryButton.current?.focus();
   }, [loadState.status]);
+
+  useEffect(() => {
+    navigationButton.current?.focus();
+  }, [managing]);
 
   const snapshot =
     loadState.status === 'ready' ? loadState.snapshot : undefined;
@@ -67,35 +49,71 @@ export function Popup() {
   );
   const hasLists = snapshot !== undefined && snapshot.lists.length > 0;
 
+  function openDialog(action: ListDialogAction, trigger: HTMLElement | null) {
+    setFeedback(null);
+    setDialog({ action, trigger });
+  }
+
+  async function saveFromScreen(request: ListMutation) {
+    setFeedback(null);
+    const response = await save(request);
+    if (!response) return;
+    setFeedback(
+      response.ok
+        ? { message: '저장했습니다.' }
+        : { message: getErrorMessage(response.error), retry: request },
+    );
+  }
+
   return (
     <div className="popup-shell">
       <header className="popup-header">
         <h1 className="sr-only">C:V — 빠른 텍스트 복사</h1>
-        {loadState.status === 'loading' ? (
+        {managing ? (
+          <>
+            <Button
+              ref={navigationButton}
+              variant="ghost"
+              size="icon"
+              disabled={saving}
+              aria-label="Command 목록으로 돌아가기"
+              onClick={() => {
+                setManaging(false);
+                setFeedback(null);
+              }}
+            >
+              <ArrowLeft aria-hidden="true" />
+            </Button>
+            <strong>리스트 관리</strong>
+            <span className="header-caption">
+              {snapshot?.lists.length ?? 0}/10
+            </span>
+          </>
+        ) : loadState.status === 'loading' ? (
           <div className="loading-header" aria-hidden="true">
             <span className="skeleton skeleton-select" />
             <span className="skeleton skeleton-icon" />
           </div>
-        ) : hasLists ? (
+        ) : snapshot && hasLists ? (
           <>
+            <ListSelector
+              snapshot={snapshot}
+              disabled={saving}
+              onSelect={(listId) => {
+                void saveFromScreen({ type: 'list.select', listId });
+              }}
+              onManage={() => setManaging(true)}
+            />
             <Button
-              className="list-trigger"
-              variant="outline"
-              disabled
-              aria-label={
-                currentList
-                  ? `현재 리스트: ${currentList.name}`
-                  : '현재 리스트 선택'
-              }
-            >
-              <span>{currentList?.name ?? '리스트 선택'}</span>
-              <ChevronDown aria-hidden="true" />
-            </Button>
-            <Button
+              ref={navigationButton}
               variant="ghost"
               size="icon"
-              disabled
+              disabled={saving}
               aria-label="리스트 관리"
+              onClick={() => {
+                setManaging(true);
+                setFeedback(null);
+              }}
             >
               <Settings aria-hidden="true" />
             </Button>
@@ -112,7 +130,29 @@ export function Popup() {
         )}
       </header>
 
-      <main className="popup-content" tabIndex={0} aria-label="저장된 Command">
+      <main
+        className="popup-content"
+        tabIndex={0}
+        aria-label={managing ? '리스트 관리' : '저장된 Command'}
+      >
+        {!dialog && (saving || feedback) ? (
+          <div
+            className="save-feedback"
+            role={feedback?.retry ? 'alert' : 'status'}
+          >
+            <p>{saving ? '저장 중…' : feedback?.message}</p>
+            {!saving && feedback?.retry ? (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (feedback.retry) void saveFromScreen(feedback.retry);
+                }}
+              >
+                다시 시도
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
         {loadState.status === 'loading' ? (
           <section
             className="skeleton-list"
@@ -133,8 +173,17 @@ export function Popup() {
               <TriangleAlert aria-hidden="true" />
             </span>
             <h2>저장된 데이터를 불러오지 못했습니다</h2>
-            <p>{getLoadErrorMessage(loadState.error)}</p>
+            <p>{getErrorMessage(loadState.error)}</p>
           </section>
+        ) : managing ? (
+          <ListManager
+            snapshot={loadState.snapshot}
+            saving={saving}
+            onReorder={(lists) => {
+              void saveFromScreen({ type: 'lists.updateMetadata', lists });
+            }}
+            onDialog={openDialog}
+          />
         ) : (
           <PopupContent hasLists={hasLists} currentList={currentList} />
         )}
@@ -146,19 +195,45 @@ export function Popup() {
             ref={retryButton}
             variant="outline"
             className="button-full"
-            onClick={() => setLoadAttempt((attempt) => attempt + 1)}
+            onClick={reload}
           >
             <RefreshCw aria-hidden="true" />
             다시 시도
           </Button>
+        ) : snapshot && (managing || !hasLists) ? (
+          <Button
+            className="button-full"
+            disabled={saving || snapshot.lists.length >= 10}
+            onClick={(event) =>
+              openDialog({ type: 'create' }, event.currentTarget)
+            }
+          >
+            <Plus aria-hidden="true" />
+            {snapshot.lists.length >= 10
+              ? '리스트는 최대 10개입니다'
+              : hasLists || managing
+                ? '리스트 추가'
+                : '리스트 만들기'}
+          </Button>
         ) : (
-          // 생성·선택·편집·DnD는 #74와 #75에서 연결한다.
+          // Command 관리는 #75에서 연결한다.
           <Button className="button-full" disabled>
             {loadState.status === 'ready' ? <Plus aria-hidden="true" /> : null}
-            {snapshot && !hasLists ? '리스트 만들기' : 'Command 추가'}
+            Command 추가
           </Button>
         )}
       </footer>
+      {dialog && snapshot ? (
+        <ListDialog
+          action={dialog.action}
+          lists={snapshot.lists}
+          saving={saving}
+          save={save}
+          onClose={() => setDialog(null)}
+          returnFocus={dialog.trigger}
+          fallbackFocus={navigationButton}
+        />
+      ) : null}
     </div>
   );
 }
