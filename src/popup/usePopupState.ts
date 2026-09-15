@@ -6,9 +6,15 @@ import type {
   MessageRequest,
 } from '../shared/type.d.ts';
 
-export type ListMutation = Extract<
+export type PopupMutation = Extract<
   MessageRequest,
-  { type: 'list.create' | 'list.select' | 'lists.updateMetadata' }
+  {
+    type:
+      | 'list.create'
+      | 'list.select'
+      | 'lists.updateMetadata'
+      | `command.${string}`;
+  }
 >;
 
 type LoadState =
@@ -46,7 +52,7 @@ export function usePopupState() {
     };
   }, [loadAttempt]);
 
-  async function save(request: ListMutation) {
+  async function save(request: PopupMutation) {
     // React가 버튼을 다시 그리기 전 연속 제출도 하나의 요청만 보낸다.
     if (savingRef.current || loadState.status !== 'ready') return;
     savingRef.current = true;

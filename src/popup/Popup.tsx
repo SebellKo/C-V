@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft,
-  Copy,
-  GripVertical,
-  List as ListIcon,
-  MoreHorizontal,
   Plus,
   RefreshCw,
   Settings,
   TriangleAlert,
+  Trash2,
 } from 'lucide-react';
-import type { List } from '../shared/type.d.ts';
 import { Button } from './components/ui/button.tsx';
 import { ListSelector } from './components/ListSelector.tsx';
 import { ListManager } from './components/ListManager.tsx';
@@ -18,18 +14,25 @@ import { ListDialog } from './components/ListDialog.tsx';
 import type { ListDialogAction } from './components/ListDialog.tsx';
 import { getErrorMessage } from './errorMessage.ts';
 import { usePopupState } from './usePopupState.ts';
-import type { ListMutation } from './usePopupState.ts';
+import type { PopupMutation } from './usePopupState.ts';
+import { CommandContent } from './components/CommandContent.tsx';
+import { CommandDialog } from './components/CommandDialog.tsx';
+import type { CommandDialogAction } from './components/CommandDialog.tsx';
 
 export function Popup() {
   const { loadState, saving, save, reload } = usePopupState();
   const [managing, setManaging] = useState(false);
-  const [dialog, setDialog] = useState<{
-    action: ListDialogAction;
-    trigger: HTMLElement | null;
-  } | null>(null);
+  const [dialog, setDialog] = useState<
+    | ({ trigger: HTMLElement | null } & (
+        | { kind: 'list'; action: ListDialogAction }
+        | { kind: 'command'; action: CommandDialogAction }
+      ))
+    | null
+  >(null);
   const [feedback, setFeedback] = useState<{
     message: string;
-    retry?: ListMutation;
+    retry?: PopupMutation;
+    refresh?: boolean;
   } | null>(null);
   const retryButton = useRef<HTMLButtonElement>(null);
   const navigationButton = useRef<HTMLButtonElement>(null);
@@ -51,13 +54,34 @@ export function Popup() {
 
   function openDialog(action: ListDialogAction, trigger: HTMLElement | null) {
     setFeedback(null);
-    setDialog({ action, trigger });
+    setDialog({ kind: 'list', action, trigger });
   }
 
-  async function saveFromScreen(request: ListMutation) {
+  function openCommandDialog(
+    action: CommandDialogAction,
+    trigger: HTMLElement | null,
+  ) {
+    setFeedback(null);
+    setDialog({ kind: 'command', action, trigger });
+  }
+
+  async function saveFromScreen(request: PopupMutation) {
     setFeedback(null);
     const response = await save(request);
     if (!response) return;
+    // 교환은 재전송하면 원복된다. 응답만 유실됐을 수 있으므로 저장 결과부터 확인한다.
+    if (
+      request.type === 'command.swap' &&
+      !response.ok &&
+      response.error === 'MESSAGE_UNAVAILABLE'
+    ) {
+      setFeedback({
+        message:
+          '저장 결과를 확인하지 못했습니다. 목록을 다시 불러와 확인해주세요.',
+        refresh: true,
+      });
+      return;
+    }
     setFeedback(
       response.ok
         ? { message: '저장했습니다.' }
@@ -102,7 +126,10 @@ export function Popup() {
               onSelect={(listId) => {
                 void saveFromScreen({ type: 'list.select', listId });
               }}
-              onManage={() => setManaging(true)}
+              onManage={() => {
+                setManaging(true);
+                setFeedback(null);
+              }}
             />
             <Button
               ref={navigationButton}
@@ -138,17 +165,21 @@ export function Popup() {
         {!dialog && (saving || feedback) ? (
           <div
             className="save-feedback"
-            role={feedback?.retry ? 'alert' : 'status'}
+            role={feedback?.retry || feedback?.refresh ? 'alert' : 'status'}
           >
             <p>{saving ? '저장 중…' : feedback?.message}</p>
-            {!saving && feedback?.retry ? (
+            {!saving && (feedback?.retry || feedback?.refresh) ? (
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (feedback.retry) void saveFromScreen(feedback.retry);
+                  if (feedback.refresh) {
+                    setFeedback(null);
+                    reload();
+                  } else if (feedback.retry)
+                    void saveFromScreen(feedback.retry);
                 }}
               >
-                다시 시도
+                {feedback.refresh ? '다시 불러오기' : '다시 시도'}
               </Button>
             ) : null}
           </div>
@@ -185,7 +216,22 @@ export function Popup() {
             onDialog={openDialog}
           />
         ) : (
-          <PopupContent hasLists={hasLists} currentList={currentList} />
+          <CommandContent
+            key={currentList?.id ?? 'unselected'}
+            hasLists={hasLists}
+            list={currentList}
+            saving={saving}
+            onSwap={(sourceId, targetId) => {
+              if (currentList)
+                void saveFromScreen({
+                  type: 'command.swap',
+                  listId: currentList.id,
+                  sourceId,
+                  targetId,
+                });
+            }}
+            onDialog={openCommandDialog}
+          />
         )}
       </main>
 
@@ -215,15 +261,46 @@ export function Popup() {
                 ? '리스트 추가'
                 : '리스트 만들기'}
           </Button>
+        ) : currentList ? (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              disabled={saving || currentList.commands.length === 0}
+              aria-label="현재 리스트의 Command 전체 삭제"
+              onClick={(event) =>
+                openCommandDialog(
+                  { type: 'clear', list: currentList },
+                  event.currentTarget,
+                )
+              }
+            >
+              <Trash2 aria-hidden="true" />
+            </Button>
+            <Button
+              className="button-grow"
+              disabled={saving || currentList.commands.length >= 10}
+              onClick={(event) =>
+                openCommandDialog(
+                  { type: 'create', list: currentList },
+                  event.currentTarget,
+                )
+              }
+            >
+              <Plus aria-hidden="true" />
+              {currentList.commands.length >= 10
+                ? 'Command는 최대 10개입니다'
+                : 'Command 추가'}
+            </Button>
+          </>
         ) : (
-          // Command 관리는 #75에서 연결한다.
           <Button className="button-full" disabled>
             {loadState.status === 'ready' ? <Plus aria-hidden="true" /> : null}
             Command 추가
           </Button>
         )}
       </footer>
-      {dialog && snapshot ? (
+      {dialog?.kind === 'list' && snapshot ? (
         <ListDialog
           action={dialog.action}
           lists={snapshot.lists}
@@ -234,72 +311,16 @@ export function Popup() {
           fallbackFocus={navigationButton}
         />
       ) : null}
+      {dialog?.kind === 'command' ? (
+        <CommandDialog
+          action={dialog.action}
+          saving={saving}
+          save={save}
+          onClose={() => setDialog(null)}
+          returnFocus={dialog.trigger}
+          fallbackFocus={navigationButton}
+        />
+      ) : null}
     </div>
-  );
-}
-
-function PopupContent({
-  hasLists,
-  currentList,
-}: {
-  hasLists: boolean;
-  currentList: List | undefined;
-}) {
-  if (currentList && currentList.commands.length > 0) {
-    return (
-      <ol className="command-list" aria-label="Command 목록">
-        {currentList.commands.map((command, index) => (
-          <li key={command.id} className="command-row">
-            <Button
-              variant="ghost"
-              size="compact"
-              disabled
-              aria-label={`${index + 1}번 Command 이동`}
-            >
-              <GripVertical aria-hidden="true" />
-            </Button>
-            {/* 숫자 키 0은 10번 위치에 대응한다. */}
-            <kbd className="command-number">{(index + 1) % 10}</kbd>
-            <p>{command.text}</p>
-            <Button
-              variant="ghost"
-              size="compact"
-              disabled
-              aria-label={`${index + 1}번 Command 메뉴`}
-            >
-              <MoreHorizontal aria-hidden="true" />
-            </Button>
-          </li>
-        ))}
-      </ol>
-    );
-  }
-
-  const emptyState = !hasLists
-    ? {
-        Icon: Copy,
-        title: '첫 리스트를 만들어보세요',
-        description:
-          '자주 사용하는 문장을 리스트별로 저장하고 숫자 단축키로 복사할 수 있습니다.',
-      }
-    : !currentList
-      ? {
-          Icon: ListIcon,
-          title: '리스트를 선택해주세요',
-          description: '선택한 리스트에 저장된 command가 여기에 표시됩니다.',
-        }
-      : {
-          Icon: Plus,
-          title: '저장된 command가 없습니다',
-          description: '자주 사용하는 문장을 이 리스트에 저장해보세요.',
-        };
-  return (
-    <section className="status-panel" aria-labelledby="empty-title">
-      <span className="status-icon">
-        <emptyState.Icon aria-hidden="true" />
-      </span>
-      <h2 id="empty-title">{emptyState.title}</h2>
-      <p>{emptyState.description}</p>
-    </section>
   );
 }
