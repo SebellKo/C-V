@@ -10,6 +10,14 @@ export function getErrorMessage(error: MessageErrorCode): string {
       return '이미 같은 이름의 리스트가 있습니다.';
     case 'LIST_LIMIT_REACHED':
       return '리스트는 최대 10개까지 만들 수 있습니다.';
+    case 'COMMAND_REQUIRED':
+      return 'Command 내용을 입력해주세요. 공백만 저장할 수는 없습니다.';
+    case 'COMMAND_DUPLICATED':
+      return '이 리스트에 같은 내용의 Command가 있습니다.';
+    case 'COMMAND_LIMIT_REACHED':
+      return 'Command는 리스트마다 최대 10개까지 저장할 수 있습니다.';
+    case 'COMMAND_NOT_FOUND':
+      return 'Command가 삭제되었습니다. 팝업을 다시 열어주세요.';
     case 'INVALID_LIST_METADATA':
     case 'LIST_NOT_FOUND':
       return '리스트가 변경되었거나 삭제되었습니다. 팝업을 다시 열어주세요.';
