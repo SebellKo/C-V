@@ -27,6 +27,19 @@ npm run dev
 
 `npm run build` 후 Chrome의 `chrome://extensions`에서 개발자 모드를 켜고 `dist/`를 압축 해제된 확장 프로그램으로 로드합니다.
 
+## 단축키
+
+| 동작             | 단축키                                       |
+| ---------------- | -------------------------------------------- |
+| Popup 열기       | macOS `Command+B`, Windows/Linux `Ctrl+B`    |
+| 리스트 선택      | `Shift+숫자`                                 |
+| Command 복사     | `Alt+숫자` (macOS `Option+숫자`)             |
+| 선택 텍스트 저장 | `Shift+Alt+숫자` (macOS `Shift+Option+숫자`) |
+
+숫자 `0`은 10번 위치입니다. 저장은 기존 위치를 교체하거나 마지막 바로 다음 위치에 추가하며, 빈 위치를 건너뛰지 않습니다. 일반 HTTP·HTTPS 페이지에서 사용하며 Chrome 내부 페이지·웹 스토어 등 확장 실행이 제한된 페이지와 iframe에서는 동작하지 않습니다.
+
+페이지·운영체제 단축키와 충돌할 수 있습니다. Popup 열기 키는 `chrome://extensions/shortcuts`에서 확인·변경할 수 있으며 페이지 내부 숫자 조합은 고정입니다. C:V는 비동기 저장 결과를 알기 전에 페이지의 기본 키 동작을 차단하지 않습니다.
+
 ## 기술 구성
 
 - Chrome Extension Manifest V3
