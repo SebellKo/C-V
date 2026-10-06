@@ -1,5 +1,14 @@
 export type Shortcut = { action: 'select' | 'copy' | 'save'; position: number };
 
+export function isEditableTarget(event: KeyboardEvent): boolean {
+  return event.composedPath().some(
+    (target) =>
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      (target instanceof HTMLElement && target.isContentEditable),
+  );
+}
+
 export function getShortcut(event: KeyboardEvent): Shortcut | undefined {
   if (
     event.defaultPrevented ||
