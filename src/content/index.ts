@@ -1,5 +1,5 @@
 import { sendMessage } from '../shared/messageClient.ts';
-import { getSelectedText, getShortcut } from './shortcut.ts';
+import { getSelectedText, getShortcut, isEditableTarget } from './shortcut.ts';
 import { writeClipboard } from './clipboard.ts';
 import { commandPreview, showToast } from './toast.ts';
 import { getErrorMessage } from './errorMessage.ts';
@@ -51,9 +51,12 @@ if (window.top === window && /^https?:$/.test(location.protocol)) {
     if (!event.isTrusted) return;
     const shortcut = getShortcut(event);
     if (!shortcut) return;
+    const editing = isEditableTarget(event);
+    if (editing && shortcut.action !== 'save') return;
     const text = shortcut.action === 'save' ? getSelectedText() : '';
     if (shortcut.action === 'save' && !text.trim()) return;
-    // 응답 전에 성공 여부를 알 수 없으므로 페이지 기본 동작을 선차단하지 않는다.
+    // 편집 중 저장 단축키가 선택한 원문을 기호로 바꾸지 않도록 즉시 막는다.
+    if (editing) event.preventDefault();
     void handleShortcut(shortcut.action, shortcut.position, text);
   });
 }
