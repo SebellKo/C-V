@@ -9,7 +9,7 @@
     "48": "icon/icon-48.png",
     "128": "icon/icon-128.png"
   },
-  "permissions": ["storage"],
+  "permissions": ["storage", "clipboardWrite"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
