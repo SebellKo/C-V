@@ -23,6 +23,7 @@ export function ListDialog({
   lists,
   saving,
   save,
+  refresh,
   onClose,
   returnFocus,
   fallbackFocus,
@@ -31,6 +32,7 @@ export function ListDialog({
   lists: List[];
   saving: boolean;
   save: ReturnType<typeof usePopupState>['save'];
+  refresh: ReturnType<typeof usePopupState>['refresh'];
   onClose: () => void;
   returnFocus: HTMLElement | null;
   fallbackFocus: RefObject<HTMLButtonElement | null>;
@@ -40,6 +42,7 @@ export function ListDialog({
     action.type === 'rename' ? action.list.name : '',
   );
   const [error, setError] = useState<string | null>(null);
+  const [recovery, setRecovery] = useState<'refresh' | 'check' | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const cancelButton = useRef<HTMLButtonElement>(null);
   const fieldId = useId();
@@ -53,17 +56,27 @@ export function ListDialog({
 
   useEffect(() => {
     // 실패 후 disabled가 해제된 DOM에 포커스를 돌려 입력을 바로 고칠 수 있게 한다.
-    if (error && !saving) (input.current ?? cancelButton.current)?.focus();
-  }, [error, saving]);
+    if (!saving && (error || recovery === null))
+      (input.current ?? cancelButton.current)?.focus();
+  }, [error, saving, recovery]);
 
   async function submit() {
+    if (recovery) return;
     setError(null);
+    if (
+      action.type !== 'create' &&
+      !lists.some((list) => list.id === action.list.id)
+    ) {
+      setError(getErrorMessage('LIST_NOT_FOUND'));
+      return;
+    }
     // Command snapshot은 보내지 않는다. Background가 최신 Command를 보존한다.
     const response = await save(
       action.type === 'create'
         ? { type: 'list.create', name }
         : {
             type: 'lists.updateMetadata',
+            expectedLists: lists.map(({ id, name }) => ({ id, name })),
             lists: lists
               .filter(
                 (list) =>
@@ -83,6 +96,8 @@ export function ListDialog({
       setOpen(false);
     } else {
       setError(getErrorMessage(response.error));
+      if (response.error === 'LIST_METADATA_CONFLICT') setRecovery('refresh');
+      if (response.error === 'MESSAGE_UNAVAILABLE') setRecovery('check');
     }
   }
 
@@ -100,7 +115,8 @@ export function ListDialog({
         role={deleting ? 'alertdialog' : 'dialog'}
         initialFocus={deleting ? cancelButton : input}
         finalFocus={() =>
-          returnFocus?.isConnected && !returnFocus.matches(':disabled')
+          returnFocus?.isConnected &&
+          !returnFocus.matches(':disabled, [data-disabled]')
             ? returnFocus
             : fallbackFocus.current
         }
@@ -129,7 +145,9 @@ export function ListDialog({
             <DialogDescription>
               {deleting
                 ? `‘${action.list.name}’와 저장된 Command ${action.list.commands.length}개를 함께 삭제합니다. 되돌릴 수 없습니다.`
-                : '이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.'}
+                : action.type === 'rename'
+                  ? `현재 이름: ${lists.find((list) => list.id === action.list.id)?.name ?? '삭제된 리스트'}. 이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.`
+                  : '이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.'}
             </DialogDescription>
             {!deleting ? (
               <div className="field">
@@ -143,7 +161,7 @@ export function ListDialog({
                   aria-describedby={error ? `${fieldId}-error` : undefined}
                   onChange={(event) => {
                     setName(event.target.value);
-                    setError(null);
+                    if (!recovery) setError(null);
                   }}
                   onKeyDown={(event) => {
                     // 한글 조합 확정 Enter가 저장까지 실행되지 않게 한다.
@@ -162,6 +180,25 @@ export function ListDialog({
                 {error}
               </p>
             ) : null}
+            {recovery ? (
+              <Button
+                variant="outline"
+                disabled={saving}
+                onClick={async () => {
+                  const response = await refresh();
+                  if (!response) return;
+                  if (response.ok) {
+                    if (recovery === 'check') setOpen(false);
+                    else {
+                      setRecovery(null);
+                      setError(null);
+                    }
+                  } else setError(getErrorMessage(response.error));
+                }}
+              >
+                {recovery === 'check' ? '저장 결과 확인' : '최신 목록 불러오기'}
+              </Button>
+            ) : null}
           </div>
           <div className="dialog-footer">
             <Button
@@ -175,7 +212,7 @@ export function ListDialog({
             <Button
               type="submit"
               variant={deleting ? 'destructive' : 'default'}
-              disabled={saving}
+              disabled={saving || recovery !== null}
             >
               {saving ? '저장 중…' : deleting ? '리스트 삭제' : '저장'}
             </Button>

@@ -565,9 +565,6 @@
     color: var(--destructive);
   }
   .save-feedback {
-    position: sticky;
-    z-index: 1;
-    top: 0;
     padding: var(--spacing-2) var(--spacing-3);
     border-bottom: 1px solid var(--border);
     background: var(--background);

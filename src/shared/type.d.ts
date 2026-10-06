@@ -22,6 +22,11 @@ export type ListMetadata = {
 
 export type StateErrorCode =
   | 'INVALID_STATE'
+  | 'UNSUPPORTED_SCHEMA_VERSION'
+  | 'LIST_METADATA_CONFLICT'
+  | 'STORAGE_READ_ERROR'
+  | 'STORAGE_WRITE_ERROR'
+  | 'STORAGE_QUOTA_EXCEEDED'
   | 'INVALID_ID'
   | 'DUPLICATE_ID'
   | 'LIST_NOT_FOUND'
@@ -39,7 +44,11 @@ export type MessageRequest =
   | { type: 'state.get' }
   | { type: 'list.create'; name: string }
   | { type: 'list.select'; listId: string | null }
-  | { type: 'lists.updateMetadata'; lists: ListMetadata[] }
+  | {
+      type: 'lists.updateMetadata';
+      expectedLists: ListMetadata[];
+      lists: ListMetadata[];
+    }
   | { type: 'command.create'; listId: string; text: string }
   | {
       type: 'command.update';
