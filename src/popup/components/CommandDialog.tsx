@@ -20,6 +20,7 @@ export function CommandDialog({
   action,
   saving,
   save,
+  refresh,
   onClose,
   returnFocus,
   fallbackFocus,
@@ -27,6 +28,7 @@ export function CommandDialog({
   action: CommandDialogAction;
   saving: boolean;
   save: ReturnType<typeof usePopupState>['save'];
+  refresh: ReturnType<typeof usePopupState>['refresh'];
   onClose: () => void;
   returnFocus: HTMLElement | null;
   fallbackFocus: RefObject<HTMLButtonElement | null>;
@@ -36,6 +38,7 @@ export function CommandDialog({
     action.type === 'edit' ? action.command.text : '',
   );
   const [error, setError] = useState<string | null>(null);
+  const [checkResult, setCheckResult] = useState(false);
   const input = useRef<HTMLTextAreaElement>(null);
   const cancelButton = useRef<HTMLButtonElement>(null);
   const fieldId = useId();
@@ -54,6 +57,7 @@ export function CommandDialog({
   }, [error, saving]);
 
   async function submit() {
+    if (checkResult) return;
     setError(null);
     const listId = action.list.id;
     let request: PopupMutation;
@@ -83,7 +87,10 @@ export function CommandDialog({
     const response = await save(request);
     if (!response) return;
     if (response.ok) setOpen(false);
-    else setError(getErrorMessage(response.error));
+    else {
+      setError(getErrorMessage(response.error));
+      if (response.error === 'MESSAGE_UNAVAILABLE') setCheckResult(true);
+    }
   }
 
   return (
@@ -153,7 +160,7 @@ export function CommandDialog({
                   aria-describedby={error ? `${fieldId}-error` : undefined}
                   onChange={(event) => {
                     setText(event.target.value);
-                    setError(null);
+                    if (!checkResult) setError(null);
                   }}
                 />
               </div>
@@ -162,6 +169,20 @@ export function CommandDialog({
               <p id={`${fieldId}-error`} className="inline-error" role="alert">
                 {error}
               </p>
+            ) : null}
+            {checkResult ? (
+              <Button
+                variant="outline"
+                disabled={saving}
+                onClick={async () => {
+                  const response = await refresh();
+                  if (!response) return;
+                  if (response.ok) setOpen(false);
+                  else setError(getErrorMessage(response.error));
+                }}
+              >
+                저장 결과 확인
+              </Button>
             ) : null}
           </div>
           <div className="dialog-footer">
@@ -176,7 +197,7 @@ export function CommandDialog({
             <Button
               type="submit"
               variant={deleting ? 'destructive' : 'default'}
-              disabled={saving}
+              disabled={saving || checkResult}
             >
               {saving ? '저장 중…' : deleting ? '삭제' : '저장'}
             </Button>

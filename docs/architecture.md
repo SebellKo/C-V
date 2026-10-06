@@ -1,7 +1,7 @@
 # 아키텍처
 
 - 문서 상태: 구현 기준 v1
-- 최종 수정일: 2026-09-03
+- 최종 수정일: 2026-10-06
 - 적용 대상: C:V Chrome Extension TypeScript 구현
 
 ## 1. 문서 목적
@@ -152,7 +152,7 @@ state 변경 과정에서 요청한 제품 규칙을 검사하므로, 그 결과
 
 service worker 메모리는 언제든 사라질 수 있으므로 state cache로 사용하지 않습니다. 직렬화 장치는 실행 순서만 제어하며 실제 데이터는 매 변경 시 storage에서 다시 읽습니다.
 
-리스트 관리 화면의 이름·순서·삭제는 전체 snapshot 교체가 아니라 metadata 변경 의도로 전달합니다. Background는 이를 최신 state에 적용해 Popup이 열린 뒤 추가되거나 수정된 Command를 보존합니다.
+리스트 관리 화면의 이름·순서·삭제는 전체 snapshot 교체가 아니라 metadata 변경 의도로 전달합니다. Background는 요청에 포함된 변경 전 리스트 ID·이름·순서를 최신 metadata와 비교합니다. 일치할 때만 적용해 동시에 변경된 Command를 보존하고, metadata가 달라졌다면 저장하지 않고 충돌 오류를 반환합니다.
 
 ## 9. Runtime message 계약
 
@@ -180,6 +180,8 @@ Popup은 React 내장 상태로 다음 범주의 값만 관리합니다.
 - 현재 화면, dialog, 입력 draft와 validation message
 
 영속 변경은 성공 응답으로 받은 최신 state를 기준으로 화면에 확정합니다. 실패하면 기존 snapshot과 사용자의 입력 draft를 유지합니다.
+
+저장 응답을 받지 못한 경우에는 요청을 바로 재전송하지 않고 최신 state를 조회해 결과를 확인합니다. 리스트 metadata 충돌에서는 dialog 입력을 유지한 채 최신 snapshot을 불러와 다시 확인할 수 있습니다.
 
 Popup을 별도 장기 cache로 사용하지 않습니다. Popup을 다시 열면 Background에서 최신 state를 다시 읽습니다.
 
@@ -213,7 +215,8 @@ drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공�
 - 잘못된 request와 입력
 - 존재하지 않는 List, Command 또는 위치
 - 중복과 최대 개수
-- storage 읽기와 쓰기 실패
+- storage 읽기 실패, 쓰기 실패와 용량 초과
+- 리스트 metadata 충돌
 - 지원하지 않는 저장 schema
 - clipboard 쓰기 실패
 

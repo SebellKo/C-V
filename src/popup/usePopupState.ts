@@ -52,7 +52,7 @@ export function usePopupState() {
     };
   }, [loadAttempt]);
 
-  async function save(request: PopupMutation) {
+  async function requestState(request: PopupMutation | { type: 'state.get' }) {
     // React가 버튼을 다시 그리기 전 연속 제출도 하나의 요청만 보낸다.
     if (savingRef.current || loadState.status !== 'ready') return;
     savingRef.current = true;
@@ -70,7 +70,8 @@ export function usePopupState() {
   return {
     loadState,
     saving,
-    save,
+    save: (request: PopupMutation) => requestState(request),
+    refresh: () => requestState({ type: 'state.get' }),
     reload: () => setLoadAttempt((attempt) => attempt + 1),
   };
 }
