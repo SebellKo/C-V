@@ -1,4 +1,4 @@
-import type { MessageRequest } from '../shared/type.d.ts';
+import type { ListMetadata, MessageRequest } from '../shared/type.d.ts';
 import { isRecord } from '../utils/isRecord.ts';
 
 const hasString = <Key extends string>(
@@ -13,6 +13,17 @@ const hasPosition = (
   Number.isInteger(value.position) &&
   Number(value.position) >= 1 &&
   Number(value.position) <= 10;
+
+const parseListMetadata = (value: unknown): ListMetadata[] | undefined => {
+  if (!Array.isArray(value)) return undefined;
+  const lists: ListMetadata[] = [];
+  for (const list of value) {
+    if (!isRecord(list) || !hasString(list, 'id') || !hasString(list, 'name'))
+      return undefined;
+    lists.push({ id: list.id, name: list.name });
+  }
+  return lists;
+};
 
 export const parseMessageRequest = (
   value: unknown,
@@ -33,25 +44,11 @@ export const parseMessageRequest = (
         ? { type: value.type, listId: value.listId }
         : undefined;
     case 'lists.updateMetadata': {
-      if (!Array.isArray(value.lists)) {
-        return undefined;
-      }
-
-      const lists: { id: string; name: string }[] = [];
-
-      for (const list of value.lists) {
-        if (
-          !isRecord(list) ||
-          !hasString(list, 'id') ||
-          !hasString(list, 'name')
-        ) {
-          return undefined;
-        }
-
-        lists.push({ id: list.id, name: list.name });
-      }
-
-      return { type: value.type, lists };
+      const lists = parseListMetadata(value.lists);
+      const expectedLists = parseListMetadata(value.expectedLists);
+      return lists && expectedLists
+        ? { type: value.type, lists, expectedLists }
+        : undefined;
     }
     case 'command.create':
       return hasString(value, 'listId') && hasString(value, 'text')

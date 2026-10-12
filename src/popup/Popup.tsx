@@ -20,7 +20,7 @@ import { CommandDialog } from './components/CommandDialog.tsx';
 import type { CommandDialogAction } from './components/CommandDialog.tsx';
 
 export function Popup() {
-  const { loadState, saving, save, reload } = usePopupState();
+  const { loadState, saving, save, reload, refresh } = usePopupState();
   const [managing, setManaging] = useState(false);
   const [dialog, setDialog] = useState<
     | ({ trigger: HTMLElement | null } & (
@@ -69,15 +69,14 @@ export function Popup() {
     setFeedback(null);
     const response = await save(request);
     if (!response) return;
-    // 교환은 재전송하면 원복된다. 응답만 유실됐을 수 있으므로 저장 결과부터 확인한다.
+    // 응답 유실 또는 metadata 충돌에서는 재전송 전에 최신 목록부터 확인한다.
     if (
-      request.type === 'command.swap' &&
       !response.ok &&
-      response.error === 'MESSAGE_UNAVAILABLE'
+      (response.error === 'MESSAGE_UNAVAILABLE' ||
+        response.error === 'LIST_METADATA_CONFLICT')
     ) {
       setFeedback({
-        message:
-          '저장 결과를 확인하지 못했습니다. 목록을 다시 불러와 확인해주세요.',
+        message: getErrorMessage(response.error),
         refresh: true,
       });
       return;
@@ -211,7 +210,14 @@ export function Popup() {
             snapshot={loadState.snapshot}
             saving={saving}
             onReorder={(lists) => {
-              void saveFromScreen({ type: 'lists.updateMetadata', lists });
+              void saveFromScreen({
+                type: 'lists.updateMetadata',
+                expectedLists: loadState.snapshot.lists.map(({ id, name }) => ({
+                  id,
+                  name,
+                })),
+                lists,
+              });
             }}
             onDialog={openDialog}
           />
@@ -306,6 +312,7 @@ export function Popup() {
           lists={snapshot.lists}
           saving={saving}
           save={save}
+          refresh={refresh}
           onClose={() => setDialog(null)}
           returnFocus={dialog.trigger}
           fallbackFocus={navigationButton}
@@ -316,6 +323,7 @@ export function Popup() {
           action={dialog.action}
           saving={saving}
           save={save}
+          refresh={refresh}
           onClose={() => setDialog(null)}
           returnFocus={dialog.trigger}
           fallbackFocus={navigationButton}

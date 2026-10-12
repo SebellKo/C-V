@@ -46,7 +46,11 @@ export const parseAppState = (value: unknown): AppState => {
   const { currentListId, lists: storedLists, schemaVersion } = value;
 
   if (schemaVersion !== APP_STATE_SCHEMA_VERSION) {
-    throw new StateError('INVALID_STATE');
+    throw new StateError(
+      Number.isInteger(schemaVersion) && Number(schemaVersion) > 0
+        ? 'UNSUPPORTED_SCHEMA_VERSION'
+        : 'INVALID_STATE',
+    );
   }
 
   if (currentListId !== null && !isValidId(currentListId)) {
@@ -203,7 +207,19 @@ const selectListAt = (state: AppState, index: number): AppState => {
 const updateListMetadata = (
   state: AppState,
   metadata: ListMetadata[],
+  expectedLists: ListMetadata[],
 ): AppState => {
+  // 이름·순서·삭제의 충돌만 검사해 동시에 변경된 Command는 보존한다.
+  if (
+    state.lists.length !== expectedLists.length ||
+    state.lists.some(
+      (list, index) =>
+        list.id !== expectedLists[index]?.id ||
+        list.name !== expectedLists[index]?.name,
+    )
+  ) {
+    throw new StateError('LIST_METADATA_CONFLICT');
+  }
   if (metadata.length > state.lists.length) {
     throw new StateError('INVALID_LIST_METADATA');
   }
@@ -465,7 +481,7 @@ export const applyStateMutation = (
     case 'list.selectAt':
       return selectListAt(state, mutation.index);
     case 'lists.updateMetadata':
-      return updateListMetadata(state, mutation.lists);
+      return updateListMetadata(state, mutation.lists, mutation.expectedLists);
     case 'command.create':
       return createCommand(state, mutation);
     case 'command.update':

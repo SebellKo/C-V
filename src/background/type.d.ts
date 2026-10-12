@@ -4,7 +4,11 @@ export type StateMutation =
   | { type: 'list.create'; listId: string; name: string }
   | { type: 'list.select'; listId: string | null }
   | { type: 'list.selectAt'; index: number }
-  | { type: 'lists.updateMetadata'; lists: ListMetadata[] }
+  | {
+      type: 'lists.updateMetadata';
+      expectedLists: ListMetadata[];
+      lists: ListMetadata[];
+    }
   | {
       type: 'command.create';
       listId: string;
