@@ -10,6 +10,8 @@
 | [데이터 및 개인정보 정책](./data-privacy-policy.md) | 기준 확정 | 처리 데이터, 저장 위치, 권한, 보존·삭제, 외부 전송과 보안 원칙 |
 | [디자인 시스템과 와이어프레임](./design-system.md) | 기준 확정 | 색상·간격·typography token의 역할, popup layout, 컴포넌트 표현과 상태별 화면 |
 | [아키텍처](./architecture.md) | 구현 기준 v1 | 기술 stack, module 책임, 실행 환경 간 interface, 저장 schema와 테스트·build 설계 |
+| [QA 절차](./qa.md) | QA 수행, 출시 검증 남음 | 테스트 환경, 사용자 흐름, 오류·동시성 검증, 결과 기록과 완료 판정 |
+| [설치·업데이트·배포 안내](./release.md) | 배포 준비 중 | unpacked 설치와 업데이트, 데이터 호환 안내, ZIP 생성과 출시 전 점검 |
 
 ## 문서 독립성 원칙
 
@@ -27,5 +29,11 @@
 | 저장 데이터, 권한, 보존 기간, 개인정보와 보안 | 데이터 및 개인정보 정책 |
 | 색상, typography, layout, 컴포넌트와 시각적 상태 | 디자인 시스템과 와이어프레임 |
 | dependency, module, message, schema, 동시성과 테스트 구성 | 아키텍처 |
+| 테스트 수행 순서, 재현 절차와 결과 기록 | QA 절차 |
+| 설치, 업데이트, 배포 산출물과 release 안내 | 설치·업데이트·배포 안내 |
 
 기존 JavaScript 구현은 `legacy-js-final` Git tag에 참고용으로 보존되어 있으며 기준 문서의 요구사항을 대체하지 않습니다.
+
+## QA 기록
+
+- [2026-10-13 QA 결과](./qa-results/2026-10-13.md): Chrome for Testing 검증 결과, 화면 증거 위치와 남은 출시 조건

@@ -25,7 +25,18 @@ npm run dev
 
 ## 로컬 설치
 
-`npm run build` 후 Chrome의 `chrome://extensions`에서 개발자 모드를 켜고 `dist/`를 압축 해제된 확장 프로그램으로 로드합니다.
+Node.js 24 LTS와 npm을 사용합니다. 저장소 루트에서 실행합니다.
+
+```sh
+npm ci
+npm run build
+```
+
+Chrome의 `chrome://extensions`에서 개발자 모드를 켜고 **압축 해제된 확장 프로그램을 로드**로 `dist/`를 선택합니다. 확장을 고정하고 테스트할 웹 페이지를 새로고침한 뒤 popup을 엽니다.
+
+기존 JavaScript 버전의 IndexedDB 데이터는 이전되지 않습니다. 업데이트 전에 필요한 문구를 따로 복사해 보관해주세요. 확장을 제거하면 로컬 저장 데이터가 삭제됩니다.
+
+설치·업데이트·배포 절차와 사용자 QA 체크리스트는 [문서 안내](./docs/README.md)에서 확인할 수 있습니다.
 
 ## 기술 구성
 
