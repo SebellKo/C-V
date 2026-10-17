@@ -5,8 +5,6 @@ import {
   pointerIntersection,
 } from '@dnd-kit/collision';
 import {
-  ArrowDown,
-  ArrowUp,
   GripVertical,
   MoreHorizontal,
   Pencil,
@@ -26,9 +24,6 @@ export function CommandRow({
   index,
   saving,
   dragging,
-  first,
-  last,
-  onMove,
   onEdit,
   onDelete,
 }: {
@@ -36,9 +31,6 @@ export function CommandRow({
   index: number;
   saving: boolean;
   dragging: boolean;
-  first: boolean;
-  last: boolean;
-  onMove: (direction: -1 | 1) => void;
   onEdit: (trigger: HTMLElement | null) => void;
   onDelete: (trigger: HTMLElement | null) => void;
 }) {
@@ -95,14 +87,6 @@ export function CommandRow({
           <DropdownMenuItem onClick={() => onEdit(menuTrigger.current)}>
             <Pencil aria-hidden="true" />
             내용 수정
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled={first} onClick={() => onMove(-1)}>
-            <ArrowUp aria-hidden="true" />
-            위로 이동
-          </DropdownMenuItem>
-          <DropdownMenuItem disabled={last} onClick={() => onMove(1)}>
-            <ArrowDown aria-hidden="true" />
-            아래로 이동
           </DropdownMenuItem>
           <DropdownMenuItem
             data-destructive

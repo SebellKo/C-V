@@ -51,8 +51,8 @@ export function ListDialog({
     action.type === 'create'
       ? '리스트 만들기'
       : action.type === 'rename'
-        ? '리스트 이름 변경'
-        : '리스트를 삭제할까요?';
+        ? '이름 변경'
+        : '리스트 삭제';
 
   useEffect(() => {
     // 실패 후 disabled가 해제된 DOM에 포커스를 돌려 입력을 바로 고칠 수 있게 한다.
@@ -142,9 +142,9 @@ export function ListDialog({
             </Button>
           </div>
           <div className="dialog-body">
-            <DialogDescription>
+            <DialogDescription className={deleting ? undefined : 'sr-only'}>
               {deleting
-                ? `‘${action.list.name}’와 저장된 Command ${action.list.commands.length}개를 함께 삭제합니다. 되돌릴 수 없습니다.`
+                ? `‘${action.list.name}’와 문장 ${action.list.commands.length}개를 함께 삭제합니다. 되돌릴 수 없습니다.`
                 : action.type === 'rename'
                   ? `현재 이름: ${lists.find((list) => list.id === action.list.id)?.name ?? '삭제된 리스트'}. 이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.`
                   : '이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.'}
@@ -172,7 +172,7 @@ export function ListDialog({
                       event.preventDefault();
                   }}
                 />
-                <small>{name.trim().length}/100자</small>
+                <small className="sr-only">{name.trim().length}/100자</small>
               </div>
             ) : null}
             {error ? (

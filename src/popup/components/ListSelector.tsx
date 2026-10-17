@@ -1,4 +1,5 @@
-import { Check, ChevronDown, Settings } from 'lucide-react';
+import { useRef } from 'react';
+import { Check, ChevronDown } from 'lucide-react';
 import type { AppState } from '../../shared/type.d.ts';
 import { Button } from './ui/button.tsx';
 import {
@@ -15,20 +16,24 @@ export function ListSelector({
   snapshot,
   disabled,
   onSelect,
-  onManage,
+  onClear,
+  clearDisabled,
 }: {
   snapshot: AppState;
   disabled: boolean;
   onSelect: (listId: string) => void;
-  onManage: () => void;
+  onClear: (trigger: HTMLElement | null) => void;
+  clearDisabled: boolean;
 }) {
   const currentList = snapshot.lists.find(
     (list) => list.id === snapshot.currentListId,
   );
+  const menuTrigger = useRef<HTMLButtonElement>(null);
   return (
     <DropdownMenu disabled={disabled}>
       <DropdownMenuTrigger
-        render={<Button className="list-trigger" variant="outline" />}
+        ref={menuTrigger}
+        render={<Button className="list-trigger" variant="ghost" />}
         aria-label={
           currentList ? `현재 리스트: ${currentList.name}` : '현재 리스트 선택'
         }
@@ -41,22 +46,25 @@ export function ListSelector({
           value={snapshot.currentListId ?? ''}
           onValueChange={onSelect}
         >
-          {snapshot.lists.map((list, index) => (
+          {snapshot.lists.map((list) => (
             <DropdownMenuRadioItem key={list.id} value={list.id} closeOnClick>
               <span className="menu-label">
-                {list.id === snapshot.currentListId ? (
-                  <Check aria-hidden="true" />
-                ) : null}
+                <Check
+                  aria-hidden="true"
+                  className={list.id === snapshot.currentListId ? undefined : 'menu-check-hidden'}
+                />
                 <span>{list.name}</span>
               </span>
-              <kbd>⇧{(index + 1) % 10}</kbd>
             </DropdownMenuRadioItem>
           ))}
         </DropdownMenuRadioGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onManage}>
-          <Settings aria-hidden="true" />
-          리스트 관리
+        <DropdownMenuItem
+          data-destructive
+          disabled={clearDisabled}
+          onClick={() => onClear(menuTrigger.current)}
+        >
+          문장 전체 삭제
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

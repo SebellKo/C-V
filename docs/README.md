@@ -29,3 +29,7 @@
 | dependency, module, message, schema, 동시성과 테스트 구성 | 아키텍처 |
 
 기존 JavaScript 구현은 `legacy-js-final` Git tag에 참고용으로 보존되어 있으며 기준 문서의 요구사항을 대체하지 않습니다.
+
+## QA 기록
+
+- [2026-10-17 디자인 변경 검증](./qa-results/2026-10-17-design.md): 와이어프레임·Popup·알림 검증 결과와 남은 확인 사항

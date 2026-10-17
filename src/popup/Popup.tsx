@@ -5,7 +5,6 @@ import {
   RefreshCw,
   Settings,
   TriangleAlert,
-  Trash2,
 } from 'lucide-react';
 import { Button } from './components/ui/button.tsx';
 import { ListSelector } from './components/ListSelector.tsx';
@@ -20,7 +19,7 @@ import { CommandDialog } from './components/CommandDialog.tsx';
 import type { CommandDialogAction } from './components/CommandDialog.tsx';
 
 export function Popup() {
-  const { loadState, saving, save, reload, refresh } = usePopupState();
+  const { loadState, saving, selecting, save, reload, refresh } = usePopupState();
   const [managing, setManaging] = useState(false);
   const [dialog, setDialog] = useState<
     | ({ trigger: HTMLElement | null } & (
@@ -89,8 +88,8 @@ export function Popup() {
   }
 
   return (
-    <div className="popup-shell">
-      <header className="popup-header">
+    <div className="popup-shell" data-selecting={selecting || undefined}>
+      <header className={`popup-header${managing ? ' page-header' : ''}`}>
         <h1 className="sr-only">C:V — 빠른 텍스트 복사</h1>
         {managing ? (
           <>
@@ -125,9 +124,10 @@ export function Popup() {
               onSelect={(listId) => {
                 void saveFromScreen({ type: 'list.select', listId });
               }}
-              onManage={() => {
-                setManaging(true);
-                setFeedback(null);
+              clearDisabled={!currentList || currentList.commands.length === 0}
+              onClear={(trigger) => {
+                if (currentList)
+                  openCommandDialog({ type: 'clear', list: currentList }, trigger);
               }}
             />
             <Button
@@ -145,14 +145,7 @@ export function Popup() {
             </Button>
           </>
         ) : (
-          <>
-            <strong>C:V</strong>
-            <span className="header-caption">
-              {loadState.status === 'error'
-                ? '데이터를 불러오지 못함'
-                : '빠른 텍스트 복사'}
-            </span>
-          </>
+          <strong>C:V</strong>
         )}
       </header>
 
@@ -163,7 +156,11 @@ export function Popup() {
       >
         {!dialog && (saving || feedback) ? (
           <div
-            className="save-feedback"
+            className={
+              (saving && !selecting) || feedback?.retry || feedback?.refresh
+                ? 'save-feedback'
+                : 'sr-only'
+            }
             role={feedback?.retry || feedback?.refresh ? 'alert' : 'status'}
           >
             <p>{saving ? '저장 중…' : feedback?.message}</p>
@@ -192,17 +189,13 @@ export function Popup() {
             <div className="skeleton skeleton-row" aria-hidden="true" />
             <div className="skeleton skeleton-row" aria-hidden="true" />
             <div className="skeleton skeleton-row" aria-hidden="true" />
-            <p className="loading-copy">
-              <span className="spinner" aria-hidden="true" />
-              저장된 command를 불러오고 있습니다.
-            </p>
           </section>
         ) : loadState.status === 'error' ? (
           <section className="status-panel error-state" role="alert">
             <span className="status-icon">
               <TriangleAlert aria-hidden="true" />
             </span>
-            <h2>저장된 데이터를 불러오지 못했습니다</h2>
+            <h2>불러오지 못했습니다</h2>
             <p>{getErrorMessage(loadState.error)}</p>
           </section>
         ) : managing ? (
@@ -262,47 +255,30 @@ export function Popup() {
           >
             <Plus aria-hidden="true" />
             {snapshot.lists.length >= 10
-              ? '리스트는 최대 10개입니다'
+              ? '최대 10개'
               : hasLists || managing
-                ? '리스트 추가'
+                ? '추가'
                 : '리스트 만들기'}
           </Button>
         ) : currentList ? (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              disabled={saving || currentList.commands.length === 0}
-              aria-label="현재 리스트의 Command 전체 삭제"
-              onClick={(event) =>
-                openCommandDialog(
-                  { type: 'clear', list: currentList },
-                  event.currentTarget,
-                )
-              }
-            >
-              <Trash2 aria-hidden="true" />
-            </Button>
-            <Button
-              className="button-grow"
-              disabled={saving || currentList.commands.length >= 10}
-              onClick={(event) =>
-                openCommandDialog(
-                  { type: 'create', list: currentList },
-                  event.currentTarget,
-                )
-              }
-            >
-              <Plus aria-hidden="true" />
-              {currentList.commands.length >= 10
-                ? 'Command는 최대 10개입니다'
-                : 'Command 추가'}
-            </Button>
-          </>
+          <Button
+            className="button-full"
+            aria-label={currentList.commands.length >= 10 ? '문장은 최대 10개입니다' : '문장 추가'}
+            disabled={saving || currentList.commands.length >= 10}
+            onClick={(event) =>
+              openCommandDialog(
+                { type: 'create', list: currentList },
+                event.currentTarget,
+              )
+            }
+          >
+            <Plus aria-hidden="true" />
+            {currentList.commands.length >= 10 ? '최대 10개' : '추가'}
+          </Button>
         ) : (
-          <Button className="button-full" disabled>
+          <Button className="button-full" disabled aria-label="문장 추가">
             {loadState.status === 'ready' ? <Plus aria-hidden="true" /> : null}
-            Command 추가
+            추가
           </Button>
         )}
       </footer>

@@ -45,12 +45,12 @@ export function CommandDialog({
   const deleting = action.type === 'delete' || action.type === 'clear';
   const title =
     action.type === 'create'
-      ? 'Command 추가'
+      ? '문장 추가'
       : action.type === 'edit'
-        ? 'Command 수정'
+        ? '문장 수정'
         : action.type === 'delete'
-          ? 'Command를 삭제할까요?'
-          : 'Command를 모두 삭제할까요?';
+          ? '문장을 삭제할까요?'
+          : '문장을 모두 삭제할까요?';
 
   useEffect(() => {
     if (error && !saving) (input.current ?? cancelButton.current)?.focus();
@@ -135,11 +135,11 @@ export function CommandDialog({
             </Button>
           </div>
           <div className="dialog-body">
-            <DialogDescription>
+            <DialogDescription className={deleting ? undefined : 'sr-only'}>
               {action.type === 'clear'
-                ? `‘${action.list.name}’의 Command를 모두 삭제합니다. 리스트는 유지되며 삭제한 내용은 되돌릴 수 없습니다.`
+                ? `‘${action.list.name}’의 문장을 모두 삭제합니다. 되돌릴 수 없습니다.`
                 : action.type === 'delete'
-                  ? `‘${action.list.name}’에서 아래 Command를 삭제합니다. 뒤의 번호는 한 칸씩 당겨지며 삭제는 되돌릴 수 없습니다.`
+                  ? `‘${action.list.name}’에서 아래 문장을 삭제합니다. 되돌릴 수 없습니다.`
                   : '앞뒤 공백과 줄바꿈은 입력한 그대로 보존합니다.'}
             </DialogDescription>
             {action.type === 'delete' ? (
@@ -149,7 +149,7 @@ export function CommandDialog({
             ) : null}
             {!deleting ? (
               <div className="field">
-                <label htmlFor={fieldId}>Command 내용</label>
+                <label htmlFor={fieldId}>내용</label>
                 <textarea
                   ref={input}
                   id={fieldId}

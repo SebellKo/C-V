@@ -1,7 +1,7 @@
 # 디자인 시스템과 와이어프레임
 
 - 문서 상태: v2 high-fidelity 기준 확정
-- 최종 수정일: 2026-08-31
+- 최종 수정일: 2026-10-17
 - 대상: C:V Chrome Extension popup과 web toast
 
 ## 1. 문서 목적
@@ -82,7 +82,7 @@ Popup viewport는 항상 `300×380px`입니다.
 ## 5. Typography와 밀도
 
 - 글꼴은 네트워크 요청이 없는 system font stack을 사용합니다.
-- 제목은 `16/24px`, 본문은 `14/20px`, label은 `12/16px`, caption은 `11/16px`입니다.
+- 제목은 `16/24px`, 본문은 `14/20px`, label은 `13/20px`, caption은 `12/16px`입니다.
 - 기본 control 높이는 36px입니다.
 - icon-only action은 의미 있는 `aria-label`과 focus 표시를 가져야 합니다.
 - 긴 command는 목록에서 두 줄까지 미리 표시하고 원문은 자르지 않습니다.
@@ -96,13 +96,13 @@ Popup viewport는 항상 `300×380px`입니다.
 | Icon button | 설정, 닫기, 뒤로가기와 이동 action의 default·hover·focus·disabled 상태 |
 | List selector | 현재 리스트와 펼쳐진 선택 menu 표현 |
 | Command row | 번호, 미리보기, drag handle, dragging·swap target·keyboard focus 표현 |
-| List row | 이름, 현재 여부, drag handle, 삽입 위치와 이동 action 표현 |
+| List row | 번호 drag handle, 이름, 현재 선택 표시와 삽입 위치 표현 |
 | Field | label, input/textarea, 설명, focus·disabled와 validation 오류 표현 |
 | Dialog | 생성·수정 입력과 삭제 확인 |
 | Empty state | 다음 행동이 명확한 초기/빈 상태 |
 | Error state | 원인을 숨기지 않고 재시도 제공 |
 | Skeleton/Spinner | 조회 전 상태를 실제 빈 데이터와 구분 |
-| Inline feedback | 저장 성공과 실패를 action 근처에서 구분해 표현 |
+| Inline feedback | 저장 진행과 오류를 표현하며 리스트 전환 중에는 기존 배치를 유지 |
 | Web toast | icon, 결과 제목과 대상 요약을 담는 페이지 overlay 표현 |
 
 ## 7. 상태별 와이어프레임
@@ -131,13 +131,16 @@ Command row의 default, dragging과 swap target 표현은 별도 popup 화면을
 
 - viewport 하단 중앙에 16px 여백을 두고 표시합니다.
 - 최대 너비는 360px이며 좁은 viewport에서는 좌우 16px을 남깁니다.
-- 결과 제목과 대상 요약을 각각 한 줄로 표시하고 긴 내용은 말줄임 처리합니다.
+- 커맨드 알림은 윗줄에 리스트 이름과 복사·저장 결과를 보조 색상으로, 아랫줄에 문장 미리보기를 기본 글자색으로 표시합니다. 각 줄의 긴 내용은 말줄임 처리합니다.
+- 알림은 페이드인 약 0.2초와 페이드아웃 약 0.25초를 포함해 1.5초 동안 표시합니다.
 - icon은 결과를 보조하며 텍스트 없이 의미를 전달하는 유일한 수단으로 사용하지 않습니다.
 
 ## 8. 접근성과 시각 검토 기준
 
 - focus는 색상 변화만으로 표시하지 않고 ring을 함께 사용합니다.
-- DnD는 dragging과 target의 border·surface 차이 외에 keyboard focus와 위·아래 이동 action도 함께 표현합니다.
+- DnD는 dragging과 target의 border·surface 차이, keyboard focus로 이동 상태를 표현합니다. 번호·grip handle은 Space·방향키·Space로 조작하고 Escape로 취소합니다.
+- 리스트 메뉴에는 이름 변경·삭제를, 커맨드 메뉴에는 내용 수정·삭제를 제공합니다. 문장 전체 삭제는 리스트 선택 메뉴에 둡니다.
+- 메뉴 항목 간 간격을 두고 선택 배경과 hover·focus 배경을 구분합니다. 추가 버튼의 아이콘과 글자 사이에는 작은 간격을 둡니다.
 - 삭제 dialog는 대상과 영향을 한국어로 명시합니다.
 - loading, empty, error 상태를 같은 화면처럼 표현하지 않습니다.
 - dialog가 열린 상태의 배경은 접근성 tree와 tab 순서에서 제외합니다.
