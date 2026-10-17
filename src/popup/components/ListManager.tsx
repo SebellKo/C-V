@@ -12,20 +12,14 @@ import type {
 } from '@dnd-kit/react';
 import { Accessibility, Feedback } from '@dnd-kit/dom';
 import { arrayMove } from '@dnd-kit/helpers';
-import {
-  ArrowDown,
-  ArrowUp,
-  GripVertical,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-} from 'lucide-react';
+import { Check, MoreHorizontal } from 'lucide-react';
 import type { AppState, List, ListMetadata } from '../../shared/type.d.ts';
 import { Button } from './ui/button.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu.tsx';
 import type { ListDialogAction } from './ListDialog.tsx';
@@ -110,8 +104,7 @@ export function ListManager({
     >
       {lists.length === 0 ? (
         <section className="status-panel">
-          <h2>저장된 리스트가 없습니다</h2>
-          <p>아래 버튼으로 리스트를 추가해주세요.</p>
+          <h2>리스트가 없습니다</h2>
         </section>
       ) : (
         <ol className="list-manager" aria-label="리스트 목록">
@@ -125,12 +118,6 @@ export function ListManager({
               saving={saving}
               dragging={draggedId !== null}
               onDialog={onDialog}
-              onMove={(direction) => {
-                const target = lists[index + direction];
-                if (target) moveList(list.id, target.id);
-              }}
-              first={index === 0}
-              last={index === lists.length - 1}
             />
           ))}
         </ol>
@@ -147,9 +134,6 @@ function ListRow({
   saving,
   dragging,
   onDialog,
-  onMove,
-  first,
-  last,
 }: {
   list: List;
   index: number;
@@ -158,9 +142,6 @@ function ListRow({
   saving: boolean;
   dragging: boolean;
   onDialog: ListManagerProps['onDialog'];
-  onMove: (direction: -1 | 1) => void;
-  first: boolean;
-  last: boolean;
 }) {
   const { ref, handleRef, isDragSource, isDropTarget } = useSortable({
     id: list.id,
@@ -175,6 +156,7 @@ function ListRow({
       ref={ref}
       className="list-row"
       data-current={current || undefined}
+      aria-current={current ? 'true' : undefined}
       data-dragging={isDragSource || undefined}
       data-insert={
         isDropTarget && !isDragSource
@@ -193,27 +175,13 @@ function ListRow({
         focusableWhenDisabled
         aria-label={`${list.name} 리스트 이동`}
       >
-        <GripVertical aria-hidden="true" />
+        {(index + 1) % 10}
       </Button>
       <div className="list-details">
         <strong title={list.name}>{list.name}</strong>
-        <span>
-          <kbd>⇧{(index + 1) % 10}</kbd> ·{' '}
-          {current ? '현재 리스트' : `${list.commands.length} Commands`}
-        </span>
+        {current ? <Check className="current-mark" aria-hidden="true" /> : null}
       </div>
       <div className="row-actions">
-        <Button
-          variant="ghost"
-          size="compact"
-          disabled={saving || dragging}
-          aria-label={`${list.name} 이름 변경`}
-          onClick={(event) =>
-            onDialog({ type: 'rename', list }, event.currentTarget)
-          }
-        >
-          <Pencil aria-hidden="true" />
-        </Button>
         <DropdownMenu disabled={saving || dragging}>
           <DropdownMenuTrigger
             ref={menuTrigger}
@@ -223,21 +191,18 @@ function ListRow({
             <MoreHorizontal aria-hidden="true" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" aria-label={`${list.name} 관리`}>
-            <DropdownMenuItem disabled={first} onClick={() => onMove(-1)}>
-              <ArrowUp aria-hidden="true" />
-              위로 이동
+            <DropdownMenuItem
+              onClick={() => onDialog({ type: 'rename', list }, menuTrigger.current)}
+            >
+              이름 변경
             </DropdownMenuItem>
-            <DropdownMenuItem disabled={last} onClick={() => onMove(1)}>
-              <ArrowDown aria-hidden="true" />
-              아래로 이동
-            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               data-destructive
               onClick={() =>
                 onDialog({ type: 'delete', list }, menuTrigger.current)
               }
             >
-              <Trash2 aria-hidden="true" />
               리스트 삭제
             </DropdownMenuItem>
           </DropdownMenuContent>

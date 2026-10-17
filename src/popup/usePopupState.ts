@@ -25,7 +25,10 @@ type LoadState =
 export function usePopupState() {
   const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' });
   const [loadAttempt, setLoadAttempt] = useState(0);
-  const [saving, setSaving] = useState(false);
+  const [pendingRequest, setPendingRequest] = useState<
+    PopupMutation['type'] | 'state.get' | null
+  >(null);
+  const saving = pendingRequest !== null;
   const savingRef = useRef(false);
   const mounted = useRef(false);
 
@@ -56,13 +59,13 @@ export function usePopupState() {
     // React가 버튼을 다시 그리기 전 연속 제출도 하나의 요청만 보낸다.
     if (savingRef.current || loadState.status !== 'ready') return;
     savingRef.current = true;
-    setSaving(true);
+    setPendingRequest(request.type);
     const response = await sendMessage(request);
     savingRef.current = false;
     if (mounted.current) {
       if (response.ok)
         setLoadState({ status: 'ready', snapshot: response.data });
-      setSaving(false);
+      setPendingRequest(null);
     }
     return response;
   }
@@ -70,6 +73,7 @@ export function usePopupState() {
   return {
     loadState,
     saving,
+    selecting: pendingRequest === 'list.select',
     save: (request: PopupMutation) => requestState(request),
     refresh: () => requestState({ type: 'state.get' }),
     reload: () => setLoadAttempt((attempt) => attempt + 1),

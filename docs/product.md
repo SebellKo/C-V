@@ -120,7 +120,7 @@ C:V는 여러 텍스트를 번호가 있는 위치에 보관해 다음 작업을
 - `LIST-011` 리스트 순서 변경과 삭제 후 표시 순서는 1번부터 빈 번호 없이 다시 정렬합니다.
 - `LIST-012` 이름을 현재 값과 같게 저장하는 동작은 중복 오류가 아닌 변경 없음으로 처리합니다.
 - `LIST-013` 리스트를 다른 리스트 위치에 drop하면 대상 위치에 삽입하고 나머지 리스트를 앞이나 뒤로 한 칸씩 이동합니다.
-- `LIST-014` 리스트 DnD는 drag handle로 시작하며 keyboard와 위로·아래로 이동 action으로도 같은 순서 변경을 수행할 수 있어야 합니다.
+- `LIST-014` 리스트 DnD는 번호 drag handle로 시작하며 keyboard의 Space·방향키·Space로 같은 순서 변경을 수행할 수 있어야 합니다. Escape는 이동을 취소합니다.
 
 ### 8.3 현재 리스트
 
@@ -149,7 +149,7 @@ C:V는 여러 텍스트를 번호가 있는 위치에 보관해 다음 작업을
 - `COMMAND-015` command를 다른 command 위치에 drop하면 source와 target 두 command의 위치만 서로 교환합니다.
 - `COMMAND-016` command DnD는 대상 위치에 삽입해 중간 command를 밀거나 빈 위치를 만들지 않습니다.
 - `COMMAND-017` 같은 위치 또는 목록 밖에 drop하면 순서와 영속 데이터를 변경하지 않습니다.
-- `COMMAND-018` command DnD는 drag handle로 시작하며 keyboard와 위로·아래로 이동 action은 인접한 command와 위치를 교환합니다.
+- `COMMAND-018` command DnD는 drag handle로 시작하며 keyboard의 Space·방향키·Space로 교환할 command를 선택합니다. Escape는 교환을 취소합니다.
 - `COMMAND-019` drag 중 화면은 교환될 위치를 미리 표시할 수 있지만 유효한 drop 뒤 영속 저장에 성공해야 변경을 확정합니다.
 
 ### 8.5 단축키
@@ -175,8 +175,8 @@ C:V는 여러 텍스트를 번호가 있는 위치에 보관해 다음 작업을
 - `SHORTCUT-010` Chrome 또는 웹 페이지의 단축키 충돌로 동작하지 않을 수 있으며 사용자가 Chrome 확장 프로그램 단축키 설정에서 확인할 수 있게 안내합니다.
 - `SHORTCUT-011` popup을 열지 않고 웹 페이지에서 단축키 작업이 성공하면 content script가 현재 페이지 위에 web toast를 표시합니다.
 - `SHORTCUT-012` 리스트 선택 성공 toast는 선택된 리스트 이름을 표시합니다.
-- `SHORTCUT-013` command 복사 성공 toast는 현재 리스트 이름, command 번호와 command 내용 미리보기를 표시합니다.
-- `SHORTCUT-014` 선택 텍스트 저장 성공 toast는 현재 리스트 이름, 저장한 command 번호와 내용 미리보기를 표시합니다.
+- `SHORTCUT-013` command 복사 성공 toast는 윗줄에 현재 리스트 이름과 복사 결과를, 아랫줄에 command 내용 미리보기를 표시합니다.
+- `SHORTCUT-014` 선택 텍스트 저장 성공 toast는 윗줄에 현재 리스트 이름과 저장 결과를, 아랫줄에 내용 미리보기를 표시합니다.
 - `SHORTCUT-015` command 미리보기는 줄바꿈을 공백으로 바꾸고 최대 60자까지만 사용해 페이지 위에 전체 내용을 오래 노출하지 않습니다.
 - `SHORTCUT-016` 작업이 실제로 성공한 뒤에만 성공 toast를 표시하며 존재하지 않는 번호처럼 기존 정책상 no-op인 입력에는 표시하지 않습니다.
 
@@ -193,7 +193,7 @@ C:V는 여러 텍스트를 번호가 있는 위치에 보관해 다음 작업을
 - `UI-009` 저장 중에는 같은 요청을 중복 실행할 수 없게 하고 진행 상태를 표시합니다.
 - `UI-010` 사용자가 저장 응답 전에 popup을 닫더라도 이미 Background에 전달된 요청은 popup 생명주기와 별개로 완료하며 다음 popup에서 영속 결과를 다시 읽습니다.
 - `UI-011` web toast는 viewport 하단 중앙에서 16px 떨어진 위치에 표시하고 페이지 입력이나 클릭을 막지 않습니다.
-- `UI-012` web toast는 2.5초 뒤 자동으로 사라지며 닫기 버튼이나 별도 action을 제공하지 않습니다.
+- `UI-012` web toast는 페이드인·페이드아웃을 포함해 1.5초 뒤 자동으로 사라지며 닫기 버튼이나 별도 action을 제공하지 않습니다.
 - `UI-013` toast가 표시된 동안 새 성공 결과가 오면 여러 개를 쌓지 않고 최신 내용으로 교체한 뒤 표시 시간을 다시 시작합니다.
 - `UI-014` web toast는 페이지 CSS와 충돌하지 않는 격리된 style 범위에서 렌더링하며 viewport 폭이 좁으면 좌우 16px 여백을 유지합니다.
 - `UI-015` web toast는 비긴급 성공 피드백이므로 `role="status"`와 `aria-live="polite"`를 사용하고, 모션 감소 설정에서는 이동 animation 없이 표시합니다.
