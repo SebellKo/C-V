@@ -30,6 +30,7 @@
   --secondary-foreground: var(--cv-neutral-900);
   --muted: var(--cv-neutral-50);
   --muted-foreground: var(--cv-neutral-500);
+  --empty-foreground: #76767b;
   --border: var(--cv-neutral-200);
   --input: var(--cv-neutral-200);
   --primary: var(--cv-blue-700);
@@ -50,9 +51,9 @@
   --text-title-line-height: 24px;
   --text-body-size: 14px;
   --text-body-line-height: 20px;
-  --text-label-size: 12px;
-  --text-label-line-height: 16px;
-  --text-caption-size: 11px;
+  --text-label-size: 13px;
+  --text-label-line-height: 20px;
+  --text-caption-size: 12px;
   --text-caption-line-height: 16px;
   --font-weight-regular: 400;
   --font-weight-medium: 500;

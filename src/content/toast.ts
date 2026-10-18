@@ -1,4 +1,4 @@
-import tokens from '../styles/tokens.css?inline';
+import toastStyles from './toast.css?inline';
 
 let currentToast: HTMLElement | undefined;
 let dismissTimer: ReturnType<typeof setTimeout> | undefined;
@@ -8,27 +8,15 @@ export function showToast(
   detail: string,
   tone: 'success' | 'error' = 'success',
 ): void {
+  const duration = tone === 'error' ? 5000 : 1500;
   currentToast?.remove();
   clearTimeout(dismissTimer);
   const host = document.createElement('cv-toast');
-  host.style.cssText =
-    'all:initial!important;position:fixed!important;bottom:16px!important;left:50%!important;transform:translateX(-50%)!important;width:min(360px,calc(100% - 32px))!important;z-index:2147483647!important;pointer-events:none!important;';
   const shadow = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
-  style.textContent =
-    tokens.replaceAll(':root', ':host') +
-    `
-    .toast { display:flex; gap:var(--spacing-3); padding:var(--spacing-3) var(--spacing-4);
-      border:1px solid var(--border); border-radius:var(--radius-md); background:var(--popover);
-      color:var(--foreground); box-shadow:var(--shadow-popover); font-family:var(--font-sans); }
-    .icon { color:var(--primary); flex-shrink:0; }
-    .error .icon { color:var(--destructive); }
-    .text { min-width:0; }
-    strong,p { display:block; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    strong { font-size:var(--text-body-size); line-height:var(--text-body-line-height); }
-    p { color:var(--muted-foreground); font-size:var(--text-label-size); line-height:var(--text-label-line-height); }
-  `;
+  style.textContent = toastStyles.replaceAll(':root', ':host');
   const toast = document.createElement('div');
+  toast.style.setProperty('--toast-duration', `${duration}ms`);
   toast.className = tone === 'error' ? 'toast error' : 'toast';
   toast.setAttribute('role', 'status');
   toast.setAttribute('aria-live', 'polite');
@@ -64,9 +52,5 @@ export function showToast(
   dismissTimer = setTimeout(() => {
     host.remove();
     if (currentToast === host) currentToast = undefined;
-  }, 2500);
-}
-
-export function commandPreview(text: string): string {
-  return text.replace(/[\r\n]+/g, ' ').slice(0, 60);
+  }, duration);
 }

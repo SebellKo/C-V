@@ -10,7 +10,6 @@ import type {
   DragEndEvent,
 } from '@dnd-kit/react';
 import { Accessibility, Feedback } from '@dnd-kit/dom';
-import { Copy, List as ListIcon, Plus } from 'lucide-react';
 import type { List } from '../../shared/type.d.ts';
 import { CommandRow } from './CommandRow.tsx';
 import type { CommandDialogAction } from './CommandDialog.tsx';
@@ -52,31 +51,14 @@ export function CommandContent({
   const [dragging, setDragging] = useState(false);
 
   if (!list || list.commands.length === 0) {
-    const emptyState = !hasLists
-      ? {
-          Icon: Copy,
-          title: '첫 리스트를 만들어보세요',
-          description:
-            '자주 사용하는 문장을 리스트별로 저장하고 숫자 단축키로 복사할 수 있습니다.',
-        }
+    const title = !hasLists
+      ? '리스트가 없습니다'
       : !list
-        ? {
-            Icon: ListIcon,
-            title: '리스트를 선택해주세요',
-            description: '선택한 리스트에 저장된 command가 여기에 표시됩니다.',
-          }
-        : {
-            Icon: Plus,
-            title: '저장된 command가 없습니다',
-            description: '자주 사용하는 문장을 이 리스트에 저장해보세요.',
-          };
+        ? '리스트를 선택해주세요'
+        : '저장된 문장이 없습니다';
     return (
-      <section className="status-panel" aria-labelledby="empty-title">
-        <span className="status-icon">
-          <emptyState.Icon aria-hidden="true" />
-        </span>
-        <h2 id="empty-title">{emptyState.title}</h2>
-        <p>{emptyState.description}</p>
+      <section className="status-panel empty-state" aria-labelledby="empty-title">
+        <h2 id="empty-title">{title}</h2>
       </section>
     );
   }
@@ -126,12 +108,6 @@ export function CommandContent({
             index={index}
             saving={saving}
             dragging={dragging}
-            first={index === 0}
-            last={index === list.commands.length - 1}
-            onMove={(direction) => {
-              const target = list.commands[index + direction];
-              if (!saving && target) onSwap(command.id, target.id);
-            }}
             onEdit={(trigger) =>
               onDialog({ type: 'edit', list, command }, trigger)
             }

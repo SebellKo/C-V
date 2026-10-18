@@ -1,13 +1,20 @@
 import { sendMessage } from '../shared/messageClient.ts';
 import { getSelectedText, getShortcut, isEditableTarget } from './shortcut.ts';
 import { writeClipboard } from './clipboard.ts';
-import { commandPreview, showToast } from './toast.ts';
+import { showToast } from './toast.ts';
 import { getErrorMessage } from './errorMessage.ts';
 import type { MessageErrorCode } from '../shared/type.d.ts';
 
 function showFailure(error: MessageErrorCode) {
   const message = getErrorMessage(error);
-  if (message) showToast('C:V 작업을 완료하지 못했습니다', message, 'error');
+  if (message)
+    showToast(
+      error === 'MESSAGE_UNAVAILABLE'
+        ? 'C:V에 연결하지 못했습니다.'
+        : 'C:V 작업을 완료하지 못했습니다',
+      message,
+      'error',
+    );
 }
 
 async function handleShortcut(
@@ -20,7 +27,7 @@ async function handleShortcut(
       type: 'shortcut.list.select',
       position,
     });
-    if (response.ok) showToast('리스트 선택', response.data.listName);
+    if (response.ok) showToast('리스트 변경', response.data.listName);
     else showFailure(response.error);
     return;
   }
@@ -41,8 +48,8 @@ async function handleShortcut(
     return;
   }
   showToast(
-    action === 'copy' ? 'Command 복사 완료' : 'Command 저장 완료',
-    `${response.data.listName} · ${position}번 · ${commandPreview(response.data.text)}`,
+    `${response.data.listName} · ${action === 'copy' ? '복사됨' : '저장됨'}`,
+    response.data.text.replace(/\s+/g, ' ').trim().slice(0, 60),
   );
 }
 
