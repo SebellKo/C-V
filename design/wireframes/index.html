@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>C:V 와이어프레임</title>
     <link rel="stylesheet" href="../../src/styles/tokens.css" />
-    <link rel="stylesheet" href="./styles.css?v=interaction-1" />
+    <link rel="stylesheet" href="./styles.css?v=error-toast-1" />
   </head>
   <body>
     <svg class="svg-sprite" aria-hidden="true">
@@ -341,6 +341,18 @@
               <div class="web-toast" role="status" aria-live="polite">
                 <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-check"></use></svg></span>
                 <div><strong>업무 답변 · 저장됨</strong><p>회의 일정은 8월 28일 오후 2시입니다. 변경이 필요하면 캘린더 초대를 수정해주세요.</p></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="web-flow-item" id="connection-error-toast" tabindex="0">
+            <div class="flow-label"><span>04</span><h3>확장 프로그램 연결 오류</h3></div>
+            <div class="web-viewport">
+              <div class="fake-browser-bar"><i></i><i></i><i></i><span>example.com</span></div>
+              <div class="fake-page"><span></span><span></span><span></span></div>
+              <div class="web-toast is-error" role="status" aria-live="polite">
+                <span class="toast-icon"><svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg></span>
+                <div><strong>C:V 작업을 완료하지 못했습니다</strong><p>확장 프로그램에 연결하지 못했습니다. 페이지를 새로고침해주세요.</p></div>
               </div>
             </div>
           </article>

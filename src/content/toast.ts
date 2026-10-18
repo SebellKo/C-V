@@ -1,7 +1,5 @@
 import tokens from '../styles/tokens.css?inline';
 
-const TOAST_DURATION = 1500;
-
 let currentToast: HTMLElement | undefined;
 let dismissTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -10,6 +8,7 @@ export function showToast(
   detail: string,
   tone: 'success' | 'error' = 'success',
 ): void {
+  const duration = tone === 'error' ? 5000 : 1500;
   currentToast?.remove();
   clearTimeout(dismissTimer);
   const host = document.createElement('cv-toast');
@@ -23,9 +22,11 @@ export function showToast(
     .toast { display:flex; align-items:center; gap:10px; min-height:56px; box-sizing:border-box;
       padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-lg);
       background:var(--popover); color:var(--foreground); box-shadow:var(--shadow-popover); font-family:var(--font-sans);
-      animation:cv-toast-visibility ${TOAST_DURATION}ms ease-out both; }
+      animation:cv-toast-visibility ${duration}ms ease-out both; }
     .icon { box-sizing:border-box; width:32px; height:32px; padding:8px; border-radius:var(--radius-full);
       background:var(--accent); color:var(--primary); flex-shrink:0; }
+    .error { align-items:flex-start; }
+    .error strong, .error p { overflow:visible; text-overflow:clip; white-space:normal; overflow-wrap:anywhere; }
     .error .icon { background:var(--destructive-muted); color:var(--destructive); }
     .text { min-width:0; }
     strong,p { display:block; margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -37,7 +38,7 @@ export function showToast(
       line-height:var(--text-label-line-height); }
     @keyframes cv-toast-visibility {
       0% { opacity:0; transform:translateY(4px); }
-      13.333%, 83.333% { opacity:1; transform:translateY(0); }
+      ${(200 / duration) * 100}%, ${((duration - 250) / duration) * 100}% { opacity:1; transform:translateY(0); }
       100% { opacity:0; transform:translateY(4px); }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -80,5 +81,5 @@ export function showToast(
   dismissTimer = setTimeout(() => {
     host.remove();
     if (currentToast === host) currentToast = undefined;
-  }, TOAST_DURATION);
+  }, duration);
 }
