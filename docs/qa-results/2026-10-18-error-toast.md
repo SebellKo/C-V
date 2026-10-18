@@ -7,10 +7,10 @@
 ## 확인
 
 - `npm run build`: TypeScript와 popup/background/content production build 통과.
-- 빌드된 콘텐츠 스크립트의 실제 단축키 경로에서 연결 오류 원문, 성공 1500ms·오류 5000ms 타이머, 알림 교체·제거를 API 경계 대역으로 확인.
-- 실제 toast와 오류 문구 모듈을 불러온 로컬 브라우저의 320px viewport에서 확인. 오류 설명은 16px 행간의 두 줄(32px)로 표시되고 가로 넘침 없이 새로고침 안내까지 노출.
+- 빌드된 콘텐츠 스크립트의 실제 단축키 경로에서 연결 오류의 두 문장과 다른 저장 오류 복구 안내 보존, 성공 1500ms·오류 5000ms 타이머, 알림 교체·제거를 API 경계 대역으로 확인.
+- 실제 toast와 오류 문구 모듈을 불러온 로컬 브라우저의 320px viewport에서 확인. 최종 문구는 제목 `C:V에 연결하지 못했습니다.`(20px)와 설명 `페이지를 새로고침 해주세요.`(16px)가 각각 한 줄로 표시되고 가로 넘침 없이 노출.
 - 실제 브라우저의 오류 알림 host 제거 시점 5020ms 확인. 성공 알림은 `nowrap`·`ellipsis`와 1.5초 유지.
-- 와이어프레임 오류 설명도 `white-space: normal`, `text-overflow: clip`과 두 줄 표시 확인.
+- 와이어프레임도 같은 두 문장으로 구성하며 `white-space: normal`, `text-overflow: clip`을 사용.
 - `git diff --check` 및 갱신 ZIP의 압축·진입 파일·권한·QA 데이터 미포함 검사 통과.
 
 ## 남은 확인

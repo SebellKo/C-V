@@ -7,7 +7,14 @@ import type { MessageErrorCode } from '../shared/type.d.ts';
 
 function showFailure(error: MessageErrorCode) {
   const message = getErrorMessage(error);
-  if (message) showToast('C:V 작업을 완료하지 못했습니다', message, 'error');
+  if (message)
+    showToast(
+      error === 'MESSAGE_UNAVAILABLE'
+        ? 'C:V에 연결하지 못했습니다.'
+        : 'C:V 작업을 완료하지 못했습니다',
+      message,
+      'error',
+    );
 }
 
 async function handleShortcut(

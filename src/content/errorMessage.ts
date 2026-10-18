@@ -21,7 +21,7 @@ export function getErrorMessage(error: MessageErrorCode): string | undefined {
     case 'INVALID_STATE':
       return '저장된 데이터 형식을 확인할 수 없습니다. 기존 데이터는 유지됩니다.';
     case 'MESSAGE_UNAVAILABLE':
-      return '확장 프로그램에 연결하지 못했습니다. 페이지를 새로고침해주세요.';
+      return '페이지를 새로고침 해주세요.';
     default:
       return '요청을 처리하지 못했습니다. Popup에서 저장 상태를 확인해주세요.';
   }
