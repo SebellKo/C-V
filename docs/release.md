@@ -81,7 +81,7 @@ shasum -a 256 release/c-v-2.0.0.zip
 
 제출 전 남은 확인 항목과 OS 모션 감소 미검증 범위를 검토합니다. Chrome Web Store 제출·공개 배포는 별도 작업입니다.
 
-스토어 자료는 `design/branding/assets/`에 보관합니다. 스토어 아이콘은 `icon-128.png`, 아이콘 원본은 `icon-transparent-master.png`, 홍보 이미지는 `promo-en-original.png`(440×280)입니다. `screenshots/`에는 640×400 PNG 5장이 있으며 `description-ko.txt`, `description-en.txt`를 스토어 설명에 사용합니다.
+스토어 자료는 `assets/`에 보관합니다. 스토어 아이콘은 `icon-128.png`, 아이콘 원본은 `icon-transparent-master.png`, 홍보 이미지는 `promo-en-original.png`(440×280)입니다. `screenshots/`에는 640×400 PNG 5장이 있으며 `description-ko.txt`, `description-en.txt`를 스토어 설명에 사용합니다.
 
 사용자 요청으로 공개용 개인정보처리방침과 권한 사유 파일은 PR에서 제거했습니다. 제출 시 사용할 공개 방침 URL과 개인정보 선언은 별도로 준비합니다. 자동 테스트와 배포 검사 스크립트는 저장소에 포함하지 않습니다.
 
