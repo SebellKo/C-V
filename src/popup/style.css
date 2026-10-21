@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@import 'shadcn/tailwind.css';
 @import '../styles/tokens.css';
 
 @theme inline {

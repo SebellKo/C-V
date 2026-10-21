@@ -5,4 +5,9 @@ dist/
 .env
 .env.*
 !.env.example
-release/
+/release/*
+!/release/icons/
+!/release/promo/
+!/release/screenshots/
+!/release/descriptions/
+/release/**/*.zip

@@ -1,7 +1,7 @@
 # 설치·업데이트·배포 안내
 
 - 대상: C:V 2.0.0 TypeScript 재구현
-- 상태: QA용 빌드 준비, 출시 검증 미완료
+- 상태: 아이콘·스토어 자료 정리, 영구 자동 테스트 미포함. PR 검토·스토어 제출 전
 
 ## 1. 빌드와 설치
 
@@ -49,34 +49,50 @@ Unpacked 설치는 **같은 폴더 경로**에 새 빌드 파일을 놓고 `chro
 
 기존 IndexedDB 데이터의 보존·복구를 보장하지 않습니다. 새 구현에 migration과 이전 데이터 cleanup 기능은 포함되어 있지 않습니다. 이 안내는 기존 사용자에게 배포하기 전에 release note에 포함합니다.
 
-## 5. 배포 ZIP
+## 5. 필요할 때 배포 ZIP 만들기
 
-macOS에서 저장소 루트의 터미널을 열고 실행합니다. ZIP에는 `dist/`의 내용만 넣고 `manifest.json`을 ZIP 루트에 둡니다. `src/`, `node_modules/`, 문서와 테스트 데이터는 포함하지 않습니다.
+배포 ZIP은 저장소에 별도로 보관하지 않고 제출할 때 빌드해 생성합니다. ZIP에는 `dist/`의 내용만 넣고 `manifest.json`을 ZIP 루트에 둡니다. `release/`의 이미지·설명은 스토어에 따로 올리는 자료입니다.
 
-같은 이름의 ZIP이 이미 있으면 먼저 별도 위치로 옮긴 뒤 실행합니다. 아래 `test`가 실패하면 새 ZIP을 만들지 않습니다.
+macOS에서 저장소 루트의 터미널을 열고 실행합니다. 매번 새로운 임시 폴더에 생성하므로 이전 ZIP의 파일이 섞이지 않습니다.
 
 ```sh
 npm run build
-mkdir -p release
-test ! -e release/c-v-2.0.0.zip && (cd dist && zip -r -X ../release/c-v-2.0.0.zip .)
-unzip -l release/c-v-2.0.0.zip
-shasum -a 256 release/c-v-2.0.0.zip
+release_zip_dir=$(mktemp -d)
+(cd dist && zip -r -X "$release_zip_dir/c-v-2.0.0.zip" .)
+unzip -l "$release_zip_dir/c-v-2.0.0.zip"
+shasum -a 256 "$release_zip_dir/c-v-2.0.0.zip"
 ```
 
-같은 파일명으로 다시 만들 때는 기존 ZIP을 먼저 별도 위치로 옮깁니다. `zip`은 기존 항목을 유지할 수 있으므로 오래된 asset을 섞지 않도록 새 ZIP을 만듭니다. 버전 변경 시 `package.json`, lockfile의 root version, manifest와 ZIP 파일명을 함께 맞춥니다.
+버전 변경 시 `package.json`, lockfile의 root version, manifest와 ZIP 파일명을 함께 맞춥니다.
 
 ## 6. 출시 전 확인
 
-- [ ] 사용자 QA와 발견된 문제 수정 완료
-- [ ] 사용자 QA 후 영구 자동 테스트 작성·통과
-- [ ] 최종 typecheck와 production build 통과
-- [ ] 최신 안정 macOS Chrome의 unpacked 수동 검증 완료
-- [ ] Popup 300×380·CSS token·디자인 보드 비교 완료
-- [ ] 권한·개인정보 검토와 의존성 취약점 영향·처리 기록 완료
-- [ ] 최종 ZIP의 manifest·entry·asset·icon과 SHA-256 확인
-- [ ] 기존 사용자 데이터 미이전 안내와 공개용 개인정보처리방침 준비
+- [x] 사용자 QA와 발견된 문제 수정 완료
+- [ ] 영구 자동 회귀 테스트 — 사용자 요청으로 PR에서 제거
+- [x] 최종 typecheck와 production build 통과
+- [x] 일반 macOS Chrome의 핵심 흐름 수동 검증 완료(스토어 촬영·사용자 QA 포함)
+- [ ] OS 모션 감소를 켠 실제 검증 — 사용자 요청으로 미실행
+- [ ] 스토어 제출 직전 게시 버전·개인정보 선언·공개 방침 URL 확인
+- [x] Popup 300×380·CSS token·디자인 보드 비교 완료
+- [x] 권한·개인정보 검토와 의존성 취약점 영향·처리 기록 완료
+- [ ] 제출할 때 생성한 ZIP의 manifest·entry·asset·icon과 SHA-256 확인
+- [x] 기존 사용자 데이터 미이전 안내 준비
+- [ ] 공개용 개인정보처리방침 준비
 
-체크가 남아 있으면 QA용 산출물로 취급합니다. Chrome Web Store 제출·공개 배포는 이 준비 작업의 결과를 확인한 뒤 진행합니다.
+제출 전 남은 확인 항목과 OS 모션 감소 미검증 범위를 검토합니다. Chrome Web Store 제출·공개 배포는 별도 작업입니다.
+
+스토어 자료는 `release/` 아래에 용도별로 보관합니다.
+
+| 폴더 | 내용 |
+| --- | --- |
+| `release/icons/` | 128×128 스토어 아이콘과 아이콘 원본 |
+| `release/promo/` | `promo-en-original.png` 영문 홍보 이미지(440×280) |
+| `release/screenshots/` | 640×400 사용 스크린샷 5장 |
+| `release/descriptions/` | `description-ko.txt`, `description-en.txt` 스토어 설명 |
+
+위 네 폴더는 Git에서 관리합니다. ZIP과 로컬 QA 산출물은 Git에서 제외합니다.
+
+사용자 요청으로 공개용 개인정보처리방침과 권한 사유 파일은 PR에서 제거했습니다. 제출 시 사용할 공개 방침 URL과 개인정보 선언은 별도로 준비합니다. 자동 테스트와 배포 검사 스크립트는 저장소에 포함하지 않습니다.
 
 ## Chrome 플랫폼 참고
 
