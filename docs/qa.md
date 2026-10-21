@@ -101,7 +101,7 @@ D01~D09: 각각 통과 / 실패 / 부분 검증 / 미실행
 
 `npm audit` 결과는 15건(critical 1, high 11, moderate 3)입니다. shadcn CLI의 전이 dependency와 빌드 도구가 포함돼 있으며 전체 영향 검토와 조치는 미완료입니다. 자동 `--force` 수정·다운그레이드는 수행하지 않았습니다. 공개 배포 전 각 advisory의 사용 경로와 build 결과 포함 여부를 판정하고 조치 결과를 기록해야 합니다.
 
-QA ZIP: `release/c-v-2.0.0.zip` (Git 제외)
+당시 QA ZIP: `release/c-v-2.0.0.zip` (현재는 별도 보관하지 않음)
 
 ```text
 SHA-256: 46275eefdcab1f68ee3871da8efff4bfeb6ba9ea95cf33c9d308a822ae00e4d6
@@ -125,7 +125,7 @@ Chrome for Testing에서 Q01~Q14·Q16·Q17은 통과했고 Q15는 부분 검증�
 - Popup 300×380. 흰 배경 대비 본문 16.83:1, 보조 5.07:1, 빈 상태 4.52:1, 기본 버튼 5.57:1, 삭제 버튼 5.38:1을 확인했습니다.
 - 호환 lockfile 업데이트와 사용하지 않는 shadcn CLI 제거 후 의존성 취약점은 0건입니다.
 - 사용자 요청으로 PR에서 테스트 코드·설정·의존성과 배포 검사 스크립트를 제거했습니다. 영구 자동 회귀 테스트는 포함하지 않습니다.
-- 아이콘·홍보 이미지·스크린샷·한영 설명은 `assets/`에 보관합니다. 홍보 이미지 `promo-en-original.png`는 기존 440×280 파일을 이름만 변경했습니다.
+- 아이콘·홍보 이미지·스크린샷·한영 설명은 각각 `release/icons/`, `release/promo/`, `release/screenshots/`, `release/descriptions/`에 보관합니다. 홍보 이미지 `promo-en-original.png`는 기존 440×280 파일을 이름만 변경했습니다. 배포 ZIP은 필요할 때 빌드해 만들며 별도로 보관하지 않습니다.
 - 공개용 개인정보처리방침과 권한 사유 파일은 사용자 요청으로 PR에서 제거했습니다. 스토어 제출 시 공개 방침 URL과 개인정보 선언은 별도로 준비합니다.
 
 이 기록은 Chrome Web Store 제출·게시를 의미하지 않습니다. OS 모션 감소·스크린리더 음성·Windows/Linux 실기기 검증은 수행하지 않았습니다. 기존 IndexedDB 데이터는 자동 이전되지 않습니다.
