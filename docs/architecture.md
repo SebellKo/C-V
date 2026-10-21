@@ -250,6 +250,6 @@ production source는 TypeScript로 작성하며 typecheck가 성공해야 produc
 | Integration | Chrome Storage, mutation 직렬화와 runtime message 경계 |
 | Extension E2E | Popup, 단축키, clipboard와 web toast의 사용자 흐름 |
 
-테스트 dependency와 테스트 코드는 기능 구현이 완료된 뒤 추가합니다. GitHub Actions workflow는 만들지 않습니다.
+영구 자동 테스트와 테스트 dependency는 사용자 QA 완료 후 일괄 추가합니다. QA 준비 단계에서는 typecheck, production build와 임시 smoke 검증 결과를 기록합니다. GitHub Actions workflow는 만들지 않습니다.
 
 merge와 release 전에는 typecheck, production build, 자동 테스트와 macOS 최신 안정 Chrome의 unpacked extension 수동 검증을 통과해야 합니다.
