@@ -34,7 +34,3 @@
 | 설치, 업데이트, 배포 산출물과 release 안내 | 설치·업데이트·배포 안내 |
 
 기존 JavaScript 구현은 `legacy-js-final` Git tag에 참고용으로 보존되어 있으며 기준 문서의 요구사항을 대체하지 않습니다.
-
-## QA 기록
-
-- [2026-10-13 QA 결과](./qa-results/2026-10-13.md): Chrome for Testing 검증 결과, 화면 증거 위치와 남은 출시 조건
