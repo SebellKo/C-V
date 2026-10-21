@@ -3,7 +3,7 @@ import type { RefObject } from 'react';
 import { X } from 'lucide-react';
 import type { Command, List } from '../../shared/type.d.ts';
 import { getErrorMessage } from '../errorMessage.ts';
-import type { PopupMutation, usePopupState } from '../usePopupState.ts';
+import type { PopupMutation, usePopupState } from '../hooks/usePopupState.ts';
 import { Button } from './ui/button.tsx';
 import {
   Dialog,

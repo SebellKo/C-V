@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { sendMessage } from '../shared/messageClient.ts';
+import { sendMessage } from '../../shared/messageClient.ts';
 import type {
   AppState,
   MessageErrorCode,
   MessageRequest,
-} from '../shared/type.d.ts';
+} from '../../shared/type.d.ts';
 
 export type PopupMutation = Extract<
   MessageRequest,

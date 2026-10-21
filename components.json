@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/popup/style.css",
+    "css": "src/styles/popup.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""

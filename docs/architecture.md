@@ -60,9 +60,9 @@ Popup과 Content Script는 storage에 직접 접근하거나 서로 직접 통�
 | --- | --- |
 | `background` | message 검사와 dispatch, state 변경 조정, 순수 제품 규칙, `chrome.storage.local` 읽기와 쓰기 |
 | `content` | 페이지 단축키, clipboard와 web toast |
-| `popup` | React 화면과 Popup 전용 component |
+| `popup` | React 화면과 Popup 전용 component·hook |
 | `shared` | 실행 환경이 공유하는 state·message 계약과 message client |
-| `styles` | 여러 UI에서 공유하는 semantic token |
+| `styles` | 여러 UI에서 공유하는 semantic token과 화면별 CSS |
 | `utils` | 제품 의미와 실행 환경에 의존하지 않는 범용 순수 함수 |
 
 Background 내부에서는 다음 책임을 파일 단위로 구분합니다.
