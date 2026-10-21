@@ -1,0 +1,112 @@
+@import '../styles/tokens.css';
+
+:host {
+  all: initial !important;
+  position: fixed !important;
+  bottom: 16px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: min(360px, calc(100% - 32px)) !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--popover);
+  color: var(--foreground);
+  box-shadow: var(--shadow-popover);
+  font-family: var(--font-sans);
+  animation: cv-toast-visibility var(--toast-duration) ease-out both;
+}
+
+.icon {
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.text {
+  min-width: 0;
+}
+
+strong,
+p {
+  display: block;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+strong {
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-line-height);
+  font-weight: var(--font-weight-semibold);
+}
+
+p {
+  color: var(--muted-foreground);
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+}
+
+.toast:not(.error) strong {
+  color: var(--muted-foreground);
+  font-size: var(--text-caption-size);
+  line-height: var(--text-caption-line-height);
+  font-weight: var(--font-weight-regular);
+}
+
+.toast:not(.error) p {
+  margin-top: 2px;
+  color: var(--foreground);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-line-height);
+}
+
+.error {
+  align-items: flex-start;
+  animation-name: cv-toast-error-visibility;
+}
+
+.error strong,
+.error p {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.error .icon {
+  background: var(--destructive-muted);
+  color: var(--destructive);
+}
+
+@keyframes cv-toast-visibility {
+  0% { opacity: 0; transform: translateY(4px); }
+  13.333333333333334%, 83.33333333333334% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(4px); }
+}
+
+@keyframes cv-toast-error-visibility {
+  0% { opacity: 0; transform: translateY(4px); }
+  4%, 95% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast { animation: none; }
+}

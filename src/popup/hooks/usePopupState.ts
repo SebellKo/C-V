@@ -1,0 +1,81 @@
+import { useEffect, useRef, useState } from 'react';
+import { sendMessage } from '../../shared/messageClient.ts';
+import type {
+  AppState,
+  MessageErrorCode,
+  MessageRequest,
+} from '../../shared/type.d.ts';
+
+export type PopupMutation = Extract<
+  MessageRequest,
+  {
+    type:
+      | 'list.create'
+      | 'list.select'
+      | 'lists.updateMetadata'
+      | `command.${string}`;
+  }
+>;
+
+type LoadState =
+  | { status: 'loading' }
+  | { status: 'ready'; snapshot: AppState }
+  | { status: 'error'; error: MessageErrorCode };
+
+export function usePopupState() {
+  const [loadState, setLoadState] = useState<LoadState>({ status: 'loading' });
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const [pendingRequest, setPendingRequest] = useState<
+    PopupMutation['type'] | 'state.get' | null
+  >(null);
+  const saving = pendingRequest !== null;
+  const savingRef = useRef(false);
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoadState({ status: 'loading' });
+    void sendMessage({ type: 'state.get' }).then((response) => {
+      if (cancelled) return;
+      setLoadState(
+        response.ok
+          ? { status: 'ready', snapshot: response.data }
+          : { status: 'error', error: response.error },
+      );
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [loadAttempt]);
+
+  async function requestState(request: PopupMutation | { type: 'state.get' }) {
+    // React가 버튼을 다시 그리기 전 연속 제출도 하나의 요청만 보낸다.
+    if (savingRef.current || loadState.status !== 'ready') return;
+    savingRef.current = true;
+    setPendingRequest(request.type);
+    const response = await sendMessage(request);
+    savingRef.current = false;
+    if (mounted.current) {
+      if (response.ok)
+        setLoadState({ status: 'ready', snapshot: response.data });
+      setPendingRequest(null);
+    }
+    return response;
+  }
+
+  return {
+    loadState,
+    saving,
+    selecting: pendingRequest === 'list.select',
+    save: (request: PopupMutation) => requestState(request),
+    refresh: () => requestState({ type: 'state.get' }),
+    reload: () => setLoadAttempt((attempt) => attempt + 1),
+  };
+}
