@@ -1,0 +1,21 @@
+Built-in image_gen edits; deterministic PNG exports with macOS sips.
+Chrome Web Store image requirements: https://developer.chrome.com/docs/webstore/images
+
+ICON EDIT PROMPT
+Use case: background-extraction. The input image is the approved C:V icon.
+Remove ONLY the white background outside the large blue rounded-square tile, creating genuine transparent alpha outside the tile, including the rounded corners. Keep the blue rounded-square shape, its proportions and color, and the white C:V lettering inside the tile unchanged. The white lettering must remain fully opaque white. No white halo, no added shadow, no extra text, no new design. Center the tile with a modest transparent margin. Return a single square PNG icon with transparency.
+
+PROMO LAYOUT PROMPT
+Use case: compositing / layout adaptation.
+The input is the approved English C:V promotional image. Adapt this exact design to a LESS WIDE landscape rectangle with aspect ratio 11:7 (the Chrome Web Store required 440x280 shape). The target frame is noticeably taller relative to its width than the source. Produce an 11:7 canvas, NOT a wide banner. Preserve the off-white and saturated blue visual style, logo design, exact headline, two snippet cards, blue 1 key and copy icon.
+Recompose the existing elements to make the taller frame feel purposeful and filled, with a clean spacious layout: small C:V blue logo at upper left, headline in the left portion and the snippet-card illustration in the right portion, arranged vertically a little more compactly to fit. Keep all content inside 6% safe margins, no collisions. No cropping of any words or icon.
+Exact headline:
+"Your go-to text."
+"One shortcut away."
+Use bold near-black geometric sans serif and keep all English perfectly spelled. Keep two headline lines if possible; reduce font size to fit the left section without touching the cards. The blue keycap still reads "1". No other text.
+Flat minimal productivity brand art with subtle existing shadows. Do not add any object, badge, label or decoration. Do not stretch the design; arrange its elements naturally for 11:7. Entire canvas opaque off-white. No visible frame around the canvas, no watermark. This is the small promotional image, not a screenshot.
+
+EXPORTS
+store/icon-128.png: RGBA PNG, 128x128. Artwork centered in 96x96 area with transparent padding.
+store/promo-en-440x280.png: opaque RGB PNG, 440x280.
+The selected icon is also exported to public/icon/icon-16.png, icon-32.png, icon-48.png and icon-128.png. The store icon keeps transparent padding; toolbar sizes use a tighter crop.

@@ -1,0 +1,49 @@
+C:V — Copy your go-to text with a keyboard shortcut.
+
+Still typing the same text over and over, or jumping between tabs to find something to copy?
+Save your go-to greetings, replies, and email templates in C:V.
+When you need them, copy them with a number-key shortcut and paste them wherever you like!
+
+■ What you can do with C:V
+
+• Save up to 100 text snippets: 10 lists with 10 snippets each.
+• Organize your snippets into lists for different tasks and situations.
+• Save selected text from a webpage with a keyboard shortcut.
+• Copy saved snippets without opening the popup.
+• Reorder lists and snippets with drag and drop.
+• Get started without an account. Your saved content stays in your current Chrome profile and is not sent to an external server.
+
+■ Getting started
+
+1. Click the C:V icon in the Chrome toolbar to open the popup.
+2. Open “리스트 관리” (Manage lists), create a list, and select the list you want to use.
+3. Use the “+ 추가” (+ Add) button at the bottom to save your go-to text.
+4. On a webpage, press Shift + a number to select a list.
+5. Press Alt + a number to copy a saved snippet, then paste it where you need it with Ctrl + V or Command + V.
+
+To edit or delete a snippet, use the more menu (⋯) next to the item.
+
+■ Keyboard shortcuts at a glance
+
+• Select a list: Shift + a number
+• Copy a saved snippet: Alt + a number
+• Save selected text from a webpage: Shift + Alt + a number
+• Paste: Ctrl + V / Command + V on Mac
+• Open the popup: Ctrl + B / Command + B on Mac
+
+On Mac, use Option instead of Alt.
+Numbers 1–9 correspond to positions 1–9. Use 0 for position 10.
+
+For example, create your first list, then press Shift + 1 on a webpage to select it.
+Highlight the text you want to save and press Shift + Alt + 1 to save it as the first snippet.
+Later, press Alt + 1 to copy that snippet again.
+
+Note: Select lists and copy snippets while your cursor is outside a text field or editor. To paste, click the text field you want to use, then press Ctrl + V or Command + V.
+Note: Webpage shortcuts are unavailable on pages where extensions cannot run, such as Chrome settings pages. If shortcuts conflict, check the popup shortcut in Chrome’s extension keyboard shortcut settings.
+
+⚠ IMPORTANT — PLEASE READ
+
+• Do not store personal information, passwords, verification codes, API keys, or other sensitive information. C:V is not designed for storing confidential information.
+• Saving new text to a position that already contains a snippet replaces the existing content. Check the selected list and number before saving.
+• Uninstalling the extension, deleting its data, or deleting your Chrome profile can delete your saved content. There is no separate backup or recovery feature, so keep a copy of important text elsewhere.
+• When updating from the legacy version, previously saved content is not migrated automatically. Keep a separate copy of any snippets you need before updating.

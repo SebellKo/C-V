@@ -1,7 +1,7 @@
 # 설치·업데이트·배포 안내
 
 - 대상: C:V 2.0.0 TypeScript 재구현
-- 상태: QA용 빌드 준비, 출시 검증 미완료
+- 상태: 자동 테스트·접근성·스토어 자료 점검 완료, PR 검토·스토어 제출 전
 
 ## 1. 빌드와 설치
 
@@ -9,7 +9,9 @@
 
 ```sh
 npm ci
+npm test
 npm run build
+npm run check:release
 ```
 
 빌드는 strict TypeScript 검사 후 Popup·Background와 단일 IIFE Content Script를 `dist/`에 생성합니다. 개발 서버는 디자인 보드 확인용이며 실제 확장 검증은 production build를 로드해 진행합니다.
@@ -56,7 +58,9 @@ macOS에서 저장소 루트의 터미널을 열고 실행합니다. ZIP에는 `
 같은 이름의 ZIP이 이미 있으면 먼저 별도 위치로 옮긴 뒤 실행합니다. 아래 `test`가 실패하면 새 ZIP을 만들지 않습니다.
 
 ```sh
+npm test
 npm run build
+npm run check:release
 mkdir -p release
 test ! -e release/c-v-2.0.0.zip && (cd dist && zip -r -X ../release/c-v-2.0.0.zip .)
 unzip -l release/c-v-2.0.0.zip
@@ -67,16 +71,24 @@ shasum -a 256 release/c-v-2.0.0.zip
 
 ## 6. 출시 전 확인
 
-- [ ] 사용자 QA와 발견된 문제 수정 완료
-- [ ] 사용자 QA 후 영구 자동 테스트 작성·통과
-- [ ] 최종 typecheck와 production build 통과
-- [ ] 최신 안정 macOS Chrome의 unpacked 수동 검증 완료
-- [ ] Popup 300×380·CSS token·디자인 보드 비교 완료
-- [ ] 권한·개인정보 검토와 의존성 취약점 영향·처리 기록 완료
-- [ ] 최종 ZIP의 manifest·entry·asset·icon과 SHA-256 확인
-- [ ] 기존 사용자 데이터 미이전 안내와 공개용 개인정보처리방침 준비
+- [x] 사용자 QA와 발견된 문제 수정 완료
+- [x] 사용자 QA 후 영구 자동 테스트 작성·통과
+- [x] 최종 typecheck와 production build 통과
+- [x] 일반 macOS Chrome의 핵심 흐름 수동 검증 완료(스토어 촬영·사용자 QA 포함)
+- [ ] OS 모션 감소를 켠 실제 검증 — 사용자 요청으로 미실행
+- [ ] 스토어 제출 직전 게시 버전·개인정보 선언·공개 방침 URL 확인
+- [x] Popup 300×380·CSS token·디자인 보드 비교 완료
+- [x] 권한·개인정보 검토와 의존성 취약점 영향·처리 기록 완료
+- [x] 최종 ZIP의 manifest·entry·asset·icon과 SHA-256 확인
+- [x] 기존 사용자 데이터 미이전 안내와 공개용 개인정보처리방침 준비
 
-체크가 남아 있으면 QA용 산출물로 취급합니다. Chrome Web Store 제출·공개 배포는 이 준비 작업의 결과를 확인한 뒤 진행합니다.
+제출 전 남은 확인 항목과 OS 모션 감소 미검증 범위를 검토합니다. Chrome Web Store 제출·공개 배포는 별도 작업입니다.
+
+스토어 자료는 `design/branding/store/`에 보관합니다. 스토어 아이콘은 128×128, 홍보 이미지는 440×280, 스크린샷은 640×400 PNG 5장입니다. `description-ko.txt`, `description-en.txt`, `privacy-fields-ko.txt`를 스토어 입력에 사용합니다.
+
+공개용 개인정보처리방침은 `docs/privacy-policy.md`입니다. PR 브랜치의 공개 GitHub 페이지를 검토에 사용할 수 있고, 병합 뒤에는 통합 브랜치의 해당 문서 URL을 사용할 수 있습니다. 스토어에 등록한 URL의 브랜치를 삭제하기 전에 새 공개 URL로 바꾸세요. 이 작업은 별도 사이트를 게시하지 않습니다.
+
+2026-10-21 검사: 영구 테스트 27개, 타입·빌드·배포 규격 검사 통과, 전체·배포 의존성 취약점 0건. 최신 ZIP `release/c-v-2.0.0-design.zip`은 Git에서 제외합니다. SHA-256: `f9c81e7195706c6f79f777c76230cd7fac930d7c7a8e7a1f4cb19824869006b6`.
 
 ## Chrome 플랫폼 참고
 

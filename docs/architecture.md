@@ -206,7 +206,7 @@ Popup은 shadcn/ui source component와 C:V 전용 component를 조합합니다. 
 
 List와 Command DnD는 현재 dnd-kit React package를 사용합니다. DnD 계층은 drag 결과의 ID만 Background의 state 변경으로 전달하며 제품 데이터 규칙을 직접 구현하지 않습니다.
 
-drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공한 뒤 결과를 확정합니다. pointer 외에도 keyboard와 위·아래 이동 action이 같은 state 규칙을 사용해야 합니다.
+drag 중 영속 state를 변경하지 않고 유효한 drop의 저장이 성공한 뒤 결과를 확정합니다. pointer와 keyboard DnD는 같은 state 규칙을 사용합니다. 위·아래 이동 메뉴는 제공하지 않습니다.
 
 ## 13. 오류와 보안 경계
 
@@ -250,6 +250,8 @@ production source는 TypeScript로 작성하며 typecheck가 성공해야 produc
 | Integration | Chrome Storage, mutation 직렬화와 runtime message 경계 |
 | Extension E2E | Popup, 단축키, clipboard와 web toast의 사용자 흐름 |
 
-영구 자동 테스트와 테스트 dependency는 사용자 QA 완료 후 일괄 추가합니다. QA 준비 단계에서는 typecheck, production build와 임시 smoke 검증 결과를 기록합니다. GitHub Actions workflow는 만들지 않습니다.
+Vitest와 jsdom으로 순수 상태·실제 dispatcher·팝업을 검증합니다. Testing Library는 사용자 동작과 접근 가능한 이름을 기준으로 검증하며 Chrome 저장소·전송 경계만 대역으로 제공합니다. axe-core의 DOM 검사는 브라우저 색 대비·키보드 수동 검증과 구분합니다. `npm test`, `npm run build`, `npm run check:release`를 사용합니다. GitHub Actions workflow는 만들지 않습니다.
+
+shadcn에서 생성한 로컬 UI source와 Base UI는 유지합니다. 사용하지 않는 shadcn CLI dependency와 CSS import는 제거했습니다. 컴포넌트 생성 도구는 production build에 필요하지 않습니다.
 
 merge와 release 전에는 typecheck, production build, 자동 테스트와 macOS 최신 안정 Chrome의 unpacked extension 수동 검증을 통과해야 합니다.
