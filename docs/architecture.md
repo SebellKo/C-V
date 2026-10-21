@@ -250,8 +250,8 @@ production source는 TypeScript로 작성하며 typecheck가 성공해야 produc
 | Integration | Chrome Storage, mutation 직렬화와 runtime message 경계 |
 | Extension E2E | Popup, 단축키, clipboard와 web toast의 사용자 흐름 |
 
-Vitest와 jsdom으로 순수 상태·실제 dispatcher·팝업을 검증합니다. Testing Library는 사용자 동작과 접근 가능한 이름을 기준으로 검증하며 Chrome 저장소·전송 경계만 대역으로 제공합니다. axe-core의 DOM 검사는 브라우저 색 대비·키보드 수동 검증과 구분합니다. `npm test`, `npm run build`, `npm run check:release`를 사용합니다. GitHub Actions workflow는 만들지 않습니다.
+현재 저장소에는 영구 자동 테스트와 배포 검사 스크립트를 포함하지 않습니다. `npm run typecheck`와 `npm run build`를 실행하고 실제 Chrome에서 단축키·클립보드·팝업과 접근성을 수동 검증합니다. GitHub Actions workflow는 만들지 않습니다.
 
 shadcn에서 생성한 로컬 UI source와 Base UI는 유지합니다. 사용하지 않는 shadcn CLI dependency와 CSS import는 제거했습니다. 컴포넌트 생성 도구는 production build에 필요하지 않습니다.
 
-merge와 release 전에는 typecheck, production build, 자동 테스트와 macOS 최신 안정 Chrome의 unpacked extension 수동 검증을 통과해야 합니다.
+merge와 release 전에는 typecheck, production build와 macOS 최신 안정 Chrome의 unpacked extension 수동 검증을 통과해야 합니다.
