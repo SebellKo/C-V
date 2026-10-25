@@ -1,160 +1,143 @@
-# 디자인 시스템과 와이어프레임
+# 디자인 시스템과 화면 안내
 
-- 문서 상태: v2 high-fidelity 기준 확정
-- 최종 수정일: 2026-10-17
-- 대상: C:V Chrome Extension popup과 web toast
+- 확인일: 2026-10-25
+- 대상: C:V 팝업과 웹 알림의 정적 디자인, 실제 팝업의 표현
 
-## 1. 문서 목적
+## 디자인과 실제 화면
 
-C:V는 Figma 파일 대신 저장소 안의 CSS와 HTML을 디자인 원본으로 사용합니다. 이 문서는 토큰과 컴포넌트의 의도를 설명하고, 정확한 값은 [`src/styles/tokens.css`](../src/styles/tokens.css), 화면 계약은 [`design/wireframes/index.html`](../design/wireframes/index.html)에서 관리합니다.
+실제 팝업은 `src/popup/`의 React 컴포넌트와 `src/styles/popup.css`로 구현돼 있습니다. 제품 화면은 300×380px이며, 웹 알림은 `src/content/toast.ts`와 `toast.css`가 처리합니다.
 
-디자인 원본의 책임은 다음처럼 나눕니다.
+디자인 보드는 데이터에 연결되지 않은 정적 예시입니다. 버튼을 눌러 실제 문장을 저장하거나 단축키를 실행할 수 없습니다.
 
-1. `tokens.css`: 색상, 간격, typography와 크기의 정확한 값
-2. `design/wireframes`: 300×380px 화면 구성과 상태별 표현
-3. React와 shadcn/ui 구현: 승인된 화면을 실제 동작으로 구현
+## 디자인 자료의 역할
 
-Markdown에 같은 값을 별도로 복제해 새로운 원본을 만들지 않습니다. 이 문서의 표는 토큰의 역할을 설명하며 값이 충돌하면 CSS를 따릅니다.
-
-## 2. 참고 디자인 시스템
-
-시각 언어와 컴포넌트 구조는 **Obra shadcn/ui Kit Community Edition 2.2.0**을 참고해 C:V의 작은 popup 환경에 맞게 수정했습니다.
-
-- 원본: <https://www.figma.com/design/E0f9DLgBIrBDSQP9pjgwZY/Obra-shadcn-ui-kit-community-edition--2.2.0---Community->
-- 제작자: Obra Studio BV
-- 라이선스: Creative Commons Attribution 4.0 International
-- 변경 사항: 접근 가능한 blue primary와 cool gray 적용, system font 적용, 300×380px 밀도 조정, C:V 전용 command/list row 추가
-- 사용하지 않는 범위: Pro Blocks와 Obra Custom components
-
-실제 React 구현에서는 shadcn/ui의 API와 접근성 패턴을 따르되, Obra Figma 파일 자체를 runtime dependency로 사용하지 않습니다.
-
-## 3. 토큰 구조
-
-### Primitive
-
-Primitive는 브랜드와 중립 색상의 원시 값입니다. 컴포넌트가 직접 참조하지 않습니다.
-
-| 계열 | 토큰 | 용도 |
-| --- | --- | --- |
-| Cool neutral | `--cv-neutral-0`~`--cv-neutral-900` | 흰 surface, 글자, border와 비활성 상태 |
-| Blue | `--cv-blue-50`~`--cv-blue-800` | primary, 선택 상태와 focus |
-| Red | `--cv-red-50`, `--cv-red-600`, `--cv-red-700` | 오류와 destructive action 상태 |
-
-### Semantic
-
-Semantic token은 UI의 역할을 나타냅니다. 컴포넌트는 이 계층만 사용합니다.
-
-| 역할 | 토큰 |
+| 자료 | 역할 |
 | --- | --- |
-| 기본 화면 | `--background`, `--foreground` |
-| 카드와 목록 | `--card`, `--card-foreground`, `--border` |
+| [공통 토큰](../src/styles/tokens.css) | 기본 색상·간격·글자·크기. 팝업·알림·보드에서 사용 |
+| [팝업 CSS](../src/styles/popup.css) | 실제 React 화면의 배치·상태 표현 |
+| [웹 알림 CSS](../src/content/toast.css) | 페이지와 분리된 알림 표현 |
+| [보드 HTML](../design/wireframes/index.html) | 팝업 11개, 웹 알림 4개 상태의 예시 |
+| [보드 CSS](../design/wireframes/styles.css) | 정적 보드 배치와 상태 표현. 일부 토큰을 같은 값으로 재정의 |
+| `release/icons/`, `release/promo/`, `release/screenshots/`, `release/descriptions/` | Git에서 관리하는 스토어 자료. 실제 구현이나 배포 완료의 근거가 아님 |
+
+공통 토큰과 보드 CSS에 같은 이름의 값이 있으므로 변경할 때 둘이 어긋나지 않는지 확인합니다. 스토어 소개 이미지는 실제 화면을 참고해 AI로 재구성한 자료이며, 실제 화면과 세부 모양이 다를 수 있습니다.
+
+## 화면 구성과 사용 위치
+
+제품 화면의 크기는 300×380px입니다. 헤더 52px, 내용 영역 276px, 푸터 52px로 구성합니다. 목록이 길어지면 내용 영역만 세로로 스크롤하고 주요 추가 동작은 아래쪽에 유지합니다.
+
+| 영역 또는 화면 | 표시·동작 |
+| --- | --- |
+| 문장 목록 | 번호, 두 줄 미리보기, 드래그 핸들, 더보기 메뉴 |
+| 상단 리스트 선택 | 현재 리스트와 선택 메뉴. 실제 팝업의 메뉴에는 ‘문장 전체 삭제’도 포함 |
+| 리스트 관리 | 팝업 전체를 쓰는 별도 화면. 리스트 이름·현재 표시·핸들·더보기 |
+| 리스트 더보기 | 이름 변경, 리스트 삭제 |
+| 문장 더보기 | 문장 수정·삭제 |
+| 아래쪽 추가 동작 | 현재 화면에 따라 리스트 또는 문장 추가 |
+| 입력 대화상자 | 레이블, 입력 필드, 확인·취소, 오류 안내 |
+| 삭제 확인 | 삭제 대상과 함께 삭제되는 내용, 되돌릴 수 없다는 안내 |
+
+대화상자는 팝업 위에 겹쳐 표시합니다. 내용이 길어지면 본문만 스크롤하고 확인·취소 버튼에 접근할 수 있어야 합니다. 리스트와 문장 순서 변경의 차이는 [제품 규칙](product.md#저장과-순서의-규칙)을 따릅니다.
+
+현재 보드의 리스트 선택 예시에는 ‘문장 전체 삭제’가 빠져 있습니다. 실제 팝업에는 해당 메뉴가 있으므로 정적 보드가 모든 기능을 빠짐없이 나타낸다고 가정하지 않습니다.
+
+리스트 전환 중 목록 위치가 흔들리지 않고, 선택된 항목과 키보드로 강조한 항목을 구분하는 것이 디자인 의도입니다. 현재 CSS는 리스트 전환 중 진행 안내를 시각적으로 숨기는 처리를 포함합니다. 실제 목록 위치와 키보드 강조는 이번에 브라우저에서 재검증하지 않았습니다.
+
+## 색상·글자·간격
+
+흰 바탕과 회색 경계를 기본으로 사용합니다. 파란색은 주요 버튼·선택·초점, 빨간색은 삭제·오류에 사용합니다. 네트워크 글꼴 대신 시스템 글꼴을 사용하며 다크 모드는 제품 범위에 없습니다.
+
+| 역할 | 주요 토큰 |
+| --- | --- |
+| 화면·글자 | `--background`, `--foreground` |
+| 목록·경계 | `--card`, `--border`, `--input` |
 | 보조 정보 | `--muted`, `--muted-foreground` |
-| 주요 action | `--primary`, `--primary-foreground` |
-| 선택·강조 | `--accent`, `--accent-foreground` |
-| 삭제·오류 | `--destructive`, `--destructive-hover`, `--destructive-foreground`, `--destructive-muted` |
-| keyboard focus | `--ring`, `--focus-ring` |
+| 주요 동작 | `--primary`, `--primary-hover`, `--primary-foreground` |
+| 선택 | `--accent`, `--accent-foreground` |
+| 삭제·오류 | `--destructive`, `--destructive-muted` |
+| 키보드 초점 | `--ring`, `--focus-ring` |
+| 보드의 hover·열림 배경 | `--secondary` |
+| 보드의 빈 상태 제목 | `--empty-foreground` (`#76767b`) |
 
-Dark mode는 MVP 범위에 포함하지 않습니다. 필요해질 때 semantic token 값만 새 theme에서 교체하고 컴포넌트 구조는 유지합니다.
+컴포넌트의 의미가 있는 색상에는 역할별 토큰을 사용하는 것이 원칙입니다. 보드의 배경·스켈레톤 등 일부 예시는 기본 색상 토큰을 직접 참조합니다. 따라서 모든 CSS가 이미 이 원칙을 완전히 지킨다고 설명하지 않습니다.
 
-### 시각 방향
+| 글자 역할 | 공통 토큰 크기/줄높이 | 현재 보드의 크기/줄높이 |
+| --- | --- | --- |
+| 제목 | 16/24px | 16/24px |
+| 본문 | 14/20px | 14/20px |
+| 레이블 | 13/20px | 13/20px |
+| 캡션 | 12/16px | 12/16px |
 
-- 파스텔 색상을 넓은 면적에 사용하지 않고 흰 surface와 cool gray 배경을 기본으로 합니다.
-- Blue는 primary action, 선택 상태, focus처럼 의미가 있는 위치에만 사용합니다.
-- Primary button은 흰색 작은 글자도 읽을 수 있도록 밝은 system blue보다 어두운 `--cv-blue-700`을 사용합니다.
-- 선명한 system blue인 `--cv-blue-600`은 focus ring처럼 면적이 작은 강조에 사용합니다.
-- shadow와 radius는 hierarchy를 구분하는 데 필요한 수준으로만 사용합니다.
+이 표는 토큰 값을 설명합니다. 문장 행처럼 선택자에서 별도 줄높이를 정한 곳은 해당 CSS를 따릅니다. 실제 팝업의 레이블·캡션 토큰도 13px·12px입니다.
 
-## 4. Popup 레이아웃 계약
+간격 토큰은 4·8·12·16·20·24px입니다. 기본 컨트롤 높이는 36px이고 작은 아이콘 버튼과 드래그 핸들은 32px입니다. 팝업의 좁은 폭에서 문장이 잘리지 않도록 긴 문자열의 줄바꿈과 미리보기를 처리합니다. 화면에서 줄여 보여도 저장 원문을 잘라서는 안 됩니다.
 
-Popup viewport는 항상 `300×380px`입니다.
+## 보드에서 볼 수 있는 상태
 
-| 영역 | 높이 | 동작 |
-| --- | ---: | --- |
-| Header | 52px | 현재 리스트와 화면 제목을 표시하며 고정 |
-| Content | 276px | 데이터가 많으면 이 영역만 세로 scroll |
-| Footer | 52px | 현재 화면의 primary action을 표시하며 고정 |
+팝업 예시는 현재 HTML 순서대로 다음 11개입니다.
 
-- Header와 Footer는 목록 scroll에 따라 움직이지 않습니다.
-- dialog는 popup 전체에 overlay로 표시합니다.
-- dialog가 길면 dialog body만 scroll하고 action 영역은 유지합니다.
-- 리스트 관리는 좁은 dialog가 아니라 popup 전체를 사용하는 별도 화면입니다.
+1. 문장 목록
+2. 리스트 선택
+3. 리스트 관리
+4. 리스트 더보기
+5. 리스트 없음
+6. 문장 없음
+7. 리스트 이름 변경
+8. 문장 수정
+9. 삭제 확인
+10. 초기 조회 중
+11. 저장소 오류
 
-## 5. Typography와 밀도
+리스트·문장 생성은 제품 기능이지만 별도의 생성 화면 예시가 모두 제공되는 것은 아닙니다. 기본·끌고 있는 상태·교환 대상인 문장 행은 하단 컴포넌트 예시에서 비교합니다.
 
-- 글꼴은 네트워크 요청이 없는 system font stack을 사용합니다.
-- 제목은 `16/24px`, 본문은 `14/20px`, label은 `13/20px`, caption은 `12/16px`입니다.
-- 기본 control 높이는 36px입니다.
-- icon-only action은 의미 있는 `aria-label`과 focus 표시를 가져야 합니다.
-- 긴 command는 목록에서 두 줄까지 미리 표시하고 원문은 자르지 않습니다.
+웹 알림 예시는 리스트 선택 완료, 문장 복사 완료, 선택 텍스트 저장 완료, 확장 프로그램 연결 오류의 4개입니다. 기존 문서의 10개 팝업·3개 알림 설명을 이 목록으로 갱신합니다.
 
-## 6. 컴포넌트 계약
+## 웹 알림 표현
 
-| 컴포넌트 | 책임 |
+| 항목 | 현재 보드·실제 구현 기준 |
 | --- | --- |
-| Popup shell | 300×380px 영역과 고정 Header/Content/Footer 경계 |
-| Button | primary, secondary, ghost, destructive와 hover·focus·loading·disabled 상태 |
-| Icon button | 설정, 닫기, 뒤로가기와 이동 action의 default·hover·focus·disabled 상태 |
-| List selector | 현재 리스트와 펼쳐진 선택 menu 표현 |
-| Command row | 번호, 미리보기, drag handle, dragging·swap target·keyboard focus 표현 |
-| List row | 번호 drag handle, 이름, 현재 선택 표시와 삽입 위치 표현 |
-| Field | label, input/textarea, 설명, focus·disabled와 validation 오류 표현 |
-| Dialog | 생성·수정 입력과 삭제 확인 |
-| Empty state | 다음 행동이 명확한 초기/빈 상태 |
-| Error state | 원인을 숨기지 않고 재시도 제공 |
-| Skeleton/Spinner | 조회 전 상태를 실제 빈 데이터와 구분 |
-| Inline feedback | 저장 진행과 오류를 표현하며 리스트 전환 중에는 기존 배치를 유지 |
-| Web toast | icon, 결과 제목과 대상 요약을 담는 페이지 overlay 표현 |
+| 위치 | 페이지 아래쪽. 실제 구현은 하단 중앙, 하단 여백 16px |
+| 폭 | 실제 구현은 최대 360px, 좁은 화면은 좌우 16px 여백 |
+| 성공 알림 | 보조색의 제목과 문장·리스트 요약. 긴 내용은 한 줄 말줄임 |
+| 오류 알림 | 원인과 다음 행동을 줄바꿈해 표시. 오류 아이콘으로 보조 |
+| 표시 시간 | 성공 1.5초, 오류 5초 |
+| 내용 | 성공 시 리스트 이름과 결과, 필요 시 문장 미리보기. 문장 번호는 없음 |
+| 접근성 | `role="status"`, `aria-live="polite"`. 실제 구현은 `aria-atomic="true"`도 지정 |
+| 새 결과 | 실제 구현에서는 기존 알림을 교체하고 시간을 다시 계산 |
+| 모션 감소 | 이동 애니메이션 사용 안 함 |
 
-## 7. 상태별 와이어프레임
+보드에서는 알림 예시 위에 포인터를 올리거나 키보드 초점을 주면 CSS 애니메이션을 보여 줍니다. 정적 보드의 예시 DOM은 남아 있습니다. 실제 구현은 실제 시간이 지나면 알림 host를 제거합니다. 보드의 애니메이션 확인을 실제 메시지 처리·제거 테스트로 취급하지 않습니다.
 
-와이어프레임 보드는 다음 상태를 모두 실제 크기로 제공합니다.
+## 접근성 기준과 검증 한계
 
-1. 초기 조회 중
-2. 리스트 없음
-3. 현재 리스트에 command 없음
-4. 일반 command 목록
-5. 리스트 선택 menu 열림
-6. 리스트 관리와 순서 변경
-7. 리스트 생성·이름 변경 dialog
-8. command 생성·수정 dialog
-9. 삭제 확인 dialog
-10. 저장소 오류와 재시도
-11. command 10개 목록의 내부 scroll
+다음은 화면을 구현·변경할 때 지켜야 할 기준입니다.
 
-Command row의 default, dragging과 swap target 표현은 별도 popup 화면을 늘리지 않고 컴포넌트 예시에 포함합니다.
+- 아이콘만 있는 버튼에 의미 있는 레이블을 제공합니다.
+- 키보드 초점을 테두리로 표시하고, 선택·오류 의미를 색만으로 전달하지 않습니다.
+- 조회 중, 빈 상태, 오류를 구분하고 오류에서 다음 행동을 제공합니다.
+- 대화상자를 닫으면 사용자가 작업하던 곳으로 초점을 되돌립니다.
+- 순서 변경을 키보드로도 수행할 수 있게 합니다.
+- 확대 시 핵심 동작에 접근할 수 있도록 스크롤 범위를 유지합니다.
+- 오류 안내는 필요한 내용을 말줄임으로 숨기지 않습니다.
 
-### Web toast 상태
+보드의 ARIA 속성과 CSS만으로 실제 스크린 리더·키보드 동작이나 200% 확대 적합성이 입증되지는 않습니다. 기존 요구사항의 위·아래 이동 대안도 현재 메뉴에 모두 구현됐다고 가정하지 않습니다. 실제 Chrome 검증 범위와 남은 접근성 점검은 [QA 문서](qa.md)에 있습니다.
 
-1. 리스트 선택 완료
-2. command clipboard 복사 완료
-3. 선택 텍스트를 command에 저장 완료
+## 참고 디자인과 출처
 
-- viewport 하단 중앙에 16px 여백을 두고 표시합니다.
-- 최대 너비는 360px이며 좁은 viewport에서는 좌우 16px을 남깁니다.
-- 커맨드 알림은 윗줄에 리스트 이름과 복사·저장 결과를 보조 색상으로, 아랫줄에 문장 미리보기를 기본 글자색으로 표시합니다. 각 줄의 긴 내용은 말줄임 처리합니다.
-- 성공 알림은 페이드인 약 0.2초와 페이드아웃 약 0.25초를 포함해 1.5초 동안 표시합니다.
-- 오류 알림은 제목과 해결 안내를 말줄임 없이 줄바꿈하며 같은 페이드 시간을 포함해 5초 동안 표시합니다.
-- icon은 결과를 보조하며 텍스트 없이 의미를 전달하는 유일한 수단으로 사용하지 않습니다.
+기존 설계 문서는 **Obra shadcn/ui Kit Community Edition 2.2.0**을 참고한 것으로 기록하고 있습니다. 해당 출처 표기를 유지합니다.
 
-## 8. 접근성과 시각 검토 기준
+- 원본: [Obra shadcn/ui Kit Community Edition](https://www.figma.com/design/E0f9DLgBIrBDSQP9pjgwZY/Obra-shadcn-ui-kit-community-edition--2.2.0---Community-)
+- 제작자: Obra Studio BV
+- 기존 문서에 기록된 라이선스: Creative Commons Attribution 4.0 International
+- 기록된 변경: 파란 주요 버튼·회색 바탕, 시스템 글꼴, 300×380px 배치, C:V 전용 리스트·문장 행
+- 기록된 제외 범위: Pro Blocks, Obra Custom components
 
-- focus는 색상 변화만으로 표시하지 않고 ring을 함께 사용합니다.
-- DnD는 dragging과 target의 border·surface 차이, keyboard focus로 이동 상태를 표현합니다. 번호·grip handle은 Space·방향키·Space로 조작하고 Escape로 취소합니다.
-- 리스트 메뉴에는 이름 변경·삭제를, 커맨드 메뉴에는 내용 수정·삭제를 제공합니다. 문장 전체 삭제는 리스트 선택 메뉴에 둡니다.
-- 메뉴 항목 간 간격을 두고 선택 배경과 hover·focus 배경을 구분합니다. 추가 버튼의 아이콘과 글자 사이에는 작은 간격을 둡니다.
-- 삭제 dialog는 대상과 영향을 한국어로 명시합니다.
-- loading, empty, error 상태를 같은 화면처럼 표현하지 않습니다.
-- dialog가 열린 상태의 배경은 접근성 tree와 tab 순서에서 제외합니다.
-- web toast의 비긴급 상태는 `role="status"`, `aria-live="polite"`로 표현합니다.
-- 모션 감소 설정에서는 toast의 이동 animation을 제거합니다.
-- 200% 확대에서도 핵심 action에 접근할 수 있도록 scroll 경계를 유지합니다.
+이번 작업에서는 외부 디자인 원본과 라이선스를 재검증하지 않았습니다. 제품을 실행할 때 Figma에 접속하거나 파일을 받아 오지는 않습니다.
 
-## 9. 로컬 확인
-
-저장소 루트에서 다음 명령을 실행한 뒤 브라우저에서 `/design/wireframes/`를 엽니다.
+## 로컬에서 보기
 
 ```sh
 npm run dev
 ```
 
-와이어프레임은 runtime 데이터와 연결되지 않은 정적 디자인 산출물입니다. 실제 동작 검증은 구현 단계에서 진행합니다.
+개발 서버가 출력하는 주소의 `/design/wireframes/`를 엽니다. 아래쪽 ‘스타일 가이드’를 펼치면 색상·글자·간격·컴포넌트 예시를 볼 수 있습니다. 실제 확장 프로그램 설치와 테스트는 [개발 안내](development.md)를 따릅니다.
