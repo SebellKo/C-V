@@ -92,12 +92,12 @@ shasum -a 256 "$release_zip_dir/c-v-2.0.0.zip"
 | --- | --- |
 | `release/icons/` | 128×128 스토어 아이콘과 아이콘 원본 |
 | `release/promo/` | `promo-en-original.png` 영문 홍보 이미지(440×280) |
-| `release/screenshots/` | 한국어 소개 이미지 5장과 제작 기록. `en/`에는 실제 영어 UI로 캡처한 1280×800 이미지 5장 |
+| `release/screenshots/` | 한국어 소개 이미지 5장. `en/`에는 실제 영어 UI로 캡처한 1280×800 이미지 5장 |
 | `release/descriptions/` | `description-ko.txt`, `description-en.txt` 스토어 설명 |
 
 위 네 폴더는 Git에서 관리합니다. ZIP과 로컬 QA 산출물은 Git에서 제외합니다.
 
-상위 `release/screenshots/`의 한국어 소개 이미지는 기존 사용 화면을 참고해 AI로 재구성했습니다. 실제 캡처와 글꼴·여백·크기 등 세부 모양이 다를 수 있습니다. 한국어 이미지 순서와 검증 범위는 `release/screenshots/production-notes.txt`에 기록했습니다. 영어 이미지는 `release/screenshots/en/`에서 별도로 관리하며 실제 빌드 UI와 촬영용 예시 페이지를 브라우저로 캡처했습니다. 스토어 등록 시 언어에 맞는 설명과 이미지 5장을 선택합니다.
+상위 `release/screenshots/`의 한국어 소개 이미지는 기존 사용 화면을 참고해 AI로 재구성했습니다. 실제 캡처와 글꼴·여백·크기 등 세부 모양이 다를 수 있습니다. 영어 이미지는 `release/screenshots/en/`에서 별도로 관리하며 실제 빌드 UI와 촬영용 예시 페이지를 브라우저로 캡처했습니다. 스토어 등록 시 언어에 맞는 설명과 이미지 5장을 선택합니다.
 
 사용자 요청으로 공개용 개인정보처리방침과 권한 사유 파일은 PR에서 제거했습니다. 제출 시 사용할 공개 방침 URL과 개인정보 선언은 별도로 준비합니다. 자동 테스트와 배포 검사 스크립트는 저장소에 포함하지 않습니다.
 
