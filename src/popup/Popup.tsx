@@ -6,6 +6,7 @@ import {
   Settings,
   TriangleAlert,
 } from 'lucide-react';
+import { t } from '../shared/i18n.ts';
 import { Button } from './components/ui/button.tsx';
 import { ListSelector } from './components/ListSelector.tsx';
 import { ListManager } from './components/ListManager.tsx';
@@ -82,7 +83,7 @@ export function Popup() {
     }
     setFeedback(
       response.ok
-        ? { message: '저장했습니다.' }
+        ? { message: t('saved') }
         : { message: getErrorMessage(response.error), retry: request },
     );
   }
@@ -90,7 +91,7 @@ export function Popup() {
   return (
     <div className="popup-shell" data-selecting={selecting || undefined}>
       <header className={`popup-header${managing ? ' page-header' : ''}`}>
-        <h1 className="sr-only">C:V — 빠른 텍스트 복사</h1>
+        <h1 className="sr-only">{t('appTitle')}</h1>
         {managing ? (
           <>
             <Button
@@ -98,7 +99,7 @@ export function Popup() {
               variant="ghost"
               size="icon"
               disabled={saving}
-              aria-label="Command 목록으로 돌아가기"
+              aria-label={t('backToSnippets')}
               onClick={() => {
                 setManaging(false);
                 setFeedback(null);
@@ -106,7 +107,7 @@ export function Popup() {
             >
               <ArrowLeft aria-hidden="true" />
             </Button>
-            <strong>리스트 관리</strong>
+            <strong>{t('manageLists')}</strong>
             <span className="header-caption">
               {snapshot?.lists.length ?? 0}/10
             </span>
@@ -135,7 +136,7 @@ export function Popup() {
               variant="ghost"
               size="icon"
               disabled={saving}
-              aria-label="리스트 관리"
+              aria-label={t('manageLists')}
               onClick={() => {
                 setManaging(true);
                 setFeedback(null);
@@ -152,7 +153,7 @@ export function Popup() {
       <main
         className="popup-content"
         tabIndex={0}
-        aria-label={managing ? '리스트 관리' : '저장된 Command'}
+        aria-label={managing ? t('manageLists') : t('savedSnippets')}
       >
         {!dialog && (saving || feedback) ? (
           <div
@@ -163,7 +164,7 @@ export function Popup() {
             }
             role={feedback?.retry || feedback?.refresh ? 'alert' : 'status'}
           >
-            <p>{saving ? '저장 중…' : feedback?.message}</p>
+            <p>{saving ? t('saving') : feedback?.message}</p>
             {!saving && (feedback?.retry || feedback?.refresh) ? (
               <Button
                 variant="outline"
@@ -175,7 +176,7 @@ export function Popup() {
                     void saveFromScreen(feedback.retry);
                 }}
               >
-                {feedback.refresh ? '다시 불러오기' : '다시 시도'}
+                {feedback.refresh ? t('reload') : t('retry')}
               </Button>
             ) : null}
           </div>
@@ -184,7 +185,7 @@ export function Popup() {
           <section
             className="skeleton-list"
             role="status"
-            aria-label="불러오는 중"
+            aria-label={t('loading')}
           >
             <div className="skeleton skeleton-row" aria-hidden="true" />
             <div className="skeleton skeleton-row" aria-hidden="true" />
@@ -195,7 +196,7 @@ export function Popup() {
             <span className="status-icon">
               <TriangleAlert aria-hidden="true" />
             </span>
-            <h2>불러오지 못했습니다</h2>
+            <h2>{t('loadFailed')}</h2>
             <p>{getErrorMessage(loadState.error)}</p>
           </section>
         ) : managing ? (
@@ -243,7 +244,7 @@ export function Popup() {
             onClick={reload}
           >
             <RefreshCw aria-hidden="true" />
-            다시 시도
+            {t('retry')}
           </Button>
         ) : snapshot && (managing || !hasLists) ? (
           <Button
@@ -255,15 +256,19 @@ export function Popup() {
           >
             <Plus aria-hidden="true" />
             {snapshot.lists.length >= 10
-              ? '최대 10개'
+              ? t('limitReached')
               : hasLists || managing
-                ? '추가'
-                : '리스트 만들기'}
+                ? t('add')
+                : t('createList')}
           </Button>
         ) : currentList ? (
           <Button
             className="button-full"
-            aria-label={currentList.commands.length >= 10 ? '문장은 최대 10개입니다' : '문장 추가'}
+            aria-label={
+              currentList.commands.length >= 10
+                ? t('snippetLimit')
+                : t('addSnippet')
+            }
             disabled={saving || currentList.commands.length >= 10}
             onClick={(event) =>
               openCommandDialog(
@@ -273,12 +278,12 @@ export function Popup() {
             }
           >
             <Plus aria-hidden="true" />
-            {currentList.commands.length >= 10 ? '최대 10개' : '추가'}
+            {currentList.commands.length >= 10 ? t('limitReached') : t('add')}
           </Button>
         ) : (
-          <Button className="button-full" disabled aria-label="문장 추가">
+          <Button className="button-full" disabled aria-label={t('addSnippet')}>
             {loadState.status === 'ready' ? <Plus aria-hidden="true" /> : null}
-            추가
+            {t('add')}
           </Button>
         )}
       </footer>

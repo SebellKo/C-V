@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
   "name": "C:V",
-  "description": "자주 사용하는 텍스트를 단축키로 빠르게 복사합니다.",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "en",
   "version": "2.0.0",
   "icons": {
     "16": "icon/icon-16.png",

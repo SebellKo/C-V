@@ -1,3 +1,4 @@
+import { t } from '../shared/i18n.ts';
 import { sendMessage } from '../shared/messageClient.ts';
 import { getSelectedText, getShortcut, isEditableTarget } from './shortcut.ts';
 import { writeClipboard } from './clipboard.ts';
@@ -5,13 +6,15 @@ import { showToast } from './toast.ts';
 import { getErrorMessage } from './errorMessage.ts';
 import type { MessageErrorCode } from '../shared/type.d.ts';
 
+const connectionFailureTitle = t('connectionFailed');
+
 function showFailure(error: MessageErrorCode) {
   const message = getErrorMessage(error);
   if (message)
     showToast(
       error === 'MESSAGE_UNAVAILABLE'
-        ? 'C:V에 연결하지 못했습니다.'
-        : 'C:V 작업을 완료하지 못했습니다',
+        ? connectionFailureTitle
+        : t('operationFailed'),
       message,
       'error',
     );
@@ -27,7 +30,7 @@ async function handleShortcut(
       type: 'shortcut.list.select',
       position,
     });
-    if (response.ok) showToast('리스트 변경', response.data.listName);
+    if (response.ok) showToast(t('listChanged'), response.data.listName);
     else showFailure(response.error);
     return;
   }
@@ -41,14 +44,14 @@ async function handleShortcut(
   }
   if (action === 'copy' && !(await writeClipboard(response.data.text))) {
     showToast(
-      '복사하지 못했습니다',
-      '페이지가 활성화되어 있는지와 클립보드 권한을 확인해주세요.',
+      t('copyFailed'),
+      t('clipboardHint'),
       'error',
     );
     return;
   }
   showToast(
-    `${response.data.listName} · ${action === 'copy' ? '복사됨' : '저장됨'}`,
+    t(action === 'copy' ? 'snippetCopied' : 'snippetSaved', response.data.listName),
     response.data.text.replace(/\s+/g, ' ').trim().slice(0, 60),
   );
 }

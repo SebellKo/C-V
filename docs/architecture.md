@@ -1,7 +1,7 @@
 # 아키텍처
 
-- 확인일: 2026-10-25
-- 기준: `main`의 `605dfa4` 소스
+- 확인일: 2026-10-27
+- 기준: `main`의 `bf13017`과 #99의 한국어·영어 지원 변경
 
 ## 구조와 책임
 
@@ -46,9 +46,17 @@ C:V는 Chrome Extension Manifest V3 확장 프로그램입니다. 팝업은 Reac
 | `vite.config.ts`: `src/background/index.ts` | `dist/background.js`와 필요한 공용 청크 |
 | `vite.content.config.ts`: `src/content/index.ts` | 의존성을 포함한 단일 IIFE `dist/content.js` |
 
-정적 content script는 module이 아니므로 독립된 IIFE로 만듭니다. 두 번째 빌드는 `emptyOutDir: false`, `copyPublicDir: false`로 앞선 출력을 보존합니다. 첫 번째 빌드에서 `public/`의 manifest와 아이콘을 복사합니다. 디자인 보드는 production 진입점이 아닙니다.
+정적 content script는 module이 아니므로 독립된 IIFE로 만듭니다. 두 번째 빌드는 `emptyOutDir: false`, `copyPublicDir: false`로 앞선 출력을 보존합니다. 첫 번째 빌드에서 `public/`의 manifest, 아이콘과 `_locales` 번역 파일을 복사합니다. 디자인 보드는 production 진입점이 아닙니다.
 
 manifest는 `storage`, `clipboardWrite`를 요청합니다. HTTP/HTTPS 페이지에 `document_idle` 시점의 content script를 선언하고, 팝업 기본 단축키로 `Ctrl+B`와 Mac의 `Command+B`를 제안합니다. TypeScript 검사 대상은 `src/`이며 디자인 보드의 동작이나 실제 확장 환경을 검증하지는 않습니다.
+
+## 한국어·영어 문구
+
+번역 원본은 `public/_locales/ko/messages.json`과 `public/_locales/en/messages.json`입니다. Chrome 내장 `chrome.i18n`이 표시 언어를 선택하고, 지원하지 않는 언어는 manifest의 `default_locale: "en"`을 따릅니다. 확장 설명도 같은 번역 파일을 사용합니다.
+
+`src/shared/i18n.ts`의 `t()`는 영어 파일의 키를 타입으로 검사한 뒤 `chrome.i18n.getMessage()`를 호출합니다. 타입 전용 JSON 참조이므로 번역 전체를 JS에 묶어 싣지 않습니다. 동적 값은 메시지의 placeholder로 전달합니다. Popup·Content Script의 기존 오류 매핑은 유지하고 Background는 번역을 담당하지 않습니다.
+
+각 언어 파일의 `language` 메시지는 `ko` 또는 `en`입니다. 팝업 문서와 웹 알림 host의 `lang`에 이 값을 사용해 영어 대체 표시도 정확히 알립니다. 웹 페이지 자체의 `lang`은 변경하지 않습니다. 확장 갱신 후 이전 페이지에서는 번역 API도 끊길 수 있으므로 연결 실패 제목·새로고침 안내·알림 언어는 content script 초기화 시 읽어 둡니다. 저장 schema와 사용자 원문은 언어 선택과 관계없습니다.
 
 ## 실행 흐름
 
@@ -151,7 +159,7 @@ Chrome의 일회성 `runtime.sendMessage`와 `runtime.onMessage`를 사용합니
 
 background는 메시지 발신자 객체를 추가 검사하지 않습니다. 요청 형태를 검사한다는 사실과 발신 환경별 권한 검사를 한다는 주장을 구분해야 합니다.
 
-오류 범주는 입력·중복·개수, 없는 대상, 리스트 변경 충돌, 저장소 읽기·쓰기·용량, 저장 형식입니다. UI가 오류 코드를 한국어 문장으로 바꿉니다. content script가 연결 실패를 만나면 `MESSAGE_UNAVAILABLE`로 다루고 새로고침을 안내합니다.
+오류 범주는 입력·중복·개수, 없는 대상, 리스트 변경 충돌, 저장소 읽기·쓰기·용량, 저장 형식입니다. UI가 오류 코드를 Chrome UI 언어에 맞는 한국어·영어 문장으로 바꿉니다. content script가 연결 실패를 만나면 `MESSAGE_UNAVAILABLE`로 다루고 새로고침을 안내합니다.
 
 ## 팝업과 웹 페이지 처리
 
