@@ -4,8 +4,6 @@ Still typing the same text over and over, or jumping between tabs to find someth
 Save your go-to greetings, replies, and email templates in C:V.
 When you need them, copy them with a number-key shortcut and paste them wherever you like!
 
-The interface follows your Chrome language: Korean or English. Other languages use English. Your saved text stays as entered.
-
 ■ What you can do with C:V
 
 • Save up to 100 text snippets: 10 lists with 10 snippets each.
