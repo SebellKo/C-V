@@ -10,6 +10,7 @@ import {
   Pencil,
   Trash2,
 } from 'lucide-react';
+import { t } from '../../shared/i18n.ts';
 import type { Command } from '../../shared/type.d.ts';
 import { Button } from './ui/button.tsx';
 import {
@@ -66,7 +67,7 @@ export function CommandRow({
         disabled={saving}
         // 저장 중에도 dnd-kit이 이동한 핸들로 키보드 포커스를 복원할 수 있게 한다.
         focusableWhenDisabled
-        aria-label={`${index + 1}번 Command 이동`}
+        aria-label={t('moveSnippet', String(index + 1))}
       >
         <GripVertical aria-hidden="true" />
       </Button>
@@ -76,24 +77,24 @@ export function CommandRow({
         <DropdownMenuTrigger
           ref={menuTrigger}
           render={<Button variant="ghost" size="compact" />}
-          aria-label={`${index + 1}번 Command 메뉴`}
+          aria-label={t('snippetMenu', String(index + 1))}
         >
           <MoreHorizontal aria-hidden="true" />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          aria-label={`${index + 1}번 Command 관리`}
+          aria-label={t('snippetActions', String(index + 1))}
         >
           <DropdownMenuItem onClick={() => onEdit(menuTrigger.current)}>
             <Pencil aria-hidden="true" />
-            내용 수정
+            {t('editSnippetContent')}
           </DropdownMenuItem>
           <DropdownMenuItem
             data-destructive
             onClick={() => onDelete(menuTrigger.current)}
           >
             <Trash2 aria-hidden="true" />
-            Command 삭제
+            {t('deleteSnippet')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

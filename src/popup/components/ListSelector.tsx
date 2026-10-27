@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
+import { t } from '../../shared/i18n.ts';
 import type { AppState } from '../../shared/type.d.ts';
 import { Button } from './ui/button.tsx';
 import {
@@ -35,13 +36,13 @@ export function ListSelector({
         ref={menuTrigger}
         render={<Button className="list-trigger" variant="ghost" />}
         aria-label={
-          currentList ? `현재 리스트: ${currentList.name}` : '현재 리스트 선택'
+          currentList ? t('currentList', currentList.name) : t('selectCurrentList')
         }
       >
-        <span>{currentList?.name ?? '리스트 선택'}</span>
+        <span>{currentList?.name ?? t('selectList')}</span>
         <ChevronDown aria-hidden="true" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent aria-label="리스트 선택">
+      <DropdownMenuContent aria-label={t('selectList')}>
         <DropdownMenuRadioGroup
           value={snapshot.currentListId ?? ''}
           onValueChange={onSelect}
@@ -64,7 +65,7 @@ export function ListSelector({
           disabled={clearDisabled}
           onClick={() => onClear(menuTrigger.current)}
         >
-          문장 전체 삭제
+          {t('clearSnippets')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

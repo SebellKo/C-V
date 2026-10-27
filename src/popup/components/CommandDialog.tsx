@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { X } from 'lucide-react';
+import { t } from '../../shared/i18n.ts';
 import type { Command, List } from '../../shared/type.d.ts';
 import { getErrorMessage } from '../errorMessage.ts';
 import type { PopupMutation, usePopupState } from '../hooks/usePopupState.ts';
@@ -45,12 +46,12 @@ export function CommandDialog({
   const deleting = action.type === 'delete' || action.type === 'clear';
   const title =
     action.type === 'create'
-      ? '문장 추가'
+      ? t('addSnippet')
       : action.type === 'edit'
-        ? '문장 수정'
+        ? t('editSnippet')
         : action.type === 'delete'
-          ? '문장을 삭제할까요?'
-          : '문장을 모두 삭제할까요?';
+          ? t('deleteSnippetTitle')
+          : t('clearSnippetsTitle');
 
   useEffect(() => {
     if (error && !saving) (input.current ?? cancelButton.current)?.focus();
@@ -129,7 +130,7 @@ export function CommandDialog({
               size="compact"
               disabled={saving}
               onClick={() => setOpen(false)}
-              aria-label="닫기"
+              aria-label={t('close')}
             >
               <X aria-hidden="true" />
             </Button>
@@ -137,10 +138,10 @@ export function CommandDialog({
           <div className="dialog-body">
             <DialogDescription className={deleting ? undefined : 'sr-only'}>
               {action.type === 'clear'
-                ? `‘${action.list.name}’의 문장을 모두 삭제합니다. 되돌릴 수 없습니다.`
+                ? t('clearSnippetsDescription', action.list.name)
                 : action.type === 'delete'
-                  ? `‘${action.list.name}’에서 아래 문장을 삭제합니다. 되돌릴 수 없습니다.`
-                  : '앞뒤 공백과 줄바꿈은 입력한 그대로 보존합니다.'}
+                  ? t('deleteSnippetDescription', action.list.name)
+                  : t('snippetContentHint')}
             </DialogDescription>
             {action.type === 'delete' ? (
               <div className="command-delete-preview">
@@ -149,7 +150,7 @@ export function CommandDialog({
             ) : null}
             {!deleting ? (
               <div className="field">
-                <label htmlFor={fieldId}>내용</label>
+                <label htmlFor={fieldId}>{t('content')}</label>
                 <textarea
                   ref={input}
                   id={fieldId}
@@ -181,7 +182,7 @@ export function CommandDialog({
                   else setError(getErrorMessage(response.error));
                 }}
               >
-                저장 결과 확인
+                {t('checkSaveResult')}
               </Button>
             ) : null}
           </div>
@@ -192,14 +193,14 @@ export function CommandDialog({
               disabled={saving}
               onClick={() => setOpen(false)}
             >
-              취소
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               variant={deleting ? 'destructive' : 'default'}
               disabled={saving || checkResult}
             >
-              {saving ? '저장 중…' : deleting ? '삭제' : '저장'}
+              {saving ? t('saving') : deleting ? t('delete') : t('save')}
             </Button>
           </div>
         </form>

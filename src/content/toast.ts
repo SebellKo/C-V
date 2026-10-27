@@ -1,4 +1,7 @@
+import { t } from '../shared/i18n.ts';
 import toastStyles from './toast.css?inline';
+
+const language = t('language');
 
 let currentToast: HTMLElement | undefined;
 let dismissTimer: ReturnType<typeof setTimeout> | undefined;
@@ -12,6 +15,7 @@ export function showToast(
   currentToast?.remove();
   clearTimeout(dismissTimer);
   const host = document.createElement('cv-toast');
+  host.lang = language;
   const shadow = host.attachShadow({ mode: 'closed' });
   const style = document.createElement('style');
   style.textContent = toastStyles.replaceAll(':root', ':host');

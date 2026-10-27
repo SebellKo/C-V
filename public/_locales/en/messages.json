@@ -1,0 +1,398 @@
+{
+  "saved": {
+    "message": "Saved."
+  },
+  "appTitle": {
+    "message": "C:V — Quick text copy"
+  },
+  "backToSnippets": {
+    "message": "Back to snippets"
+  },
+  "manageLists": {
+    "message": "Manage lists"
+  },
+  "savedSnippets": {
+    "message": "Saved snippets"
+  },
+  "saving": {
+    "message": "Saving…"
+  },
+  "reload": {
+    "message": "Reload"
+  },
+  "retry": {
+    "message": "Try again"
+  },
+  "loading": {
+    "message": "Loading"
+  },
+  "loadFailed": {
+    "message": "Could not load your lists"
+  },
+  "limitReached": {
+    "message": "Limit of 10 reached"
+  },
+  "add": {
+    "message": "Add"
+  },
+  "createList": {
+    "message": "Create list"
+  },
+  "snippetLimit": {
+    "message": "You can save up to 10 snippets per list"
+  },
+  "addSnippet": {
+    "message": "Add snippet"
+  },
+  "renameList": {
+    "message": "Rename"
+  },
+  "deleteList": {
+    "message": "Delete list"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "deletedList": {
+    "message": "Deleted list"
+  },
+  "listNameHint": {
+    "message": "Enter a name with 1–100 characters, excluding leading and trailing spaces."
+  },
+  "listName": {
+    "message": "List name"
+  },
+  "checkSaveResult": {
+    "message": "Check save result"
+  },
+  "loadLatestLists": {
+    "message": "Load latest lists"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "save": {
+    "message": "Save"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "listDragInstructions": {
+    "message": "Press Space to pick up a list, use the arrow keys to move it, then press Space to drop it. Press Escape to cancel."
+  },
+  "dragOutside": {
+    "message": "Outside the list. Dropping here will leave the order unchanged."
+  },
+  "listDragCanceled": {
+    "message": "Move canceled."
+  },
+  "listDragRequested": {
+    "message": "Reorder requested."
+  },
+  "dragUnchanged": {
+    "message": "Order unchanged."
+  },
+  "noLists": {
+    "message": "No lists yet"
+  },
+  "listCollection": {
+    "message": "Lists"
+  },
+  "editSnippetContent": {
+    "message": "Edit snippet"
+  },
+  "deleteSnippet": {
+    "message": "Delete snippet"
+  },
+  "selectCurrentList": {
+    "message": "Select the current list"
+  },
+  "selectList": {
+    "message": "Select list"
+  },
+  "clearSnippets": {
+    "message": "Delete all snippets"
+  },
+  "snippetDragInstructions": {
+    "message": "Press Space to pick up a snippet, use the arrow keys to choose a snippet to swap with, then press Space to drop it. Press Escape to cancel."
+  },
+  "snippetDragCanceled": {
+    "message": "Swap canceled."
+  },
+  "snippetDragRequested": {
+    "message": "Snippet swap requested."
+  },
+  "selectListPrompt": {
+    "message": "Select a list"
+  },
+  "noSnippets": {
+    "message": "No saved snippets yet"
+  },
+  "snippetCollection": {
+    "message": "Snippets"
+  },
+  "editSnippet": {
+    "message": "Edit snippet"
+  },
+  "deleteSnippetTitle": {
+    "message": "Delete this snippet?"
+  },
+  "clearSnippetsTitle": {
+    "message": "Delete all snippets?"
+  },
+  "snippetContentHint": {
+    "message": "Leading and trailing spaces and line breaks are kept as entered."
+  },
+  "content": {
+    "message": "Content"
+  },
+  "connectionFailed": {
+    "message": "Could not connect to C:V"
+  },
+  "operationFailed": {
+    "message": "C:V could not complete the action"
+  },
+  "listChanged": {
+    "message": "List changed"
+  },
+  "copyFailed": {
+    "message": "Could not copy"
+  },
+  "clipboardHint": {
+    "message": "Make sure the page is active and clipboard access is allowed."
+  },
+  "deleteListDescription": {
+    "message": "Delete “$name$” and its snippets ($count$). This cannot be undone.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "renameListDescription": {
+    "message": "Current name: $name$. Enter a name with 1–100 characters, excluding leading and trailing spaces.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "characterCount": {
+    "message": "$count$/100 characters",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "listPickedUp": {
+    "message": "Picked up list $name$.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listMoveTarget": {
+    "message": "Move to position $position$.",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "moveList": {
+    "message": "Move list $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listMenu": {
+    "message": "Menu for list $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listActions": {
+    "message": "Manage $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "moveSnippet": {
+    "message": "Move snippet $position$",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetMenu": {
+    "message": "Menu for snippet $position$",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetActions": {
+    "message": "Manage snippet $position$",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "currentList": {
+    "message": "Current list: $name$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetPickedUp": {
+    "message": "Picked up snippet $position$.",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSwapTarget": {
+    "message": "Swap with snippet $position$.",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "clearSnippetsDescription": {
+    "message": "Delete all snippets in “$name$”. This cannot be undone.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "deleteSnippetDescription": {
+    "message": "Delete the snippet below from “$name$”. This cannot be undone.",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetCopied": {
+    "message": "$name$ · Copied",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSaved": {
+    "message": "$name$ · Saved",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupListNameRequired": {
+    "message": "Enter a list name."
+  },
+  "popupListNameTooLong": {
+    "message": "Use no more than 100 characters, excluding leading and trailing spaces."
+  },
+  "popupListNameDuplicated": {
+    "message": "A list with this name already exists."
+  },
+  "popupListLimitReached": {
+    "message": "You can create up to 10 lists."
+  },
+  "popupCommandRequired": {
+    "message": "Enter some text. A snippet cannot contain only spaces."
+  },
+  "popupCommandDuplicated": {
+    "message": "This list already has a snippet with the same text."
+  },
+  "popupCommandLimitReached": {
+    "message": "You can save up to 10 snippets per list."
+  },
+  "popupCommandNotFound": {
+    "message": "This snippet was deleted. Reopen the popup."
+  },
+  "popupListNotFound": {
+    "message": "This list was changed or deleted. Reopen the popup."
+  },
+  "popupListMetadataConflict": {
+    "message": "The lists were changed in another window. Load the latest lists, then check your changes."
+  },
+  "popupUnsupportedSchema": {
+    "message": "This saved data format is not supported. Your data is unchanged. Check the extension version."
+  },
+  "popupStorageRead": {
+    "message": "Could not read your saved data. Try again shortly."
+  },
+  "popupStorageWrite": {
+    "message": "Could not save your changes. Your input and saved data are unchanged. Try again."
+  },
+  "popupStorageQuota": {
+    "message": "Storage is full. Remove unneeded data or shorten your input, then try again."
+  },
+  "popupInvalidState": {
+    "message": "Could not verify the saved data format. Your data is unchanged."
+  },
+  "popupMessageUnavailable": {
+    "message": "The extension did not respond. If you sent a save request, check the latest lists for the result."
+  },
+  "popupStorageError": {
+    "message": "Could not access storage. Try again shortly."
+  },
+  "popupRequestFailed": {
+    "message": "Could not complete the request. Reopen the popup or try again."
+  },
+  "contentCommandDuplicated": {
+    "message": "Another snippet in the current list has the same text."
+  },
+  "contentStorageRead": {
+    "message": "Could not read your saved data. Try again."
+  },
+  "contentStorageWrite": {
+    "message": "Could not save your changes. Your saved data is unchanged. Try again."
+  },
+  "contentStorageQuota": {
+    "message": "Storage is full. Remove unneeded data in the popup, then try again."
+  },
+  "contentUnsupportedSchema": {
+    "message": "This saved data format is not supported. Your data is unchanged. Check the extension version."
+  },
+  "contentStorageError": {
+    "message": "Could not access storage. Check the available space, then try again."
+  },
+  "contentInvalidState": {
+    "message": "Could not verify the saved data format. Your saved data is unchanged."
+  },
+  "contentMessageUnavailable": {
+    "message": "Refresh the page."
+  },
+  "contentRequestFailed": {
+    "message": "Could not complete the request. Check your saved data in the popup."
+  },
+  "language": {
+    "message": "en"
+  },
+  "extensionDescription": {
+    "message": "Copy your frequently used text with keyboard shortcuts."
+  }
+}

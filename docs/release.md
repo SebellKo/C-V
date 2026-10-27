@@ -92,14 +92,27 @@ shasum -a 256 "$release_zip_dir/c-v-2.0.0.zip"
 | --- | --- |
 | `release/icons/` | 128×128 스토어 아이콘과 아이콘 원본 |
 | `release/promo/` | `promo-en-original.png` 영문 홍보 이미지(440×280) |
-| `release/screenshots/` | 1280×800 제품 소개 이미지 5장, 제작 기록과 프롬프트 |
+| `release/screenshots/` | 한국어 소개 이미지 5장. `en/`에는 실제 영어 UI로 캡처한 1280×800 이미지 5장 |
 | `release/descriptions/` | `description-ko.txt`, `description-en.txt` 스토어 설명 |
 
 위 네 폴더는 Git에서 관리합니다. ZIP과 로컬 QA 산출물은 Git에서 제외합니다.
 
-제품 소개 이미지는 기존 사용 화면을 참고해 AI로 재구성했습니다. 실제 캡처와 글꼴·여백·크기 등 세부 모양이 다를 수 있습니다. 이미지 순서와 검증 범위는 `release/screenshots/production-notes.txt`에 기록했습니다.
+상위 `release/screenshots/`의 한국어 소개 이미지는 기존 사용 화면을 참고해 AI로 재구성했습니다. 실제 캡처와 글꼴·여백·크기 등 세부 모양이 다를 수 있습니다. 영어 이미지는 `release/screenshots/en/`에서 별도로 관리하며 실제 빌드 UI와 촬영용 예시 페이지를 브라우저로 캡처했습니다. 스토어 등록 시 언어에 맞는 설명과 이미지 5장을 선택합니다.
 
 사용자 요청으로 공개용 개인정보처리방침과 권한 사유 파일은 PR에서 제거했습니다. 제출 시 사용할 공개 방침 URL과 개인정보 선언은 별도로 준비합니다. 자동 테스트와 배포 검사 스크립트는 저장소에 포함하지 않습니다.
+
+## 한국어·영어로 스토어에 등록하기
+
+확장 내부의 언어 지원과 스토어 상세 설명·이미지 등록은 별도입니다. 현재 패키지는 `_locales/en`, `_locales/ko`, `default_locale: "en"`과 번역된 manifest 설명을 포함하므로 다국어 인식을 위한 코드를 더 추가할 필요는 없습니다.
+
+1. 현재 게시 버전보다 높은 버전으로 빌드한 ZIP을 Developer Dashboard의 **Package**에 업로드합니다. ZIP 안의 `_locales/en/messages.json`과 `_locales/ko/messages.json`을 확인합니다.
+2. **Store listing** 상단의 언어 선택에서 English와 한국어를 각각 선택합니다. 선택 가능한 번역 언어는 패키지의 `_locales` 폴더와 대응합니다.
+3. 영어에는 `release/descriptions/description-en.txt`, 한국어에는 `description-ko.txt`의 상세 설명을 입력합니다. 저장소의 설명 파일이 자동으로 등록되는 것은 아닙니다.
+4. 언어별 **Localized screenshots**에 영어는 `release/screenshots/en/`의 5장, 한국어는 `release/screenshots/` 바로 아래의 5장을 등록합니다. 작은 홍보 이미지와 marquee 이미지는 언어별로 등록할 수 없으므로 공용 자료를 사용합니다.
+5. **Distribution**의 배포 국가를 확인합니다. 지원 언어를 추가하는 것과 배포 국가를 선택하는 것은 별도 설정입니다.
+6. 저장 후 두 언어의 설명·이미지·공통 기능 안내를 대조하고 심사에 제출합니다. 이 절차를 문서에 적는 것으로 업로드나 게시가 실행되지는 않습니다.
+
+근거: [스토어 등록 정보와 언어별 설명·이미지](https://developer.chrome.com/docs/webstore/cws-dashboard-listing#localize_your_listing), [새 패키지와 버전 업데이트](https://developer.chrome.com/docs/webstore/update).
 
 ## Chrome 플랫폼 참고
 

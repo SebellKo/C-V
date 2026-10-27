@@ -16,8 +16,8 @@ When you need them, copy them with a number-key shortcut and paste them wherever
 ■ Getting started
 
 1. Click the C:V icon in the Chrome toolbar to open the popup.
-2. Open “리스트 관리” (Manage lists), create a list, and select the list you want to use.
-3. Use the “+ 추가” (+ Add) button at the bottom to save your go-to text.
+2. Open “Manage lists”, create a list, and select the list you want to use.
+3. Use the “+ Add” button at the bottom to save your go-to text.
 4. On a webpage, press Shift + a number to select a list.
 5. Press Alt + a number to copy a saved snippet, then paste it where you need it with Ctrl + V or Command + V.
 

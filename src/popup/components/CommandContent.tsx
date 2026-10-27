@@ -10,28 +10,28 @@ import type {
   DragEndEvent,
 } from '@dnd-kit/react';
 import { Accessibility, Feedback } from '@dnd-kit/dom';
+import { t } from '../../shared/i18n.ts';
 import type { List } from '../../shared/type.d.ts';
 import { CommandRow } from './CommandRow.tsx';
 import type { CommandDialogAction } from './CommandDialog.tsx';
 
 const dragAccessibility = Accessibility.configure({
   screenReaderInstructions: {
-    draggable:
-      'Space로 잡고 방향키로 교환 대상을 고른 뒤 Space로 놓으세요. Escape로 취소합니다.',
+    draggable: t('snippetDragInstructions'),
   },
   announcements: {
     dragstart: ({ operation }: DragStartEvent) =>
-      `${operation.source?.data.position}번 Command를 잡았습니다.`,
+      t('snippetPickedUp', String(operation.source?.data.position)),
     dragover: ({ operation }: DragOverEvent) =>
       operation.target
-        ? `${operation.target.data.position}번 Command와 교환합니다.`
-        : '목록 밖입니다. 놓으면 순서를 변경하지 않습니다.',
+        ? t('snippetSwapTarget', String(operation.target.data.position))
+        : t('dragOutside'),
     dragend: ({ canceled, operation }: DragEndEvent) =>
       canceled
-        ? '교환을 취소했습니다.'
+        ? t('snippetDragCanceled')
         : operation.target && operation.source?.id !== operation.target.id
-          ? 'Command 교환을 요청했습니다.'
-          : '순서를 변경하지 않았습니다.',
+          ? t('snippetDragRequested')
+          : t('dragUnchanged'),
   },
 });
 
@@ -52,10 +52,10 @@ export function CommandContent({
 
   if (!list || list.commands.length === 0) {
     const title = !hasLists
-      ? '리스트가 없습니다'
+      ? t('noLists')
       : !list
-        ? '리스트를 선택해주세요'
-        : '저장된 문장이 없습니다';
+        ? t('selectListPrompt')
+        : t('noSnippets');
     return (
       <section className="status-panel empty-state" aria-labelledby="empty-title">
         <h2 id="empty-title">{title}</h2>
@@ -100,7 +100,7 @@ export function CommandContent({
         }
       }}
     >
-      <ol className="command-list" aria-label="Command 목록">
+      <ol className="command-list" aria-label={t('snippetCollection')}>
         {list.commands.map((command, index) => (
           <CommandRow
             key={command.id}

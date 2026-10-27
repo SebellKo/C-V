@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { RefObject } from 'react';
 import { X } from 'lucide-react';
+import { t } from '../../shared/i18n.ts';
 import type { List } from '../../shared/type.d.ts';
 import { getErrorMessage } from '../errorMessage.ts';
 import type { usePopupState } from '../hooks/usePopupState.ts';
@@ -49,10 +50,10 @@ export function ListDialog({
   const deleting = action.type === 'delete';
   const title =
     action.type === 'create'
-      ? '리스트 만들기'
+      ? t('createList')
       : action.type === 'rename'
-        ? '이름 변경'
-        : '리스트 삭제';
+        ? t('renameList')
+        : t('deleteList');
 
   useEffect(() => {
     // 실패 후 disabled가 해제된 DOM에 포커스를 돌려 입력을 바로 고칠 수 있게 한다.
@@ -136,7 +137,7 @@ export function ListDialog({
               size="compact"
               disabled={saving}
               onClick={() => setOpen(false)}
-              aria-label="닫기"
+              aria-label={t('close')}
             >
               <X aria-hidden="true" />
             </Button>
@@ -144,14 +145,21 @@ export function ListDialog({
           <div className="dialog-body">
             <DialogDescription className={deleting ? undefined : 'sr-only'}>
               {deleting
-                ? `‘${action.list.name}’와 문장 ${action.list.commands.length}개를 함께 삭제합니다. 되돌릴 수 없습니다.`
+                ? t('deleteListDescription', [
+                    action.list.name,
+                    String(action.list.commands.length),
+                  ])
                 : action.type === 'rename'
-                  ? `현재 이름: ${lists.find((list) => list.id === action.list.id)?.name ?? '삭제된 리스트'}. 이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.`
-                  : '이름은 앞뒤 공백을 제외하고 1자 이상 100자 이하로 입력해주세요.'}
+                  ? t(
+                      'renameListDescription',
+                      lists.find((list) => list.id === action.list.id)?.name ??
+                        t('deletedList'),
+                    )
+                  : t('listNameHint')}
             </DialogDescription>
             {!deleting ? (
               <div className="field">
-                <label htmlFor={fieldId}>리스트 이름</label>
+                <label htmlFor={fieldId}>{t('listName')}</label>
                 <Input
                   ref={input}
                   id={fieldId}
@@ -172,7 +180,9 @@ export function ListDialog({
                       event.preventDefault();
                   }}
                 />
-                <small className="sr-only">{name.trim().length}/100자</small>
+                <small className="sr-only">
+                  {t('characterCount', String(name.trim().length))}
+                </small>
               </div>
             ) : null}
             {error ? (
@@ -196,7 +206,7 @@ export function ListDialog({
                   } else setError(getErrorMessage(response.error));
                 }}
               >
-                {recovery === 'check' ? '저장 결과 확인' : '최신 목록 불러오기'}
+                {recovery === 'check' ? t('checkSaveResult') : t('loadLatestLists')}
               </Button>
             ) : null}
           </div>
@@ -207,14 +217,14 @@ export function ListDialog({
               disabled={saving}
               onClick={() => setOpen(false)}
             >
-              취소
+              {t('cancel')}
             </Button>
             <Button
               type="submit"
               variant={deleting ? 'destructive' : 'default'}
               disabled={saving || recovery !== null}
             >
-              {saving ? '저장 중…' : deleting ? '리스트 삭제' : '저장'}
+              {saving ? t('saving') : deleting ? t('deleteList') : t('save')}
             </Button>
           </div>
         </form>

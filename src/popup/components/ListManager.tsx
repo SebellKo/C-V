@@ -13,6 +13,7 @@ import type {
 import { Accessibility, Feedback } from '@dnd-kit/dom';
 import { arrayMove } from '@dnd-kit/helpers';
 import { Check, MoreHorizontal } from 'lucide-react';
+import { t } from '../../shared/i18n.ts';
 import type { AppState, List, ListMetadata } from '../../shared/type.d.ts';
 import { Button } from './ui/button.tsx';
 import {
@@ -26,22 +27,21 @@ import type { ListDialogAction } from './ListDialog.tsx';
 
 const dragAccessibility = Accessibility.configure({
   screenReaderInstructions: {
-    draggable:
-      'Space로 잡고 방향키로 이동한 뒤 Space로 놓으세요. Escape로 취소합니다.',
+    draggable: t('listDragInstructions'),
   },
   announcements: {
     dragstart: ({ operation }: DragStartEvent) =>
-      `${operation.source?.data.name} 리스트를 잡았습니다.`,
+      t('listPickedUp', operation.source?.data.name),
     dragover: ({ operation }: DragOverEvent) =>
       operation.target
-        ? `${operation.target.data.position}번 위치로 이동합니다.`
-        : '목록 밖입니다. 놓으면 순서를 변경하지 않습니다.',
+        ? t('listMoveTarget', String(operation.target.data.position))
+        : t('dragOutside'),
     dragend: ({ canceled, operation }: DragEndEvent) =>
       canceled
-        ? '이동을 취소했습니다.'
+        ? t('listDragCanceled')
         : operation.target && operation.source?.id !== operation.target.id
-          ? '순서 변경을 요청했습니다.'
-          : '순서를 변경하지 않았습니다.',
+          ? t('listDragRequested')
+          : t('dragUnchanged'),
   },
 });
 
@@ -104,10 +104,10 @@ export function ListManager({
     >
       {lists.length === 0 ? (
         <section className="status-panel">
-          <h2>리스트가 없습니다</h2>
+          <h2>{t('noLists')}</h2>
         </section>
       ) : (
-        <ol className="list-manager" aria-label="리스트 목록">
+        <ol className="list-manager" aria-label={t('listCollection')}>
           {lists.map((list, index) => (
             <ListRow
               key={list.id}
@@ -173,7 +173,7 @@ function ListRow({
         className="drag-handle"
         disabled={saving}
         focusableWhenDisabled
-        aria-label={`${list.name} 리스트 이동`}
+        aria-label={t('moveList', list.name)}
       >
         {(index + 1) % 10}
       </Button>
@@ -186,15 +186,15 @@ function ListRow({
           <DropdownMenuTrigger
             ref={menuTrigger}
             render={<Button variant="ghost" size="compact" />}
-            aria-label={`${list.name} 리스트 메뉴`}
+            aria-label={t('listMenu', list.name)}
           >
             <MoreHorizontal aria-hidden="true" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" aria-label={`${list.name} 관리`}>
+          <DropdownMenuContent align="end" aria-label={t('listActions', list.name)}>
             <DropdownMenuItem
               onClick={() => onDialog({ type: 'rename', list }, menuTrigger.current)}
             >
-              이름 변경
+              {t('renameList')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -203,7 +203,7 @@ function ListRow({
                 onDialog({ type: 'delete', list }, menuTrigger.current)
               }
             >
-              리스트 삭제
+              {t('deleteList')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
