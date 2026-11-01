@@ -392,7 +392,10 @@
   "language": {
     "message": "ko"
   },
+  "extensionName": {
+    "message": "C:V — 텍스트 저장과 단축키 복사"
+  },
   "extensionDescription": {
-    "message": "자주 사용하는 텍스트를 단축키로 빠르게 복사합니다."
+    "message": "자주 쓰는 문구와 텍스트를 리스트별로 저장하고, 숫자 단축키로 클립보드에 빠르게 복사하세요."
   }
 }

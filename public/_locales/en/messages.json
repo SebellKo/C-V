@@ -392,7 +392,10 @@
   "language": {
     "message": "en"
   },
+  "extensionName": {
+    "message": "C:V — Text Snippets & Quick Copy"
+  },
   "extensionDescription": {
-    "message": "Copy your frequently used text with keyboard shortcuts."
+    "message": "Save reusable text snippets in lists and copy them to your clipboard with keyboard shortcuts."
   }
 }
