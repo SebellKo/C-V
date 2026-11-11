@@ -1,0 +1,401 @@
+{
+  "saved": {
+    "message": "保存しました。"
+  },
+  "appTitle": {
+    "message": "C:V — 定型文をすばやくコピー"
+  },
+  "backToSnippets": {
+    "message": "定型文の一覧に戻る"
+  },
+  "manageLists": {
+    "message": "リストを管理"
+  },
+  "savedSnippets": {
+    "message": "保存済みの定型文"
+  },
+  "saving": {
+    "message": "保存中…"
+  },
+  "reload": {
+    "message": "再読み込み"
+  },
+  "retry": {
+    "message": "再試行"
+  },
+  "loading": {
+    "message": "読み込み中"
+  },
+  "loadFailed": {
+    "message": "リストを読み込めませんでした"
+  },
+  "limitReached": {
+    "message": "上限の10件に達しました"
+  },
+  "add": {
+    "message": "追加"
+  },
+  "createList": {
+    "message": "リストを作成"
+  },
+  "snippetLimit": {
+    "message": "1つのリストに保存できる定型文は10件までです"
+  },
+  "addSnippet": {
+    "message": "定型文を追加"
+  },
+  "renameList": {
+    "message": "名前を変更"
+  },
+  "deleteList": {
+    "message": "リストを削除"
+  },
+  "close": {
+    "message": "閉じる"
+  },
+  "deletedList": {
+    "message": "削除済みのリスト"
+  },
+  "listNameHint": {
+    "message": "先頭と末尾の空白を除き、1〜100文字で入力してください。"
+  },
+  "listName": {
+    "message": "リスト名"
+  },
+  "checkSaveResult": {
+    "message": "保存結果を確認"
+  },
+  "loadLatestLists": {
+    "message": "最新のリストを読み込む"
+  },
+  "cancel": {
+    "message": "キャンセル"
+  },
+  "save": {
+    "message": "保存"
+  },
+  "delete": {
+    "message": "削除"
+  },
+  "listDragInstructions": {
+    "message": "スペースキーでリストを選び、矢印キーで移動先を選んでから、もう一度スペースキーを押して確定します。Escキーでキャンセルできます。"
+  },
+  "dragOutside": {
+    "message": "一覧の外です。ここで離しても順序は変わりません。"
+  },
+  "listDragCanceled": {
+    "message": "移動をキャンセルしました。"
+  },
+  "listDragRequested": {
+    "message": "並べ替えをリクエストしました。"
+  },
+  "dragUnchanged": {
+    "message": "順序は変わりませんでした。"
+  },
+  "noLists": {
+    "message": "リストはまだありません"
+  },
+  "listCollection": {
+    "message": "リスト一覧"
+  },
+  "editSnippetContent": {
+    "message": "定型文を編集"
+  },
+  "deleteSnippet": {
+    "message": "定型文を削除"
+  },
+  "selectCurrentList": {
+    "message": "使用するリストを選択"
+  },
+  "selectList": {
+    "message": "リストを選択"
+  },
+  "clearSnippets": {
+    "message": "すべての定型文を削除"
+  },
+  "snippetDragInstructions": {
+    "message": "スペースキーで定型文を選び、矢印キーで入れ替え先を選んでから、もう一度スペースキーを押して確定します。Escキーでキャンセルできます。"
+  },
+  "snippetDragCanceled": {
+    "message": "入れ替えをキャンセルしました。"
+  },
+  "snippetDragRequested": {
+    "message": "定型文の入れ替えをリクエストしました。"
+  },
+  "selectListPrompt": {
+    "message": "リストを選択してください"
+  },
+  "noSnippets": {
+    "message": "保存済みの定型文はまだありません"
+  },
+  "snippetCollection": {
+    "message": "定型文の一覧"
+  },
+  "editSnippet": {
+    "message": "定型文を編集"
+  },
+  "deleteSnippetTitle": {
+    "message": "この定型文を削除しますか？"
+  },
+  "clearSnippetsTitle": {
+    "message": "すべての定型文を削除しますか？"
+  },
+  "snippetContentHint": {
+    "message": "先頭と末尾の空白や改行は、入力したまま保存されます。"
+  },
+  "content": {
+    "message": "内容"
+  },
+  "connectionFailed": {
+    "message": "C:V に接続できませんでした"
+  },
+  "operationFailed": {
+    "message": "C:V で操作を完了できませんでした"
+  },
+  "listChanged": {
+    "message": "リストを切り替えました"
+  },
+  "copyFailed": {
+    "message": "コピーできませんでした"
+  },
+  "clipboardHint": {
+    "message": "ページがアクティブで、クリップボードへのアクセスが許可されているか確認してください。"
+  },
+  "deleteListDescription": {
+    "message": "「$name$」と、その中の定型文$count$件を削除します。この操作は取り消せません。",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "count": {
+        "content": "$2"
+      }
+    }
+  },
+  "renameListDescription": {
+    "message": "現在の名前は「$name$」です。先頭と末尾の空白を除き、1〜100文字で入力してください。",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "characterCount": {
+    "message": "$count$/100文字",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "listPickedUp": {
+    "message": "リスト「$name$」を移動できるようになりました。",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listMoveTarget": {
+    "message": "$position$番目に移動します。",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "moveList": {
+    "message": "リスト「$name$」を移動",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listMenu": {
+    "message": "リスト「$name$」のメニュー",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "listActions": {
+    "message": "リスト「$name$」を管理",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "moveSnippet": {
+    "message": "$position$番目の定型文を移動",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetMenu": {
+    "message": "$position$番目の定型文のメニュー",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetActions": {
+    "message": "$position$番目の定型文を管理",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "currentList": {
+    "message": "使用中のリスト「$name$」",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetPickedUp": {
+    "message": "$position$番目の定型文を移動できるようになりました。",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSwapTarget": {
+    "message": "$position$番目の定型文と入れ替えます。",
+    "placeholders": {
+      "position": {
+        "content": "$1"
+      }
+    }
+  },
+  "clearSnippetsDescription": {
+    "message": "「$name$」にある定型文をすべて削除します。この操作は取り消せません。",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "deleteSnippetDescription": {
+    "message": "「$name$」から次の定型文を削除します。この操作は取り消せません。",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetCopied": {
+    "message": "$name$・コピーしました",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSaved": {
+    "message": "$name$・保存しました",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      }
+    }
+  },
+  "popupListNameRequired": {
+    "message": "リスト名を入力してください。"
+  },
+  "popupListNameTooLong": {
+    "message": "先頭と末尾の空白を除き、100文字以内で入力してください。"
+  },
+  "popupListNameDuplicated": {
+    "message": "同じ名前のリストがすでにあります。"
+  },
+  "popupListLimitReached": {
+    "message": "リストは10件まで作成できます。"
+  },
+  "popupCommandRequired": {
+    "message": "定型文を入力してください。空白だけの定型文は保存できません。"
+  },
+  "popupCommandDuplicated": {
+    "message": "このリストには同じ内容の定型文がすでにあります。"
+  },
+  "popupCommandLimitReached": {
+    "message": "1つのリストに保存できる定型文は10件までです。"
+  },
+  "popupCommandNotFound": {
+    "message": "この定型文は削除されました。ポップアップを開き直してください。"
+  },
+  "popupListNotFound": {
+    "message": "このリストは変更または削除されました。ポップアップを開き直してください。"
+  },
+  "popupListMetadataConflict": {
+    "message": "別のウィンドウでリストが変更されました。最新のリストを読み込んで、変更内容を確認してください。"
+  },
+  "popupUnsupportedSchema": {
+    "message": "このデータ形式には対応していません。保存済みのデータはそのままです。拡張機能のバージョンを確認してください。"
+  },
+  "popupStorageRead": {
+    "message": "保存済みのデータを読み込めませんでした。しばらくしてからもう一度お試しください。"
+  },
+  "popupStorageWrite": {
+    "message": "変更を保存できませんでした。入力内容と保存済みのデータはそのままです。もう一度お試しください。"
+  },
+  "popupStorageQuota": {
+    "message": "保存容量がいっぱいです。不要なデータを削除するか、入力内容を短くしてからもう一度お試しください。"
+  },
+  "popupInvalidState": {
+    "message": "保存済みのデータの形式を確認できませんでした。データはそのままです。"
+  },
+  "popupMessageUnavailable": {
+    "message": "拡張機能から応答がありませんでした。保存操作をした場合は、最新のリストで結果を確認してください。"
+  },
+  "popupStorageError": {
+    "message": "保存領域にアクセスできませんでした。しばらくしてからもう一度お試しください。"
+  },
+  "popupRequestFailed": {
+    "message": "操作を完了できませんでした。ポップアップを開き直すか、もう一度お試しください。"
+  },
+  "contentCommandDuplicated": {
+    "message": "使用中のリストには同じ内容の定型文がすでにあります。"
+  },
+  "contentStorageRead": {
+    "message": "保存済みのデータを読み込めませんでした。もう一度お試しください。"
+  },
+  "contentStorageWrite": {
+    "message": "変更を保存できませんでした。保存済みのデータはそのままです。もう一度お試しください。"
+  },
+  "contentStorageQuota": {
+    "message": "保存容量がいっぱいです。ポップアップで不要なデータを削除してからもう一度お試しください。"
+  },
+  "contentUnsupportedSchema": {
+    "message": "このデータ形式には対応していません。保存済みのデータはそのままです。拡張機能のバージョンを確認してください。"
+  },
+  "contentStorageError": {
+    "message": "保存領域にアクセスできませんでした。空き容量を確認してからもう一度お試しください。"
+  },
+  "contentInvalidState": {
+    "message": "保存済みのデータの形式を確認できませんでした。データはそのままです。"
+  },
+  "contentMessageUnavailable": {
+    "message": "ページを再読み込みしてください。"
+  },
+  "contentRequestFailed": {
+    "message": "操作を完了できませんでした。ポップアップで保存結果を確認してください。"
+  },
+  "language": {
+    "message": "ja"
+  },
+  "extensionName": {
+    "message": "C:V — 定型文の保存とコピー"
+  },
+  "extensionDescription": {
+    "message": "よく使うテキストをリストに保存し、ショートカットキーでクリップボードにコピーできます。"
+  }
+}
