@@ -31,6 +31,8 @@ To edit or delete a snippet, use the more menu (⋯) next to the item.
 • Paste: Ctrl + V / Command + V on Mac
 • Open the popup: Ctrl + B / Command + B on Mac
 
+On Mac, if Command + B doesn’t open the popup after installation, enter chrome://extensions/shortcuts in Chrome’s address bar and set C:V’s popup shortcut to Command + B again.
+
 On Mac, use Option instead of Alt.
 Numbers 1–9 correspond to positions 1–9. Use 0 for position 10.
 
