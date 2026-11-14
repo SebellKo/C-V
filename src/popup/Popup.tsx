@@ -6,6 +6,7 @@ import {
   Settings,
   TriangleAlert,
 } from 'lucide-react';
+import { writeClipboard } from '../content/clipboard.ts';
 import { t } from '../shared/i18n.ts';
 import { Button } from './components/ui/button.tsx';
 import { ListSelector } from './components/ListSelector.tsx';
@@ -31,6 +32,7 @@ export function Popup() {
   >(null);
   const [feedback, setFeedback] = useState<{
     message: string;
+    error?: boolean;
     retry?: PopupMutation;
     refresh?: boolean;
   } | null>(null);
@@ -158,11 +160,18 @@ export function Popup() {
         {!dialog && (saving || feedback) ? (
           <div
             className={
-              (saving && !selecting) || feedback?.retry || feedback?.refresh
+              (saving && !selecting) ||
+              feedback?.error ||
+              feedback?.retry ||
+              feedback?.refresh
                 ? 'save-feedback'
                 : 'sr-only'
             }
-            role={feedback?.retry || feedback?.refresh ? 'alert' : 'status'}
+            role={
+              feedback?.error || feedback?.retry || feedback?.refresh
+                ? 'alert'
+                : 'status'
+            }
           >
             <p>{saving ? t('saving') : feedback?.message}</p>
             {!saving && (feedback?.retry || feedback?.refresh) ? (
@@ -221,6 +230,17 @@ export function Popup() {
             hasLists={hasLists}
             list={currentList}
             saving={saving}
+            onCopy={(text) => {
+              if (!currentList) return;
+              const listName = currentList.name;
+              void writeClipboard(text).then((copied) =>
+                setFeedback(
+                  copied
+                    ? { message: t('snippetCopied', listName) }
+                    : { message: t('clipboardHint'), error: true },
+                ),
+              );
+            }}
             onSwap={(sourceId, targetId) => {
               if (currentList)
                 void saveFromScreen({

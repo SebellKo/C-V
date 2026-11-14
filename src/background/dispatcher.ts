@@ -106,12 +106,14 @@ const dispatchRequest = async (
         ? success<typeof request>(result)
         : failure('POSITION_NOT_FOUND');
     }
+    case 'shortcut.command.copy':
     case 'shortcut.command.set': {
       const state = await mutateState({
         type: 'command.setCurrentAt',
         index: request.position - 1,
         newCommandId: crypto.randomUUID(),
         text: request.text,
+        allowDuplicateText: request.type === 'shortcut.command.copy',
       });
       const list = getCurrentList(state);
 

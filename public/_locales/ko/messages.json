@@ -292,6 +292,37 @@
       }
     }
   },
+  "copyToClipboard": {
+    "message": "클립보드에 복사"
+  },
+  "snippetSourceCopied": {
+    "message": "$number$번 문장을 클립보드에 복사함",
+    "placeholders": {
+      "number": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSourceClipboardFailed": {
+    "message": "슬롯에는 복사할 수 있습니다. 붙여넣으려면 클립보드 권한을 확인하고 다시 시도하세요."
+  },
+  "snippetSourceRequired": {
+    "message": "복사할 문장을 먼저 선택하세요."
+  },
+  "shortcutListRequired": {
+    "message": "복사할 리스트를 다시 선택하세요."
+  },
+  "snippetCopiedToSlot": {
+    "message": "$name$ · $number$번에 복사됨",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "number": {
+        "content": "$2"
+      }
+    }
+  },
   "snippetCopied": {
     "message": "$name$ · 복사됨",
     "placeholders": {
@@ -396,6 +427,6 @@
     "message": "C:V — 텍스트 저장과 단축키 복사"
   },
   "extensionDescription": {
-    "message": "자주 쓰는 문구와 텍스트를 리스트별로 저장하고, 숫자 단축키로 클립보드에 빠르게 복사하세요."
+    "message": "자주 쓰는 문구를 리스트에 저장하고, 단축키로 원하는 슬롯에 복사하거나 클립보드에 복사하세요."
   }
 }

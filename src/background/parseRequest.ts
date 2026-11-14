@@ -97,6 +97,7 @@ export const parseMessageRequest = (
       return hasPosition(value)
         ? { type: value.type, position: value.position }
         : undefined;
+    case 'shortcut.command.copy':
     case 'shortcut.command.set':
       return hasPosition(value) && hasString(value, 'text')
         ? {

@@ -39,12 +39,14 @@ export function CommandContent({
   hasLists,
   list,
   saving,
+  onCopy,
   onSwap,
   onDialog,
 }: {
   hasLists: boolean;
   list: List | undefined;
   saving: boolean;
+  onCopy: (text: string) => void;
   onSwap: (sourceId: string, targetId: string) => void;
   onDialog: (action: CommandDialogAction, trigger: HTMLElement | null) => void;
 }) {
@@ -108,6 +110,7 @@ export function CommandContent({
             index={index}
             saving={saving}
             dragging={dragging}
+            onCopy={() => onCopy(command.text)}
             onEdit={(trigger) =>
               onDialog({ type: 'edit', list, command }, trigger)
             }

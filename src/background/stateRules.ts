@@ -263,6 +263,7 @@ const updateListMetadata = (
 const createCommand = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.create' }>,
+  allowDuplicateText = false,
 ): AppState => {
   if (!isValidId(mutation.commandId)) {
     throw new StateError('INVALID_ID');
@@ -291,7 +292,7 @@ const createCommand = (
   const { text } = mutation;
   validateCommandText(text);
 
-  if (hasDuplicateCommandText(list, text)) {
+  if (!allowDuplicateText && hasDuplicateCommandText(list, text)) {
     throw new StateError('COMMAND_DUPLICATED');
   }
 
@@ -304,6 +305,7 @@ const createCommand = (
 const updateCommand = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.update' }>,
+  allowDuplicateText = false,
 ): AppState => {
   const foundList = findList(state, mutation.listId);
 
@@ -328,7 +330,10 @@ const updateCommand = (
     return state;
   }
 
-  if (hasDuplicateCommandText(list, text, mutation.commandId)) {
+  if (
+    !allowDuplicateText &&
+    hasDuplicateCommandText(list, text, mutation.commandId)
+  ) {
     throw new StateError('COMMAND_DUPLICATED');
   }
 
@@ -417,6 +422,7 @@ const swapCommands = (
 const setCommandAt = (
   state: AppState,
   mutation: Extract<StateMutation, { type: 'command.setAt' }>,
+  allowDuplicateText = false,
 ): AppState => {
   const foundList = findList(state, mutation.listId);
 
@@ -436,20 +442,28 @@ const setCommandAt = (
   const currentCommand = list.commands[mutation.index];
 
   if (currentCommand) {
-    return updateCommand(state, {
-      type: 'command.update',
-      listId: mutation.listId,
-      commandId: currentCommand.id,
-      text: mutation.text,
-    });
+    return updateCommand(
+      state,
+      {
+        type: 'command.update',
+        listId: mutation.listId,
+        commandId: currentCommand.id,
+        text: mutation.text,
+      },
+      allowDuplicateText,
+    );
   }
 
-  return createCommand(state, {
-    type: 'command.create',
-    listId: mutation.listId,
-    commandId: mutation.newCommandId,
-    text: mutation.text,
-  });
+  return createCommand(
+    state,
+    {
+      type: 'command.create',
+      listId: mutation.listId,
+      commandId: mutation.newCommandId,
+      text: mutation.text,
+    },
+    allowDuplicateText,
+  );
 };
 
 const setCommandAtCurrentList = (
@@ -460,13 +474,17 @@ const setCommandAtCurrentList = (
     return state;
   }
 
-  return setCommandAt(state, {
-    type: 'command.setAt',
-    listId: state.currentListId,
-    index: mutation.index,
-    newCommandId: mutation.newCommandId,
-    text: mutation.text,
-  });
+  return setCommandAt(
+    state,
+    {
+      type: 'command.setAt',
+      listId: state.currentListId,
+      index: mutation.index,
+      newCommandId: mutation.newCommandId,
+      text: mutation.text,
+    },
+    mutation.allowDuplicateText,
+  );
 };
 
 export const applyStateMutation = (
