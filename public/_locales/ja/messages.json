@@ -396,6 +396,37 @@
     "message": "C:V — 定型文の保存とコピー"
   },
   "extensionDescription": {
-    "message": "よく使うテキストをリストに保存し、ショートカットキーでクリップボードにコピーできます。"
+    "message": "よく使うテキストをリストに保存し、ショートカットキーで指定した位置にコピーしたり、クリップボードにコピーしたりできます。"
+  },
+  "copyToClipboard": {
+    "message": "クリップボードにコピー"
+  },
+  "snippetSourceCopied": {
+    "message": "$number$番の定型文をクリップボードにコピーしました",
+    "placeholders": {
+      "number": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSourceClipboardFailed": {
+    "message": "別のスロットにはコピーできます。貼り付けるには、クリップボードへのアクセス権を確認してからもう一度お試しください。"
+  },
+  "snippetSourceRequired": {
+    "message": "コピーする定型文を先に選択してください。"
+  },
+  "shortcutListRequired": {
+    "message": "コピー先のリストを選び直してください。"
+  },
+  "snippetCopiedToSlot": {
+    "message": "$name$・$number$番にコピーしました",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "number": {
+        "content": "$2"
+      }
+    }
   }
 }

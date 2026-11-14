@@ -66,7 +66,11 @@ export type MessageRequest =
     }
   | { type: 'shortcut.list.select'; position: number }
   | { type: 'shortcut.command.get'; position: number }
-  | { type: 'shortcut.command.set'; position: number; text: string };
+  | {
+      type: 'shortcut.command.set' | 'shortcut.command.copy';
+      position: number;
+      text: string;
+    };
 
 export type ShortcutListResult = {
   listId: string;
@@ -87,14 +91,18 @@ export type MessageErrorCode =
   | 'STORAGE_ERROR'
   | 'MESSAGE_UNAVAILABLE';
 
-export type MessageData<Request extends MessageRequest> =
-  Request extends { type: 'shortcut.list.select' }
-    ? ShortcutListResult
-    : Request extends {
-          type: 'shortcut.command.get' | 'shortcut.command.set';
-        }
-      ? ShortcutCommandResult
-      : AppState;
+export type MessageData<Request extends MessageRequest> = Request extends {
+  type: 'shortcut.list.select';
+}
+  ? ShortcutListResult
+  : Request extends {
+        type:
+          | 'shortcut.command.get'
+          | 'shortcut.command.set'
+          | 'shortcut.command.copy';
+      }
+    ? ShortcutCommandResult
+    : AppState;
 
 export type MessageResponse<Request extends MessageRequest = MessageRequest> =
   | { ok: true; data: MessageData<Request> }

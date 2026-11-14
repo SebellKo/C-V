@@ -38,6 +38,7 @@ export type StateMutation =
     }
   | {
       type: 'command.setCurrentAt';
+      allowDuplicateText: boolean;
       index: number;
       newCommandId: string;
       text: string;

@@ -292,6 +292,37 @@
       }
     }
   },
+  "copyToClipboard": {
+    "message": "Copy to clipboard"
+  },
+  "snippetSourceCopied": {
+    "message": "Snippet $number$ copied to clipboard",
+    "placeholders": {
+      "number": {
+        "content": "$1"
+      }
+    }
+  },
+  "snippetSourceClipboardFailed": {
+    "message": "You can still copy this snippet to another slot. Check clipboard access and try again to paste."
+  },
+  "snippetSourceRequired": {
+    "message": "Select a snippet to copy first."
+  },
+  "shortcutListRequired": {
+    "message": "Select the destination list again before copying."
+  },
+  "snippetCopiedToSlot": {
+    "message": "$name$ · Copied to slot $number$",
+    "placeholders": {
+      "name": {
+        "content": "$1"
+      },
+      "number": {
+        "content": "$2"
+      }
+    }
+  },
   "snippetCopied": {
     "message": "$name$ · Copied",
     "placeholders": {
@@ -396,6 +427,6 @@
     "message": "C:V — Text Snippets & Quick Copy"
   },
   "extensionDescription": {
-    "message": "Save reusable text snippets in lists and copy them to your clipboard with keyboard shortcuts."
+    "message": "Save reusable text snippets in lists, copy them between slots with keyboard shortcuts, or copy them to your clipboard."
   }
 }

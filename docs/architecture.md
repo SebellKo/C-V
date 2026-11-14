@@ -5,7 +5,7 @@
 
 ## 구조와 책임
 
-C:V는 Chrome Extension Manifest V3 확장 프로그램입니다. 팝업은 React로 작성하고, background service worker가 저장 데이터를 관리하며, content script가 페이지 단축키·클립보드·알림을 처리합니다.
+C:V는 Chrome Extension Manifest V3 확장 프로그램입니다. 팝업은 React로 작성하고, background service worker가 저장 데이터를 관리하며, content script가 페이지 단축키와 알림을 처리합니다. 페이지 단축키와 팝업 메뉴에서 클립보드에 복사할 수 있습니다.
 
 | 파일·영역 | 책임 |
 | --- | --- |
@@ -153,7 +153,7 @@ Chrome의 일회성 `runtime.sendMessage`와 `runtime.onMessage`를 사용합니
 | `command.swap` | `listId`, `sourceId`, `targetId` | `AppState` |
 | `shortcut.list.select` | `position`: 정수 1~10 | `listId`, `listName`, `position` |
 | `shortcut.command.get` | `position`: 정수 1~10 | 위 위치 정보와 `commandId`, `text` |
-| `shortcut.command.set` | `position`, `text` | 저장된 문장과 위치 정보 |
+| `shortcut.command.set`, `shortcut.command.copy` | `position`, `text` | 저장된 문장과 위치 정보 |
 
 응답은 `{ ok: true, data: ... }` 또는 `{ ok: false, error: '오류 코드' }`입니다. 요청은 `unknown`에 해당하는 외부 값으로 취급하고 알려진 type과 필수 값의 자료형·위치 범위를 확인합니다. 사용자 콘텐츠나 원본 Error 객체를 오류 응답에 싣지 않습니다.
 
@@ -168,10 +168,10 @@ background는 메시지 발신자 객체를 추가 검사하지 않습니다. �
 웹 페이지 코드는 다음 순서로 동작합니다.
 
 1. 최상위 HTTP/HTTPS 페이지에서 실제 사용자 `keydown`을 받습니다.
-2. 숫자 코드와 modifier를 확인합니다. 반복 입력·입력 조합 중·추가 Ctrl/Meta/AltGraph 조합은 제외합니다.
-3. 입력창에서는 저장 조합만 허용합니다. 선택은 그 시점에 읽고 비밀번호 필드는 제외합니다.
-4. background에 선택·조회·저장을 요청합니다.
-5. 복사는 페이지가 활성 상태일 때 수행합니다. `navigator.clipboard`가 있으면 `writeText`를 사용하고, 없을 때는 copy 이벤트와 `document.execCommand('copy')` 경로를 사용합니다. `writeText` 실패 후 이 경로로 재시도하지는 않습니다.
+2. 숫자 키와 보조키를 확인합니다. 입력기 조합과 오른쪽 Alt의 AltGraph 문자 입력은 건너뜁니다.
+3. 인식한 단축키의 기본 입력을 즉시 막습니다. 반복 입력은 막되 요청은 다시 보내지 않습니다.
+4. 리스트 선택, 복사 원본 조회, 목적지에 복사하는 요청을 키를 누른 순서로 처리합니다. 원본 텍스트는 클립보드에 쓰고, 슬롯 복사에 쓰는 사본은 현재 페이지에 보관합니다. 리스트 선택에 실패하면 다음 리스트 선택이 성공할 때까지 슬롯 복사를 막습니다.
+5. 복사는 기존 위치의 내용을 교체하거나 바로 다음 위치에 추가합니다. 이 동작에 한해 같은 리스트의 문장 중복을 허용합니다.
 6. 실제 성공한 경우에만 성공 알림을 표시합니다.
 
 웹 알림은 닫힌 Shadow DOM 안에 `textContent`로 렌더링합니다. 성공 1.5초·오류 5초 뒤 host를 제거하고, 새 알림이 오면 이전 host와 타이머를 교체합니다. 미리보기는 공백 정리 후 `slice(0, 60)`을 적용하므로 이모지 단위 보존까지 보장하지 않습니다.

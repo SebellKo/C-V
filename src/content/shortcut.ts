@@ -1,32 +1,44 @@
-export type Shortcut = { action: 'select' | 'copy' | 'save'; position: number };
+export type Shortcut = {
+  action: 'selectList' | 'selectCommand' | 'copy' | 'save';
+  position: number;
+};
 
-export function isEditableTarget(event: KeyboardEvent): boolean {
-  return event.composedPath().some(
-    (target) =>
-      target instanceof HTMLInputElement ||
-      target instanceof HTMLTextAreaElement ||
-      (target instanceof HTMLElement && target.isContentEditable),
-  );
-}
-
-export function getShortcut(event: KeyboardEvent): Shortcut | undefined {
+export function getShortcut(
+  event: KeyboardEvent,
+  mac: boolean,
+  leftAlt: boolean,
+): Shortcut | undefined {
+  const altGraph = event.getModifierState('AltGraph');
   if (
     event.defaultPrevented ||
-    event.repeat ||
     event.isComposing ||
-    event.ctrlKey ||
     event.metaKey ||
-    event.getModifierState('AltGraph')
+    (altGraph && (mac || !leftAlt))
   )
     return;
-  if (!event.shiftKey && !event.altKey) return;
-  // Shift/Option은 event.key를 기호로 바꾸므로 물리 숫자 키를 기준으로 한다.
+
+  // Match the physical key even when a modifier changes the character.
   const digit = /^(?:Digit|Numpad)([0-9])$/.exec(event.code)?.[1];
   if (digit === undefined) return;
-  return {
-    action: event.altKey ? (event.shiftKey ? 'save' : 'copy') : 'select',
-    position: digit === '0' ? 10 : Number(digit),
-  };
+  const position = digit === '0' ? 10 : Number(digit);
+  const { ctrlKey, altKey, shiftKey } = event;
+
+  // Chrome on Windows can report Ctrl+left Alt as AltGraph on some layouts.
+  if (altGraph)
+    return shiftKey ? undefined : { action: 'selectCommand', position };
+
+  if (ctrlKey && shiftKey && !altKey) return { action: 'selectList', position };
+  if (ctrlKey && altKey && !shiftKey && (mac || leftAlt))
+    return { action: 'selectCommand', position };
+  // Leave Windows Alt codes available on the numeric keypad.
+  if (
+    !shiftKey &&
+    (mac
+      ? ctrlKey && !altKey
+      : leftAlt && altKey && !ctrlKey && event.code.startsWith('Digit'))
+  )
+    return { action: 'copy', position };
+  if (!ctrlKey && shiftKey && altKey) return { action: 'save', position };
 }
 
 export function getSelectedText(): string {

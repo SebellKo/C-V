@@ -5,6 +5,7 @@ import {
   pointerIntersection,
 } from '@dnd-kit/collision';
 import {
+  Copy,
   GripVertical,
   MoreHorizontal,
   Pencil,
@@ -25,6 +26,7 @@ export function CommandRow({
   index,
   saving,
   dragging,
+  onCopy,
   onEdit,
   onDelete,
 }: {
@@ -32,6 +34,7 @@ export function CommandRow({
   index: number;
   saving: boolean;
   dragging: boolean;
+  onCopy: () => void;
   onEdit: (trigger: HTMLElement | null) => void;
   onDelete: (trigger: HTMLElement | null) => void;
 }) {
@@ -85,6 +88,10 @@ export function CommandRow({
           align="end"
           aria-label={t('snippetActions', String(index + 1))}
         >
+          <DropdownMenuItem onClick={onCopy}>
+            <Copy aria-hidden="true" />
+            {t('copyToClipboard')}
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onEdit(menuTrigger.current)}>
             <Pencil aria-hidden="true" />
             {t('editSnippetContent')}
